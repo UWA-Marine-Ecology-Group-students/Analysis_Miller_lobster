@@ -51,15 +51,16 @@ setwd(data.dir)
 dir()
 
 
-dat <-read_csv("catch.sw.sst.csv")%>%
+dat <-read_csv("sub.legal.sw.sst.csv")%>%
    
-  dplyr::rename(response=Count)%>%
+  dplyr::rename(response=Count,
+                Taxa=sizeclass)%>%
   # #   Transform variables
   mutate(Date=as.factor(yday(Date)))%>% #as julian day
   # mutate(recap.Date=as.factor(yday(recap.Date)))%>% #as julian day
   mutate(Site=as.factor(Site))%>%
   mutate(Location=as.factor(Location))%>%
-  mutate(Taxa="catch")%>%
+  # mutate(Taxa="catch")%>%
   # na.omit()%>%
   glimpse()
 
@@ -69,7 +70,8 @@ names(dat)
 ggplot(data=dat,aes(y=response,x=Location))+
   # geom_smooth(method="gam")+
   geom_boxplot(notch=T)+
-  geom_point(alpha=0.25)
+  geom_point(alpha=0.25)+
+  facet_grid(.~Taxa)
 
 
 
