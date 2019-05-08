@@ -27,8 +27,8 @@ Theme1 <-
     legend.position = c(0.2, 0.8),
     text=element_text(size=15),
     strip.text.y = element_text(size = 15,angle = 0, colour="black"),
-    axis.title.x=element_text(vjust=0.3, size=15, colour="black",face="bold"),
-    axis.title.y=element_text(vjust=0.6, angle=90, size=15, colour="black",face="bold"),
+    axis.title.x=element_text(vjust=0, size=15, colour="black",face="bold"),
+    axis.title.y=element_text(vjust=0.6, angle=90, size=15,,face="bold", colour="black"),
     axis.text.x=element_text(size=15, colour="black"),
     axis.text.y=element_text(size=15, colour="black"),
     axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
@@ -82,6 +82,7 @@ use.dat<-dat%>%
   glimpse()
 
 mod=gam(response~s(Hs.m.sw,k=3,bs='cr')+s(T1.s.sw,k=3,bs='cr')+Location+s(Site,bs='re')+s(Date,bs='re'),family=tw(),data=use.dat)
+
 summary(mod)
 
 
@@ -216,9 +217,9 @@ grid.arrange(catch.legal.location,catch.sublegal.location,nrow=1,ncol=2)
 # Use arrangeGrob ONLY - as we can pass this to ggsave! Note use of raw ggplot's
 combine.plot<-arrangeGrob(catch.legal.location,catch.sublegal.location,nrow=1,ncol=2)
 
-ggsave(combine.plot,file="catch.location.png", width = 40, height = 15,units = "cm")
+# ggsave(combine.plot,file="catch.location.png", width = 40, height = 15,units = "cm")
 
-
+ggsave(combine.plot,file="catch.location.png", width = 30, height = 10,units = "cm")
 
 
 
