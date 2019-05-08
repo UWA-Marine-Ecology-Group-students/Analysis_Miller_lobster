@@ -51,18 +51,18 @@ dir()
 
 
 dat<- read_csv("length.sw.sst.csv")%>%
-  dplyr::rename(response=Carapace.length,
-                Taxa=Colour)%>%
-  drop_na(Taxa)%>%
-  drop_na(response)%>%
-  filter(Taxa%in%c("Red","White"))%>%
-  filter(!Location=="Rivermouth")%>%
-  filter(!Location=="Golden Ridge")%>%
-  # #   Transform variables
-  mutate(Date=yday(Date))%>%
-  mutate(Site=as.factor(Site))%>%
-  mutate(Location=as.factor(Location))%>%
-  mutate(Trap.ID=as.factor(Trap.ID))%>%
+  # dplyr::rename(response=Carapace.length,
+  #               Taxa=Colour)%>%
+  # drop_na(Taxa)%>%
+  # drop_na(response)%>%
+  # filter(Taxa%in%c("Red","White"))%>%
+  # filter(!Location=="Rivermouth")%>%
+  # filter(!Location=="Golden Ridge")%>%
+  # # #   Transform variables
+  # mutate(Date=yday(Date))%>%
+  # mutate(Site=as.factor(Site))%>%
+  # mutate(Location=as.factor(Location))%>%
+  # mutate(Trap.ID=as.factor(Trap.ID))%>%
   glimpse()
 
 names(dat)
