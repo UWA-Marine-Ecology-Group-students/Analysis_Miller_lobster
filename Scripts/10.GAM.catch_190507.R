@@ -14,6 +14,7 @@ detach("package:plyr", unload=TRUE)#will error - don't worry
 library(tidyr)
 library(dplyr)
 library(lubridate)
+library(readr)
 options(dplyr.width = Inf) #enables head() to display all coloums
 library(mgcv)
 library(MuMIn)
@@ -25,12 +26,16 @@ library(doSNOW)
 library(gamm4)
 library(RCurl) #needed to download data from GitHub
 # install package----
+# library(devtools) #run once
 # devtools::install_github("beckyfisher/FSSgam_package") #run once
 library(FSSgam)
 
 # Set work directory----
 
 work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+work.dir=("Z://Analysis_Miller_lobster") #for laptop
+
+
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -51,7 +56,7 @@ dat <-read_csv("catch.sw.sst.csv")%>%
   dplyr::rename(response=Count)%>%
   # #   Transform variables
   mutate(Date=as.factor(yday(Date)))%>% #as julian day
-  mutate(recap.Date=as.factor(yday(recap.Date)))%>% #as julian day
+  # mutate(recap.Date=as.factor(yday(recap.Date)))%>% #as julian day
   mutate(Site=as.factor(Site))%>%
   mutate(Location=as.factor(Location))%>%
   mutate(Taxa="catch")%>%
@@ -119,7 +124,6 @@ setwd(model.dir) #Set wd for example outputs - will differ on your computer
 
 # Presets
 glimpse(dat)
-glimpse(use.dat)
 names(dat)
 resp.vars=unique.vars.use
 use.dat=dat
@@ -132,7 +136,7 @@ for(i in 1:length(resp.vars)){
   use.dat=dat[which(dat$Taxa==resp.vars[i]),]
   
   Model1=gam(response~s(sst,k=3,bs='cr')+ s(Site,bs='re')+s(Date,bs='re'),family=tw(),  data=use.dat)
-  # gam.check(Model1) 
+  # gam.check(Model1)
   # plot.gam(Model1)
   # summary(Model1)
   

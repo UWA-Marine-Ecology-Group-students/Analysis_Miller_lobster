@@ -33,6 +33,8 @@ library(FSSgam)
 # Set work directory----
 
 work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+work.dir=("Z://Analysis_Miller_lobster") #for laptop
+
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
