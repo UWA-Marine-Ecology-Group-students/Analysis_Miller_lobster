@@ -8,14 +8,6 @@ library(googlesheets)
 library(stringr)
 library(lubridate)
 
-require(rerddap)
-require(ncdf4)
-require(data.table)
-require(sp)
-require(rgeos)
-require(geosphere)
-require(magrittr)
-
 
 # Study name----
 study<-"Lobster.Data"
@@ -23,9 +15,10 @@ study<-"Lobster.Data"
 # Set work directory----
 #For Tims Github 
 
-work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
+# work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
+# work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+work.dir=("C:/GitHub/Analysis_Miller_lobster")
 
-work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -190,4 +183,14 @@ catch.sw.sst <- left_join(catch.swell, av.catch.sst, by=c("SiteNo", "Date"))%>%
 #saaaaaaaaaveeeee for GAM-----
 setwd(data.dir)
 write.csv(catch.sw.sst,"catch.sw.sst.csv", row.names=F)
+
+#Add in column with legal vs sublegal----
+library(readr)
+setwd(data.dir)
+dat<- read_csv("catch.sw.sst.csv")%>%
+  glimpse()
+
+
+
+
   
