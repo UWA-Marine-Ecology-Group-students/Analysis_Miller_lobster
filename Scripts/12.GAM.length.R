@@ -57,7 +57,7 @@ dat<- read_csv("length.sw.sst.csv")%>%
   drop_na(response)%>%
   filter(Taxa%in%c("Red","White"))%>%
   filter(!Location=="Rivermouth")%>%
-  filter(!Location=="Golden Ridge")%>% #think about putting that back in
+  # filter(!Location=="Golden Ridge")%>% #think about putting that back in
   # #   Transform variables
   mutate(Date=as.factor(yday(Date)))%>%
   mutate(Site=as.factor(Site))%>%

@@ -14,7 +14,6 @@ rm(list=ls())
 
 
 
-
 # Plotting Theme-
 Theme1 <-
   theme( # use theme_get() to see available options
@@ -27,11 +26,11 @@ Theme1 <-
     legend.title = element_blank(),
     legend.position = c(0.2, 0.8),
     text=element_text(size=15),
-    strip.text.y = element_text(size = 15,angle = 0),
-    axis.title.x=element_text(vjust=0.3, size=15),
-    axis.title.y=element_text(vjust=0.6, angle=90, size=15),
-    axis.text.x=element_text(size=15),
-    axis.text.y=element_text(size=15),
+    strip.text.y = element_text(size = 15,angle = 0, colour="black"),
+    axis.title.x=element_text(vjust=0.3, size=15, colour="black",face="bold"),
+    axis.title.y=element_text(vjust=0.6, angle=90, size=15, colour="black",face="bold"),
+    axis.text.x=element_text(size=15, colour="black"),
+    axis.text.y=element_text(size=15, colour="black"),
     axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
     axis.line.y=element_line(colour="black", size=0.5,linetype='solid'),
     strip.background = element_blank())
@@ -41,7 +40,7 @@ Theme1 <-
 
 # Set work directory----
 
-work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+# work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 work.dir=("Z://Analysis_Miller_lobster") #for laptop
 
 
@@ -105,8 +104,11 @@ predicts.catch.legal = testdata%>%data.frame(fits)%>%
 
 
 # Plot legal catch - location ----
-catch.legal.location<- ggplot(aes(x=Location,y=response,fill=Location,colour=Location), data=predicts.catch.legal) +
-  ylab("Lobster per pot")+
+catch.legal.location<- ggplot(aes(x=Location,y=response,
+                              fill=Location,colour=Location), 
+                              data=predicts.catch.legal) +
+  
+  ylab(bquote('Lobster (' *pot^-1*')'))+
   xlab('Location')+
   # scale_fill_manual(labels = c("Fished", "No-take"),values=c("red", "black"))+
   # scale_colour_manual(labels = c("Fished", "No-take"),values=c("red", "black"))+
@@ -114,9 +116,11 @@ catch.legal.location<- ggplot(aes(x=Location,y=response,fill=Location,colour=Loc
   geom_bar(stat = "identity")+
   geom_errorbar(aes(ymin = response-se.fit,ymax = response+se.fit),width = 0.5) +
   theme_classic()+
-  Theme1
-  # annotate("text", x = -Inf, y=Inf, label = "(a)",vjust = 1, hjust = -.1,size=5)+
-  # annotate("text", x = -Inf, y=Inf, label = "   Dosinia subrosea",vjust = 1, hjust = -.1,size=5,fontface="italic")
+  Theme1+
+  theme(legend.position = "none")+
+  # scale_y_continuous(breaks=seq(0,12,2))+
+  ylim(0,12)+
+  ggtitle("Legal")
 catch.legal.location
 
 
@@ -190,18 +194,18 @@ predicts.catch.sublegal = testdata%>%data.frame(fits)%>%
 
 # Plot sublegal catch - location ----
 catch.sublegal.location<- ggplot(aes(x=Location,y=response,fill=Location,colour=Location), data=predicts.catch.sublegal) +
-  ylab("Lobster per pot")+
+  ylab(bquote('Lobster (' *pot^-1*')'))+
   xlab('Location')+
-  # scale_fill_manual(labels = c("Fished", "No-take"),values=c("red", "black"))+
-  # scale_colour_manual(labels = c("Fished", "No-take"),values=c("red", "black"))+
-  # scale_x_discrete(limits = rev(levels(predicts.bds.status$Status)))+
   geom_bar(stat = "identity")+
   geom_errorbar(aes(ymin = response-se.fit,ymax = response+se.fit),width = 0.5) +
   theme_classic()+
-  Theme1
-# annotate("text", x = -Inf, y=Inf, label = "(a)",vjust = 1, hjust = -.1,size=5)+
-# annotate("text", x = -Inf, y=Inf, label = "   Dosinia subrosea",vjust = 1, hjust = -.1,size=5,fontface="italic")
+  Theme1+
+  theme(legend.position = "none")+
+  #scale_y_continuous(breaks=seq(0,12,2))+
+  ylim(0,12)+
+  ggtitle(label="Subegal")
 catch.sublegal.location
+
 
 
 # Save plots----
@@ -212,7 +216,7 @@ grid.arrange(catch.legal.location,catch.sublegal.location,nrow=1,ncol=2)
 # Use arrangeGrob ONLY - as we can pass this to ggsave! Note use of raw ggplot's
 combine.plot<-arrangeGrob(catch.legal.location,catch.sublegal.location,nrow=1,ncol=2)
 
-ggsave(combine.plot,file="catch.location.png", width = 30, height = 15,units = "cm")
+ggsave(combine.plot,file="catch.location.png", width = 40, height = 15,units = "cm")
 
 
 
