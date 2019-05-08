@@ -7,6 +7,7 @@
 # A.C. Lee
 # Dr Tim J. Langlois
 
+rm(list=ls())
 
 
 # librarys----
@@ -23,14 +24,11 @@ library(RColorBrewer)
 library(doSNOW)
 library(gamm4)
 library(RCurl) #needed to download data from GitHub
-
-rm(list=ls())
-
-
+library(lubridate)
+library(readr)
 # install package----
 # devtools::install_github("beckyfisher/FSSgam_package") #run once
 library(FSSgam)
-
 
 
 work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
@@ -39,46 +37,49 @@ work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 data.dir<-paste(work.dir,"Data",sep="/")
 map.dir<-paste(work.dir,"Map Layers",sep="/")
 plots.dir<-paste(work.dir,"Plots",sep="/")
-model.dir<-paste(work.dir,"Model_out",sep="/")
+model.dir<-paste(work.dir,"Model_out_catch",sep="/")
 
 
 # Bring in and format the data----
-name<-"lobster"
+name<-"catch"
 
+work.dir=("Z://Analysis_Miller_lobster")
+# Sub directories ----
+data.dir<-paste(work.dir,"Data",sep="/")
+plots.dir<-paste(work.dir,"Plots",sep="/")
+
+#Import Data----
 setwd(data.dir)
-dir()
-dat <-read_csv("dat.sw.sst.csv")%>%
-  
-  dplyr::rename(Taxa=sex,
-                "Hs.m.sw"="Hs(m).sw",
-                "Hs.m.sea"="Hs(m).sea",
-                "T1.s.sw"="T1(s).sw",
-                "T1.s.sea"="T1(s).sea"
-                )%>%
+dat <-read_csv("catch.sw.sst.csv")%>%
+  dplyr::rename(response=Count)%>%
+  # dplyr::rename(Taxa=sex,
+  #               "Hs.m.sw"="Hs(m).sw",
+  #               "Hs.m.sea"="Hs(m).sea",
+  #               "T1.s.sw"="T1(s).sw",
+  #               "T1.s.sea"="T1(s).sea"
+  #               )%>%
   # #   Transform variables
   mutate(Date=yday(Date))%>%
   mutate(Site=as.factor(Site))%>%
   mutate(Location=as.factor(Location))%>%
+  mutate(Date=as.factor(Date))%>%
+  mutate(Taxa="all")%>%
   
   # mutate(sqrt.X1mm=sqrt(X1mm))%>%
   # mutate(sqrt.X500um=sqrt(X500um))%>%
-  # na.omit()%>%
+  na.omit()%>%
   glimpse()
 
 names(dat)
-
-
 
 
 # Set predictor variables---
 pred.vars.fact=c("Location")
 # "Site"
 
-
 pred.vars.cont=c("Hs.m.sw",
-                 "Hs.m.sea",
                  "T1.s.sw",
-                 "T1.s.sea","sst","Date") 
+                 "sst") 
 # Removed correlated
 # "Date",
 # "Hs(m).tot","Tp(s).tot","T1(s).tot","Tp(s).sea","Tp(s).sw","Dir(deg).sw","Dir(deg).sea",
@@ -86,28 +87,24 @@ pred.vars.cont=c("Hs.m.sw",
 # Check for correalation of predictor variables- remove anything highly correlated (>0.95)---
 round(cor(dat[,pred.vars.cont]),2)
 
-
-
-
-# Plot of likely transformations - thanks to Anna Cresswell for this loop!
-par(mfrow=c(3,2))
-for (i in pred.vars.cont) {
-  x<-dat[ ,i]
-  x = as.numeric(unlist(x))
-  hist((x))#Looks best
-  plot((x),main = paste(i))
-  hist(sqrt(x))
-  plot(sqrt(x))
-  hist(log(x+1))
-  plot(log(x+1))
-}
+# 
+# # Plot of likely transformations - thanks to Anna Cresswell for this loop!
+# par(mfrow=c(3,2))
+# for (i in pred.vars.cont) {
+#   x<-dat[ ,i]
+#   x = as.numeric(unlist(x))
+#   hist((x))#Looks best
+#   plot((x),main = paste(i))
+#   hist(sqrt(x))
+#   plot(sqrt(x))
+#   hist(log(x+1))
+#   plot(log(x+1))
+# }
 
 # Review of individual predictors - we have to make sure they have an even distribution---
 #If the data are squewed to low numbers try sqrt>log or if squewed to high numbers try ^2 of ^3
 # Decided that X4mm, X2mm, X1mm and X500um needed a sqrt transformation
 #Decided Depth, x63um, InPreds and BioTurb were not informative variables. 
-
-
 
 
 # Check to make sure Response vector has not more than 80% zeros----
@@ -128,7 +125,6 @@ setwd(model.dir) #Set wd for example outputs - will differ on your computer
 
 # Presets
 glimpse(dat)
-glimpse(use.dat)
 names(dat)
 resp.vars=unique.vars.use
 use.dat=dat
@@ -140,16 +136,17 @@ var.imp=list()
 for(i in 1:length(resp.vars)){
   use.dat=dat[which(dat$Taxa==resp.vars[i]),]
   
-  Model1=gam(response~s(Date,k=3,bs='cr')+ s(Site,bs="re"),family=tw(),  data=use.dat)
-  # gam.check(Model1)
+  Model1=gam(response~s(sst,k=3,bs="cr")+ s(Site,bs="re") + s(Date,bs="re"), family=tw(),  data=use.dat)
+  gam.check(Model1)
   
   model.set=generate.model.set(use.dat=use.dat,
                                test.fit=Model1,
                                pred.vars.cont=pred.vars.cont,
                                pred.vars.fact=pred.vars.fact,
                                # linear.vars="Distance",
+                               
                                k=3,
-                               null.terms="s(Site,bs='re')")
+                               null.terms="s(Site,bs="re") + s(Date,bs="re")")
   
   out.list=fit.model.set(model.set,
                          max.models=600,
