@@ -151,6 +151,7 @@ sites.2018<-dat.pot.2018%>%
 # Import 2017 length data----
 dat.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   gs_read_csv(ws = "Lobster.var",col_types = "nncncccccccnnnn")%>%
+  mutate(Source='oscar-doncel-canons-masters')%>%
   glimpse()
 
 unique(dat.2017$Carapace.length) 
@@ -163,14 +164,20 @@ unique(dat.2017$Moult.stage) # NA
 
 dat.length.2017<-dat.2017%>%
   mutate(Count=1)%>%        # Count for Abundance
+  mutate(Colour=str_replace_all(.$Colour,c("UNKNOWN"="Unknown")))%>%
+  mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
   mutate(Carapace.length=as.numeric(as.character(Carapace.length)))%>%
   mutate(day.trap=paste(Day,Trap.number,sep="."))%>%  #New column for Day and trap.number
-  mutate(Recapture=NA)%>%
+  #mutate(Recapture=NA)%>% # some of Oscar's are recaptures from the same trip and some are old tags
+  mutate(Recapture=if_else(Tagged%in%c("EXISTING","EXISTING.OLD"),TRUE,NA))%>%
+  mutate(Cable.Tie=if_else(Tag.number%in%c("CT"),TRUE,NA))%>% # Move cable tie data into a different column
+  mutate(Tag.number=ifelse(Tag.number%in%c("CT"),NA,as.character(Tag.number)))%>%
   mutate(Trip=0)%>%
-  mutate(Source='Oscar')%>%
-  mutate(Fisher='')%>%
-  select(Trip, Day, Trap.number, Carapace.length, Sex, Colour, Tag.number,Recapture, day.trap, Source, Fisher)%>%
+  select(-c(Tagged))%>%
+  #select(Trip, Day, Trap.number, Carapace.length, Sex, Colour, Tag.number,Recapture, day.trap, Source, Fisher)%>%
   glimpse()
+
+names(dat.length.2017)
 
 #Import 2017 pot data----
 dat.pot.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
