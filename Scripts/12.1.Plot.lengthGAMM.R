@@ -244,6 +244,6 @@ setwd("C:/GitHub/Analysis_Miller_lobster/Plots")
 # Use arrangeGrob ONLY - as we can pass this to ggsave! Note use of raw ggplot's
 # combine.plot<-arrangeGrob(catch.legal.location,catch.sublegal.location,nrow=1,ncol=2)
 
-ggsave(length.white.location,file="length.white.location.png", width = 30, height = 15,units = "cm")
+ggsave(length.white.location,file="length.white.location.png", width = 15, height = 7.5,units = "cm")
 
 
