@@ -18,9 +18,10 @@ study<-"Lobster.Data"
 
 #For Tims Github 
 
-work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
+# work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
+# work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+work.dir=("C:/GitHub/Analysis_Miller_lobster")
 
-work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -144,6 +145,7 @@ get.sst<-function(data){
   return(data$sst)
 } #Matts Function for sst data
 # Import k-mean cluster data----
+
 
 k.dat <- read_csv("kcluster.csv")%>%
   mutate(Date=as.Date(Date))%>%
