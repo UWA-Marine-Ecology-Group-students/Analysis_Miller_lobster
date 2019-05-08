@@ -63,14 +63,16 @@ unique(dat.length.2018$Sex) # "Female" "Male"   "Unknown"
 unique(dat.length.2018$Colour) # "Red"   "White" "Unknown"  
 unique(dat.length.2018$Outlier) #  NA  "y"
 unique(dat.length.2018$Setose.state) # "I" NA  "E" "M"
+unique(dat.length.2018$Dead) # NA     "Dead"
+unique(dat.length.2018$Individual.Remarks)
 
 # Damage data
 unique(dat.length.2018$Damage.new.a) # 0 1 2 - I have fixed when more than 2 antennas damaged
 unique(dat.length.2018$Total.damage)%>%sort()
 
+# Counts
 length(unique(dat.length.2018$Tag.number)) # 7537 tagged individuals
 length(dat.length.2018$Carapace.length) # 9318 total indiviuals caught
-
 length(unique(dat.length.2018$trip.day.trap)) # 1163 pots
 
 # Things that should actually be in the metadata not the lobster data
@@ -85,28 +87,33 @@ duplicate.remarks<-additional.info%>%
   summarise(n=n())%>%
   filter(n>1)
 
-1440-1163
+unique(additional.info$Pot.Remarks)
 
 # Import 2018 pot data----
 dat.pot.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
   gs_read_csv(ws = "Pot.var",col_types = "nccnccnnccnnnc")%>%
   mutate(trip.day.trap=paste(Trip,Day,Trap.ID,sep="."))%>% 
-  mutate(New.Site.Name=str_replace_all(.$Site.Name,c( "SM"="Seven Mile", "DM"="Davids Marks",  "RM"="Rivermouth", "IR"="Irwin Reef", "LR"="Long Reef", "SD"="South Dummy", "LH"="Little Horseshoe", "CHin1_"="Cliff Head Mid","CHin2_"="Cliff Head South","CHout1_" = "Cliff Head OUT1","CHout2_" = "Cliff Head North", "JB"="Jim Bailey", "GR"="Golden Ridge", "SR"="South Rig", "WL"="Whites Lump")))%>% 
+  mutate(Site=str_replace_all(.$Site.Name,c( "SM"="Seven Mile", "DM"="Davids Marks",  "RM"="Rivermouth", "IR"="Irwin Reef", "LR"="Long Reef", "SD"="South Dummy", "LH"="Little Horseshoe", "CHin1_"="Cliff Head Mid","CHin2_"="Cliff Head South","CHout1_" = "Cliff Head OUT1","CHout2_" = "Cliff Head North", "JB"="Jim Bailey", "GR"="Golden Ridge", "SR"="South Rig", "WL"="Whites Lump")))%>% 
+  mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile","Little Horseshoe"="Cliff Head", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Long Reef"="Irwin Reef", "South Dummy"="Irwin Reef","South Rig"= "Irwin Reef","Whites Lump"= "Irwin Reef","WP"= "Irwin Reef","Whitepoint"="Irwin Reef")))%>% 
+  mutate(Site=str_replace_all(.$Site, c("Jim Bailey"="White Point" ,"WP"="White Point" , "Whitepoint"="White Point" , "CHS"="Cliff Head South","CHM"="Cliff Head Mid","CHN"="Cliff Head North", "Seven Mile Beach"= "Seven Mile.out")))%>%
   filter(Johns=="No")%>% # turn off when I add in john's data (if ever)
   dplyr::rename(Latitude=Latitude.y, Longitude=Longitude.x)%>%
   mutate(Latitude=as.numeric(Latitude))%>%
   mutate(Longitude=as.numeric(Longitude))%>%
   filter(!Comment%in%c("Duplicate"))%>%
   select(-c(Johns,Comment))%>%
+  dplyr::rename(Site.Code=Site.Name)%>%
   glimpse()
 
-unique(dat.pot.2018$Location)%>%sort()
-unique(dat.pot.2018$Site.Name)%>%sort()
-unique(dat.pot.2018$New.Site.Name)%>%sort()
+# Locations
+  # Seven Mile Beach
+  # Cliff Head
+  # Irwin Reef
 
-sites<-dat.pot.2018%>%
-  distinct(Location,Site.Name,New.Site.Name)
 
+unique(dat.pot.2018$Location)%>%sort() # "Cliff Head"   "Golden Ridge" "Irwin Reef"   "Rivermouth"   "Seven Mile"  
+unique(dat.pot.2018$Site)%>%sort() # Would be nice to rename "Cliff Head OUT1"
+unique(dat.pot.2018$Site.Code)%>%sort()
 
 length(unique(dat.pot.2018$trip.day.trap)) # 1461
 
@@ -120,8 +127,6 @@ missing.from.lobster<-anti_join(additional.info,dat.pot.2018, by = c("Trip",  "T
 missing.field.info<-anti_join(dat.pot.2018,additional.info, by = c("Trip", "Trap.ID", "Day", "trip.day.trap"))
 # 21 pots that aren't in the lobster data
 
-
-
 ## Pot numbers
 # 1461 pots in total
 # 1163 non-empty pots
@@ -134,37 +139,30 @@ missing.field.info<-anti_join(dat.pot.2018,additional.info, by = c("Trip", "Trap
 
 duplicate.pots<-dat.pot.2018%>%
   group_by(trip.day.trap)%>%
-  dplyr::summarise(n=n())%>%filter(n>1)
-
-# Create "sites" for 2018 Data----
+  dplyr::summarise(n=n())%>%filter(n>1) # Fixed
+ 
+# Create "sites" for 2018 Data ----
+# Not sure we need this????
 sites.2018<-dat.pot.2018%>%
-  distinct(Trap.ID,Site.Name)%>% #Keeps only distinct rows (Trap.ID & Site.Name)
+  distinct(Trap.ID,Location,Site)%>% #Keeps only distinct rows (Trap.ID & Site.Name)
   mutate(Trap.ID=as.character(Trap.ID))%>%
-  dplyr::rename(Site=Site.Name)%>%
   glimpse()
 
-#Add a "Site" column by Trap.ID to dat.length----
-dat.length.2018<-left_join(dat.length.2018,sites, by="Trap.ID") 
-
-#Check for missing sites: ones in dat.length but not in dat.pot
-#missing.site.1<-anti_join(dat.length.1,sites)  # 0
-
-#Join Lobster and pot 2018 data----
-dat.2018<- dplyr::left_join(dat.length.2018, dat.pot.2018)%>%
-  select(Trip, Trap.ID, Day, Date, Tag.number, Recapture, Trap.Number, Carapace.length, Sex, Colour, Site, Longitude, Latitude, Source, Fisher, Total.damage)%>%
+# Import 2017 length data----
+dat.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
+  gs_read_csv(ws = "Lobster.var",col_types = "nncncccccccnnnn")%>%
   glimpse()
 
-#Check data that's in dat.length.all but not in dat.pot
-# missing.dat.1 <-anti_join(dat.length.1, dat.pot.1)  #0
+unique(dat.2017$Carapace.length) 
+unique(dat.2017$Sex) # "Female"  "Male"    "UNKNOWN"
+unique(dat.2017$Colour) # "Red"     "White"   "UNKNOWN"
+unique(dat.2017$Setose.state) # NA       "SETOSE"
+unique(dat.2017$Egg.stage) # NA  "2"
+unique(dat.2017$Tagged) # "NO"           "YES"          "EXISTING.OLD" "EXISTING"  
+unique(dat.2017$Moult.stage) # NA
 
-glimpse(dat.1)
-#Import 2017 length data----
-
-dat.length.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
-  gs_read_csv(ws = "Lobster.var" )%>%
-  mutate(Count=1)%>%        #Count for Abundance
-  #filter(!is.na(Carapace.length))%>% #Turn on if you want to filter out NA CL
-  filter(!is.na(Tag.number))%>% #A lot not tagged, filtered out
+dat.length.2017<-dat.2017%>%
+  mutate(Count=1)%>%        # Count for Abundance
   mutate(Carapace.length=as.numeric(as.character(Carapace.length)))%>%
   mutate(day.trap=paste(Day,Trap.number,sep="."))%>%  #New column for Day and trap.number
   mutate(Recapture=NA)%>%
