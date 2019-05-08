@@ -48,8 +48,8 @@ Theme1 <-
     strip.text.y = element_text(size = 10,angle = 0),
     axis.title.x=element_text(vjust=0.3, size=10),
     axis.title.y=element_text(vjust=0.6, angle=90, size=10),
-    axis.text.x=element_text(size=10,angle = 90, hjust=1,vjust=0.5),
-    axis.text.y=element_text(size=10,face="italic"),
+    axis.text.x=element_text(size=14,angle = 90, hjust=1,vjust=0.5,face="bold", colour = "black"),
+    axis.text.y=element_text(size=14,face="bold", colour = "black"),
     axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
     axis.line.y=element_line(colour="black", size=0.5,linetype='solid'),
     strip.background = element_blank())
