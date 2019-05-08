@@ -32,12 +32,10 @@ plots.dir<-paste(work.dir,"Plots",sep="/")
 # gs_auth(new_user = TRUE) #only run once
 
 # Import 2018 length data----
-dat.length.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
+dat.length.2018<-gs_title("Lobsters_data_2018_All")%>% 
   gs_read_csv(ws = "Lobster.var")%>%
   mutate(Count=1)%>% # Create count for abundance calcs
   # I think we need to keep NA's in Carapace.length and tag.number BG 07/05/19
-  # filter(!is.na(Carapace.length))%>% # Filter out NAs in CL
-  # filter(!is.na(Tag.number))%>% # Filter out NAs in Tag.numbers
   filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>% # now filters out where all are blank, 35 individuals have colour but no other details
   mutate(Carapace.length=as.numeric(as.character(Carapace.length)))%>%
   mutate(trip.day.trap=paste(Trip,Day,Trap.ID,sep="."))%>%  #Trap.ID
@@ -49,7 +47,6 @@ dat.length.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
   # group_by(ID)%>%
   replace_na(list(Damage.old.a = 0, Damage.old.L = 0,Damage.new.a = 0, Damage.new.L = 0))%>%
   mutate(Total.damage=sum(Damage.old.a+Damage.old.L+Damage.new.a+Damage.new.L,na.rm = TRUE))%>%
-  dplyr::select(-c(X23,X24))%>%
   # select(Trip, Trap.ID, Day, Date, Tag.number, Recapture, Trap.Number, Carapace.length, Sex, Colour, trip.day.trap, Source, Fisher,Total.damage)%>%
   glimpse()
 
