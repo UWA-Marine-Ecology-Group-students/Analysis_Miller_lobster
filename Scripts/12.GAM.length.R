@@ -51,18 +51,18 @@ dir()
 
 
 dat<- read_csv("length.sw.sst.csv")%>%
-  # dplyr::rename(response=Carapace.length,
-  #               Taxa=Colour)%>%
-  # drop_na(Taxa)%>%
-  # drop_na(response)%>%
-  # filter(Taxa%in%c("Red","White"))%>%
-  # filter(!Location=="Rivermouth")%>%
-  # filter(!Location=="Golden Ridge")%>%
-  # # #   Transform variables
-  # mutate(Date=yday(Date))%>%
-  # mutate(Site=as.factor(Site))%>%
-  # mutate(Location=as.factor(Location))%>%
-  # mutate(Trap.ID=as.factor(Trap.ID))%>%
+  dplyr::rename(response=Carapace.length,
+                Taxa=Colour)%>%
+  drop_na(Taxa)%>%
+  drop_na(response)%>%
+  filter(Taxa%in%c("Red","White"))%>%
+  filter(!Location=="Rivermouth")%>%
+  filter(!Location=="Golden Ridge")%>% #think about putting that back in
+  # #   Transform variables
+  mutate(Date=as.factor(yday(Date)))%>%
+  mutate(Site=as.factor(Site))%>%
+  mutate(Location=as.factor(Location))%>%
+  mutate(Trap.ID=as.factor(Trap.ID))%>%
   glimpse()
 
 names(dat)
@@ -70,6 +70,9 @@ names(dat)
 ggplot(data=dat,aes(x=Taxa,y=response))+
   geom_boxplot()+
   facet_grid(.~Location)
+
+
+
 
 
 # Set predictor variables---
@@ -122,10 +125,9 @@ for(i in 1:length(unique.vars)){
 unique.vars.use     
 
 
-
-
 # Run the full subset model selection----
 setwd(model.dir) #Set wd for example outputs - will differ on your computer
+
 
 # Presets
 glimpse(dat)
@@ -140,8 +142,9 @@ var.imp=list()
 for(i in 1:length(resp.vars)){
   use.dat=dat[which(dat$Taxa==resp.vars[i]),]
   
-  Model1=gam(response~s(sst,k=3,bs='cr')+ s(Trap.ID,bs='re'),  data=use.dat)
+  Model1=gam(response~s(sst,k=3,bs='cr')+ s(Site,bs='re')+s(Trap.ID,bs='re'),  data=use.dat)
   # gam.check(Model1)
+  # plot.gam(Model1)
   
   model.set=generate.model.set(use.dat=use.dat,
                                test.fit=Model1,
@@ -150,9 +153,9 @@ for(i in 1:length(resp.vars)){
                                factor.factor.interactions = F,
                                smooth.smooth.interactions = F,
                                factor.smooth.interactions = F,
-                               # linear.vars="Distance",
+                               cov.cutoff = 0.7,
                                k=3,
-                               null.terms="s(Trap.ID,Site,bs='re')+s(Date,bs='re')")
+                               null.terms="s(Site,bs='re')+s(Trap.ID,bs='re')")
   
   out.list=fit.model.set(model.set,
                          max.models=600,
