@@ -1,5 +1,5 @@
 # Part 3 - plots of the most parsimonious models----
-
+rm(list=ls())
 ### now  make a nice plot of the most interesting models-----
 library(gridExtra)
 library(ggplot2)
@@ -11,7 +11,7 @@ options(dplyr.width = Inf) #enables head() to display all coloums
 library(mgcv)
 library(lubridate)
 library(readr)
-rm(list=ls())
+
 
 
 
@@ -43,8 +43,8 @@ Theme1 <-
 # Set work directory----
 
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
-work.dir=("Z://Analysis_Miller_lobster") #for laptop
-
+work.dir=("Z://Analysis_Miller_lobster") #for Ash laptop
+work.dir=("C:/GitHub/Analysis_Miller_lobster") #for Brooke laptop
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -56,8 +56,8 @@ model.dir<-paste(work.dir,"Model_out_catch",sep="/")
 # Bring in and format the data----
 name<-"catch"
 
-setwd("C:/GitHub/Analysis_Miller_lobster/Data")
 
+setwd(data.dir)
 
 dat<- read_csv("length.sw.sst.csv")%>%
   dplyr::rename(response=Carapace.length,
@@ -75,6 +75,10 @@ dat<- read_csv("length.sw.sst.csv")%>%
   glimpse()
 
 names(dat)
+
+
+ggplot(data=use.dat,aes(x=Location,y=response, colour=Location))+
+  geom_boxplot()
 
 
 # Model for White----
@@ -133,10 +137,11 @@ length.white.location<- ggplot(aes(x=Location,y=response,fill=Location,colour=Lo
   # scale_fill_manual(labels = c("Fished", "No-take"),values=c("red", "black"))+
   # scale_colour_manual(labels = c("Fished", "No-take"),values=c("red", "black"))+
   # scale_x_discrete(limits = rev(levels(predicts.bds.status$Status)))+
-  geom_bar(stat = "identity")+
+  geom_point(stat = "identity")+
   geom_errorbar(aes(ymin = response-se.fit,ymax = response+se.fit),width = 0.5) +
+  # geom_jitter(data=use.dat,alpha=0.25, size=2,show.legend=FALSE,width = 0.05, height = 0)+
   theme_classic()+
-  ylim(0, 100)+
+  # ylim(0, 100)+
   Theme1+
   theme(legend.position = "none")+
 ggtitle("Whites")
