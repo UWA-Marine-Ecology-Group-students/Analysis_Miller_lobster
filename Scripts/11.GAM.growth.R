@@ -35,6 +35,8 @@ library(FSSgam)
 
 
 work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+work.dir=("Z://Analysis_Miller_lobster") #for laptop
+
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -73,8 +75,8 @@ table(dat$Taxa, dat$Location.int)
 
 
 ggplot(data=dat,aes(x=Location,y=response))+
-  geom_boxplot()+
-  facet_grid(.~Taxa)
+  geom_boxplot(notch=T)+
+  facet_grid(moult~Taxa)
 
 
 # Set predictor variables---
