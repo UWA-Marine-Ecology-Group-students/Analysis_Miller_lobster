@@ -123,41 +123,39 @@ duplicate.pots<-dat.pot.2018%>%
 rm(additional.info.2018,duplicate.pots,duplicate.remarks,missing.field.info,missing.from.lobster)
 
 # Import 2017 length data----
-dat.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
+dat.old.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   gs_read_csv(ws = "Lobster.var",col_types = "nncncccccccnnnn")%>%
   mutate(Sample=paste(Day,Trap.number,sep="."))%>%  #New column for Day and trap.number
   mutate(Source='oscar-doncel-canons-masters')%>%
   glimpse()
 
-dat.length.2017<-dat.2017%>%
+dat.old.length.2017<-dat.2017%>%
   mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
   mutate(Colour=capitalise(Colour))%>%
   mutate(Recapture=if_else(Tagged%in%c("EXISTING","EXISTING.OLD"),TRUE,NA))%>%
   mutate(Cable.Tie=if_else(Tag.number%in%c("CT"),TRUE,NA))%>% # Move cable tie data into a different column
   mutate(Tag.number=ifelse(Tag.number%in%c("CT"),NA,as.character(Tag.number)))%>%
   mutate(Trip=0)%>%
-  select(-c(ID,Tagged))%>%
+  select(-c(Tagged))%>%
   #select(Trip, Day, Trap.number, Carapace.length, Sex, Colour, Tag.number,Recapture, day.trap, Source, Fisher)%>%
   glimpse()
-
-
-
-names(dat.length.2017)
-unique(dat.length.2017$Setose.state) # NA       "SETOSE" # Need to fix these up 
-unique(dat.length.2017$Egg.stage) # NA  "2" # Need to fix these up 
-unique(dat.length.2017$Moult.stage) # NA 
-unique(dat.length.2017$Recapture) #  NA TRUE 
-
-# No pot info in length data
-
-
+# 
+# names(dat.length.2017)
+# unique(dat.length.2017$Setose.state) # NA       "SETOSE" # Need to fix these up 
+# unique(dat.length.2017$Egg.stage) # NA  "2" # Need to fix these up 
+# unique(dat.length.2017$Moult.stage) # NA 
+# unique(dat.length.2017$Recapture) #  NA TRUE 
 
 ### THE SHEET ABOVE IS USING A CLEANED FORM OF THE DATA NOT THE ORIGINAL
 ### BUT THIS HAS FILTERED OUT SOME USEFUL DATA
 
 # New 2017 Original Data -----
 dat.2017<-gs_title("1_Lobsters_data_171210.xlsx")%>% # To use GoogleSheets
-  gs_read_csv(ws = "Sheet1",col_types = "nccccnccccccnnnncccccc")%>% # 
+  gs_read_csv(ws = "Sheet1",col_types = "nccccnccccccnnnnccccc")%>% #
+  mutate(Trap.number=str_replace_all(.$Trap.number,c("CH6F6"="CH6C6")))%>%
+  mutate(Pot.type=ifelse(Trap.number%in%c("CH6C6"),"C",Pot.type))%>%
+  mutate(Sample=paste(Day,Trap.number,sep="."))%>%  #New column for Day and trap.number
+  mutate(Source='oscar-doncel-canons-masters')%>%
   glimpse()
 
 dat.length.2017<-dat.2017%>%
@@ -166,25 +164,34 @@ dat.length.2017<-dat.2017%>%
   mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
   mutate(Colour=capitalise(Colour))%>%
   mutate(Colour=if_else(Colour%in%c("Unkown"),"Unknown",Colour))%>%
+  select(-c(Location,Pot.type,Date,Pot.Remarks,PWO,PWF,Source))%>%
   glimpse()
 
-names(dat.2017)
-
-
 unique(dat.length.2017$Day) # numeric
-unique(dat.length.2017$Location) # character
-unique(dat.length.2017$Pot.type) # character
 unique(dat.length.2017$Trap.number) # character
-unique(dat.length.2017$Date) #character
 unique(dat.length.2017$Carapace.length) # numeric
 unique(dat.length.2017$Sex) # Character
 unique(dat.length.2017$Colour) # character
-unique(dat.length.2017$Pot.Remarks)
 unique(dat.length.2017$Dead)
 unique(dat.length.2017$Individual.Remarks)
-unique(dat.length.2017$PWO)
 
+names(dat.2017)
 
+additional.info.2017<-dat.2017%>%
+  dplyr::select(Sample,Day,Location,Pot.type,Trap.number,Date,Pot.Remarks,PWO,PWF,Source)%>%
+  distinct()%>%
+  glimpse()
+
+unique(additional.info.2017$Location) # character
+unique(additional.info.2017$Pot.type) # character
+unique(additional.info.2017$Date) #character
+unique(additional.info.2017$Pot.Remarks)
+unique(additional.info.2017$PWO)
+
+duplicates<-additional.info.2017%>%
+  group_by(Sample)%>%
+  summarise(n=n())%>%
+  filter(n>1)
 
 # Import 2017 pot data----
 dat.pot.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
@@ -196,8 +203,8 @@ dat.pot.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   glimpse()
 
 unique(dat.pot.2017$Notes)
-
-
+test<-anti_join(dat.pot.2017,additional.info.2017, by = c("Day",  "Trap.number", "Pot.type", "Sample"))
+# Three pots that arent in the original
 
 # Check for pots in length that aren't in the pot data ----
 missing.pot.var<-anti_join(dat.length.2017,dat.pot.2017)
