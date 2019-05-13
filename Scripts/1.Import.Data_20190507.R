@@ -40,7 +40,7 @@ dat.length.2018<-dat.2018%>%
   mutate(Damage.new.L=if_else(Damage.new.a==9,0,Damage.new.L))%>%
   mutate(Damage.old.L=if_else(Damage.new.a==9,0,Damage.old.L))%>%
   mutate(Damage.new.a=if_else(Damage.new.a==9,0,Damage.new.a))%>%
-  dplyr::select(-c(Location,Date,Trap.Type,Day.Pull,Pot.Remarks,PWO,WKW,PWF))%>%
+  dplyr::select(Source,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Setose.state,Egg.stage,Moult.stage,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Outlier,Individual.Remarks)%>%
   glimpse()
 
 # Check formating of Lobster data
@@ -58,7 +58,7 @@ length(unique(dat.length.2018$Sample)) # 1163 pots
 
 # Things that should actually be in the metadata not the lobster data
 additional.info.2018<-dat.2018%>%
-  dplyr::select(Sample,Trip,Trap.ID,Day,Date,Trap.Number,Day.Pull,Pot.Remarks,PWO,WKW,PWF)%>%
+  dplyr::select(Sample,Date,Day.Pull,Pot.Remarks,PWO,WKW,PWF)%>% # Trap.Number,
   distinct()%>%
   glimpse()
 
@@ -88,7 +88,10 @@ dat.pot.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
   dplyr::rename(Site.Code=Site.Name)%>%
   mutate(Site.Code=str_replace_all(.$Site.Code,c("_"="")))%>% # Remove trailing underscores from site code
   left_join(.,additional.info.2018)%>%
+  select(Source,Sample,Trip,Day,Site.Code,Pot.Number,Location,Site,Date,Day.Pull,Latitude,Longitude,Depth.lidar,Pot.Type,Pot.Remarks,PWO,PWF,WKW)%>% # Trap.ID,
   glimpse()
+
+# Don't need Trap.ID
 
 names(dat.pot.2018)
 
@@ -114,15 +117,15 @@ duplicate.pots<-dat.pot.2018%>%
   dplyr::summarise(n=n())%>%filter(n>1) # No longer any duplicates
 
 # Clean up environment
-rm(additional.info.2018,duplicate.pots,duplicate.remarks,missing.field.info,missing.from.lobster)
+rm(additional.info.2018,duplicate.pots,duplicate.remarks,missing.field.info,missing.from.lobster,dat.2018)
 
-# # Import 2017 length data----
-# Original 2017 Data -----
+# Import 2017 length data----
+# Using original 2017 Data -----
 dat.2017<-gs_title("1_Lobsters_data_171210.xlsx")%>% # To use GoogleSheets
   gs_read_csv(ws = "Sheet1",col_types = "nccccnccccccnnnnccccc")%>% #
-  mutate(Trap.number=str_replace_all(.$Trap.number,c("CH6F6"="CH6C6")))%>%
-  mutate(Pot.type=ifelse(Trap.number%in%c("CH6C6"),"C",Pot.type))%>%
-  mutate(Sample=paste(Day,Trap.number,sep="."))%>%  #New column for Day and trap.number
+  mutate(Trap.ID=str_replace_all(.$Trap.number,c("CH6F6"="CH6C6")))%>%
+  mutate(Pot.type=ifelse(Trap.ID%in%c("CH6C6"),"C",Pot.type))%>%
+  mutate(Sample=paste(Day,Trap.ID,sep="."))%>%  #New column for Day and trap.number
   mutate(Source='oscar-doncel-canons-masters')%>%
   glimpse()
 
@@ -137,7 +140,7 @@ dat.length.2017<-dat.2017%>%
 
 length(unique(dat.length.2017$Sample))
 unique(dat.length.2017$Day) # numeric
-unique(dat.length.2017$Trap.number) # character
+unique(dat.length.2017$Trap.ID) # character
 unique(dat.length.2017$Carapace.length) # numeric
 unique(dat.length.2017$Sex) # Character
 unique(dat.length.2017$Colour) # character
@@ -147,7 +150,7 @@ unique(dat.length.2017$Individual.Remarks)
 names(dat.2017)
 
 additional.info.2017<-dat.2017%>%
-  dplyr::select(Sample,Day,Location,Pot.type,Trap.number,Date,Pot.Remarks,PWO,PWF,Source)%>%
+  dplyr::select(Sample,Day,Trap.ID,Pot.Remarks,PWO,PWF)%>% # Location, Date,
   distinct()%>%
   glimpse()
 
@@ -165,22 +168,37 @@ duplicates<-additional.info.2017%>%
 # Import 2017 pot data - from NEW sheet ----
 dat.pot.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   gs_read_csv(ws = "Pot.var")%>%
+  mutate(Source='oscar-doncel-canons-masters')%>%
   mutate(Sample=paste(Day,Trap.number,sep="."))%>% 
+  mutate(Location=str_replace_all(.$Location,c("Seven Mile Beach"= "Seven Mile","Whitepoint"="Irwin Reef")))%>% 
   mutate(Trip=0)%>%
-  select(-c(ID))%>%
+  select(-c(ID,Notes,Code,Latitude,Longitude,Longitude.original,Latitude.original))%>%
+  dplyr::rename(Longitude=Longitud.relocated,Latitude=Latitude.relocated,Day.Pull=Soking.time.days,Trap.ID=Trap.number,Pot.Number=Number,Pot.Type=Pot.type)%>%
   left_join(.,additional.info.2017)%>%
+  mutate(Exclude.pots=capitalise(Exclude.pots))%>%
+  mutate(Site=str_replace_all(.$Names.to.display,c("7 Mile"="Seven Mile")))%>%
+  separate(Trap.ID,into=c("Site.Code","Extra"),sep=-2)%>%
+  mutate(Site.Code=str_replace_all(.$Site.Code,c("F"="","5C"="5","0C"="0","7C"="7","2C"="2","4C"="4","3C"="3","6C"="6")))%>%
+  select(-c(John.site.names,Names.to.display,Extra))%>%
+  select(Source,Sample,Trip,Day,Site.Code,Pot.Number,Location,Site,Date,Day.Pull,Latitude,Longitude,Depth.lidar,Pot.Type,Pot.Remarks,PWO,PWF,everything())%>%
   glimpse()
 
-unique(dat.pot.2017$Notes)
-test<-anti_join(dat.pot.2017,additional.info.2017, by = c("Day",  "Trap.number", "Pot.type", "Sample"))
-# Three pots that arent in the original
+names(dat.pot.2017)
+names(dat.pot.2018)
+
+unique(dat.pot.2017$Site.Code)
+
 
 # Check for pots in length that aren't in the pot data ----
-missing.pot.var<-anti_join(dat.length.2017,dat.pot.2017)
+missing.pot.var<-anti_join(dat.length.2017,dat.pot.2017) # Two pots that arent in the original
 
 # Clean up enviroment
+
+
 rm(missing.pot.var,test,duplicates,additional.info.2017)
 
+unique(dat.pot.2018$Location)%>%sort() # "Cliff Head"   "Golden Ridge" "Irwin Reef"   "Rivermouth"   "Seven Mile"  
+unique(dat.pot.2017$Location)%>%sort() # "Cliff Head" "Irwin Reef" "Seven Mile"
 
 
 
