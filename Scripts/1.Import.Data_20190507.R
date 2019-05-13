@@ -23,12 +23,6 @@ work.dir=("C:/GitHub") # For Brooke
 # Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
 
-# Import and make data----
-# For Rstudio Server
-# options(httr_oob_default=TRUE)
-# options(httr_oob_default=FALSE) #for desktop
-# gs_auth(new_user = TRUE) #only run once
-
 # Import 2018 data----
 # Two steps to keep additional info to join back into 
 dat.2018<-gs_title("Lobsters_data_2018_All")%>% 
@@ -122,34 +116,8 @@ duplicate.pots<-dat.pot.2018%>%
 # Clean up environment
 rm(additional.info.2018,duplicate.pots,duplicate.remarks,missing.field.info,missing.from.lobster)
 
-# Import 2017 length data----
-dat.old.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
-  gs_read_csv(ws = "Lobster.var",col_types = "nncncccccccnnnn")%>%
-  mutate(Sample=paste(Day,Trap.number,sep="."))%>%  #New column for Day and trap.number
-  mutate(Source='oscar-doncel-canons-masters')%>%
-  glimpse()
-
-dat.old.length.2017<-dat.2017%>%
-  mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
-  mutate(Colour=capitalise(Colour))%>%
-  mutate(Recapture=if_else(Tagged%in%c("EXISTING","EXISTING.OLD"),TRUE,NA))%>%
-  mutate(Cable.Tie=if_else(Tag.number%in%c("CT"),TRUE,NA))%>% # Move cable tie data into a different column
-  mutate(Tag.number=ifelse(Tag.number%in%c("CT"),NA,as.character(Tag.number)))%>%
-  mutate(Trip=0)%>%
-  select(-c(Tagged))%>%
-  #select(Trip, Day, Trap.number, Carapace.length, Sex, Colour, Tag.number,Recapture, day.trap, Source, Fisher)%>%
-  glimpse()
-# 
-# names(dat.length.2017)
-# unique(dat.length.2017$Setose.state) # NA       "SETOSE" # Need to fix these up 
-# unique(dat.length.2017$Egg.stage) # NA  "2" # Need to fix these up 
-# unique(dat.length.2017$Moult.stage) # NA 
-# unique(dat.length.2017$Recapture) #  NA TRUE 
-
-### THE SHEET ABOVE IS USING A CLEANED FORM OF THE DATA NOT THE ORIGINAL
-### BUT THIS HAS FILTERED OUT SOME USEFUL DATA
-
-# New 2017 Original Data -----
+# # Import 2017 length data----
+# Original 2017 Data -----
 dat.2017<-gs_title("1_Lobsters_data_171210.xlsx")%>% # To use GoogleSheets
   gs_read_csv(ws = "Sheet1",col_types = "nccccnccccccnnnnccccc")%>% #
   mutate(Trap.number=str_replace_all(.$Trap.number,c("CH6F6"="CH6C6")))%>%
@@ -167,6 +135,7 @@ dat.length.2017<-dat.2017%>%
   select(-c(Location,Pot.type,Date,Pot.Remarks,PWO,PWF,Source))%>%
   glimpse()
 
+length(unique(dat.length.2017$Sample))
 unique(dat.length.2017$Day) # numeric
 unique(dat.length.2017$Trap.number) # character
 unique(dat.length.2017$Carapace.length) # numeric
@@ -193,13 +162,13 @@ duplicates<-additional.info.2017%>%
   summarise(n=n())%>%
   filter(n>1)
 
-# Import 2017 pot data----
+# Import 2017 pot data - from NEW sheet ----
 dat.pot.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   gs_read_csv(ws = "Pot.var")%>%
   mutate(Sample=paste(Day,Trap.number,sep="."))%>% 
   mutate(Trip=0)%>%
   select(-c(ID))%>%
-  #select(Trip,Day, Date, Trap.number, Location, Number,Longitude.original, Latitude.original, day.trap)%>%
+  left_join(.,additional.info.2017)%>%
   glimpse()
 
 unique(dat.pot.2017$Notes)
@@ -209,33 +178,17 @@ test<-anti_join(dat.pot.2017,additional.info.2017, by = c("Day",  "Trap.number",
 # Check for pots in length that aren't in the pot data ----
 missing.pot.var<-anti_join(dat.length.2017,dat.pot.2017)
 
-
-
-
-
 # Clean up enviroment
-rm(missing.pot.var)
+rm(missing.pot.var,test,duplicates,additional.info.2017)
 
-#Combine 2017 and 2018 data ----
 
-dat.all <- bind_rows(dat.2018, dat.2017)%>%
-  dplyr::mutate(Date=as_date(dmy(Date)))%>%
-  glimpse()
 
-# Write data
-setwd(data.dir)
-write.csv(dat.all, "dat.all.17-18.csv")
 
-## Brooke combining data
 
-# Things that need to happen to both 2017 and 2018 data
-mutate(Total.damage=(Damage.old.a+Damage.old.L+Damage.new.a+Damage.new.L))%>%
-  mutate(Count=1)%>% # Count for Abundance
-  mutate(Carapace.length=as.numeric(as.character(Carapace.length)))%>%
-  replace_na(list(Damage.old.a = 0, Damage.old.L = 0,Damage.new.a = 0, Damage.new.L = 0,Sex="Unknown",Colour="Unknown"))%>%
-  
-  
-  
+
+
+
+
 
 
 
@@ -319,4 +272,19 @@ write.csv(Dat.Combined, "Dat.Combined.csv")
 
 
 
+## Brooke combining data
 
+# Things that need to happen to both 2017 and 2018 data
+
+metadata<-
+dplyr::mutate(Date=as_date(dmy(Date)))%>%
+  
+  
+length<-
+  mutate(Total.damage=(Damage.old.a+Damage.old.L+Damage.new.a+Damage.new.L))%>%
+  mutate(Count=1)%>% # Count for Abundance
+  mutate(Carapace.length=as.numeric(as.character(Carapace.length)))%>%
+  replace_na(list(Damage.old.a = 0, Damage.old.L = 0,Damage.new.a = 0, Damage.new.L = 0,Sex="Unknown",Colour="Unknown"))%>%
+  
+  
+  
