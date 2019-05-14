@@ -9,6 +9,8 @@ library(stringr)
 library(measurements)
 library(lubridate)
 library(readr)
+library(devtools)
+install_github("UWAMEGFisheries/GlobalArchive", dependencies = TRUE) # to check for updates
 library(GlobalArchive) # Have to add how to download for Ash
 
 # Study name----
