@@ -2,6 +2,12 @@
 # Part 2 - custom plot of importance scores----
 
 # Bring in and format the raw data----
+#Librarys-----
+library(readr)
+library(gridExtra)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
 
 # Set work directory----
 
@@ -14,14 +20,15 @@ work.dir=("Z://Analysis_Miller_lobster") #for laptop
 data.dir<-paste(work.dir,"Data",sep="/")
 map.dir<-paste(work.dir,"Map Layers",sep="/")
 plots.dir<-paste(work.dir,"Plots",sep="/")
-model.dir<-paste(work.dir,"Model_out_catch",sep="/")
+model.dir<-paste(work.dir,"Model_out_length",sep="/")
 
 
 # Bring in and format the data----
-name<-"catch"
+name<-"length"
 
-setwd("C:/GitHub/Analysis_Miller_lobster/Plots")
-setwd("C:/GitHub/Analysis_Miller_lobster/Model_out_length")
+setwd(model.dir)
+# setwd("C:/GitHub/Analysis_Miller_lobster/Plots")
+# setwd("C:/GitHub/Analysis_Miller_lobster/Model_out_length")
 
 dat.taxa <-read.csv("length_all.var.imp.csv")%>% #from local copy
   rename(resp.var=X)%>%
@@ -97,8 +104,8 @@ gg.importance.scores
 
 # Save plots----
 setwd(plots.dir)
-setwd("C:/GitHub/Analysis_Miller_lobster/Plots")
+# setwd("C:/GitHub/Analysis_Miller_lobster/Plots")
 
 
-ggsave(gg.importance.scores,file="length.location.importance.png", width = 30, height = 10,units = "cm")
+ggsave(gg.importance.scores,file="length.location.importance.png", width = 15, height = 5,units = "cm")
 
