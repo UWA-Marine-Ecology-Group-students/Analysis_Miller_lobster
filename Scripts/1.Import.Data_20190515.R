@@ -20,7 +20,7 @@ study<-"Lobster.Data"
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
-work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+#work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -115,12 +115,12 @@ duplicate.pots<-metadata.2018%>%
   dplyr::summarise(n=n())%>%filter(n>1) # No longer any duplicates
 
 # Clean up environment
-rm(info.2018,duplicate.pots,duplicate.remarks,missing.field.info,missing.from.lobster,dat.2018)
+rm(info.2018,duplicate.pots,duplicate.remarks,dat.2018)
 
 # Import 2017 length data----
 # Using original 2017 Data -----
 dat.2017<-gs_title("1_Lobsters_data_171210.xlsx")%>% # To use GoogleSheets
-  gs_read_csv(ws = "Sheet1",col_types = "nccccnccccccnnnnccccc")%>% #
+  gs_read_csv(ws = "Sheet1",col_types = "nccccnccccccccnnnnccccc")%>% #
   mutate(Trap.ID=str_replace_all(.$Trap.number,c("CH6F6"="CH6C6")))%>%
   mutate(Pot.type=ifelse(Trap.ID%in%c("CH6C6"),"C",Pot.type))%>%
   mutate(Sample=paste(Day,Trap.ID,sep="."))%>%  #New column for Day and trap.number
@@ -196,14 +196,14 @@ fisheries.returns <- gs_title("Fisheries.Tag.Returns")%>%
   mutate(Source= "fisheries-returns")%>%
   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female")))%>%
   dplyr::rename(Tag.number=SpeciesTag, Carapace.length=SpeciesSize, Date=ReportCreatedDate, Fisher=ReportersUserName)%>%
-  dplyr::mutate(Date=as_date(mdy(Date)))%>%
   mutate(Setose.state=str_replace_all(.$SpeciesName,c("Western rock lobster - "="","male"="","Western rock lobster"="","Western rock lobster- "="","- "="","setose no tarspot"="Mature","setose with tarspot"="Mature","non setose"="Immature")))%>%
-  mutate(Tarspot=ifelse(SpeciesName%in%c("Western rock lobster - setose (with tarspot)"),TRUE,NA))%>%
+  mutate(Tarspot=ifelse(SpeciesName%in%c("Western rock lobster - setose with tarspot"),TRUE,NA))%>%
   mutate(Retention.Status=ifelse(RetentionStatus%in%c("KEPT","kept"),"Retained",RetentionStatus))%>%
   replace_na(list(Sex="Unknown"))%>%
   mutate(Dead=ifelse(Comments%in%c("Eaten by octopus"),"Dead",NA))%>%
-  rename(Individual.Remarks=Comments,Fisher.Email=ReportersUserEmail,Depth.fms=depth.fms,Exclude.Pots=Errors)%>%
-  select(-c(ReportId,SpeciesName,SpeciesCategory,ReportersPhoneNumber,ReportersBoatRegistrationNumber,address,X19,X20,X21,X22,RetentionStatus))%>%
+  dplyr::rename(Individual.Remarks=Comments,Fisher.Email=ReportersUserEmail,Depth.fms=depth.fms)%>%
+  dplyr::select(-c(ReportId,SpeciesName,SpeciesCategory,ReportersPhoneNumber,ReportersBoatRegistrationNumber,address,X19,X20,X21,X22,RetentionStatus))%>%
+  dplyr::mutate(Date=lubridate::as_date(mdy(Date)))%>%
   glimpse()
 
 length(fisheries.returns$Tag.number) # 183
@@ -239,7 +239,7 @@ fisheries.returns <- bind_rows(dd, dm)%>%
 names(fisheries.returns)
 
 metadata.fisheries<-fisheries.returns%>%
-  select(Source,Sample,Latitude,Longitude,Fisher,Fisher.Email,Date,Depth.fms,Exclude.Pots)
+  select(Source,Sample,Latitude,Longitude,Fisher,Fisher.Email,Date,Depth.fms,Exclude.Pots,Pot.Remarks)
 
 length.fisheries<-fisheries.returns%>%
   mutate(Recapture=as.character(Recapture))%>%
@@ -260,6 +260,7 @@ fisher.returns <- gs_title("UWA.Tag.Returns")%>%
   mutate(Longitude=as.numeric(Longitude))%>%
   mutate(row=1:nrow(.))%>%
   mutate(Sample=paste(row,Tag.number,sep="."))%>%
+  mutate(Retention.Status=str_replace_all(.$Retention.Status, c("Returned"="Released")))%>%
   glimpse()
 
 names(fisher.returns)
@@ -274,28 +275,81 @@ length.fisher<-fisher.returns%>%
 # Clean up enviroment
 rm(dd,dm,fisher.returns,fisheries.returns)
 
+# Seven Mile Data ----
+sevenmile <- gs_title("Lobster_Data_Fisheries_SMB")%>%
+  gs_read_csv("Dat.smb",col_types = "nnnnnccncnnccccnnc")%>%
+  mutate(Source="ben-seven-mile")%>%
+  mutate(Sample=as.character(Pot.ID))%>%
+  mutate(Tag.number=as.character(Tag.number))%>%
+  mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"="Seven Mile")))%>%
+  mutate(Outlier=ifelse(Tag.number%in%c("190428","190188","190124","190443"),"y",NA))%>% # four tags have more than -7 growth
+  mutate(Site="Seven Mile.in")%>%
+  mutate(month=format(as.Date(Date),'%m'))%>%
+  mutate(month=month((as_date(Date))))%>%
+  filter(month%in%c(5:12))%>% # Remove Jan-April
+  dplyr::mutate(Date=lubridate::as_date(ymd(Date)))%>%
+  glimpse()
+
+names(sevenmile)
+
+metadata.sevenmile<-sevenmile%>%
+  distinct(Source,Trip,Sample,Date,Longitude,Latitude,Location,Site)
+
+length.sevenmile<-sevenmile%>%
+  select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Total.damage,Outlier)
+
 # Tidy names of data frames ----
 names(length.2017)<-capitalise(names(length.2017))
 names(length.2018)<-capitalise(names(length.2018))
 names(length.fisheries)<-capitalise(names(length.fisheries))
 names(length.fisher)<-capitalise(names(length.fisher))
+names(length.sevenmile)<-capitalise(names(length.sevenmile))
 
 names(metadata.2017)<-capitalise(names(metadata.2017))
 names(metadata.2018)<-capitalise(names(metadata.2018))
 names(metadata.fisheries)<-capitalise(names(metadata.fisheries))
 names(metadata.fisher)<-capitalise(names(metadata.fisher))
+names(metadata.sevenmile)<-capitalise(names(metadata.sevenmile))
 
 # Combine data ----
 metadata<-bind_rows(metadata.2017,metadata.2018,metadata.fisheries,metadata.fisher)%>%
+  replace_na(list(Exclude.pots="No"))%>%
   glimpse()
   
 length<-bind_rows(length.2017,length.2018,length.fisheries,length.fisher)%>%
-  replace_na(list(Damage.old.a = 0, Damage.old.l = 0,Damage.new.a = 0, Damage.new.l = 0,Sex="Unknown",Colour="Unknown"))%>%
+  replace_na(list(Damage.old.a = 0, Damage.old.l = 0,Damage.new.a = 0, Damage.new.l = 0))%>%
   mutate(Total.damage=(Damage.old.a+Damage.old.l+Damage.new.a+Damage.new.l))%>%
+  bind_rows(.,length.sevenmile)%>%
+  replace_na(list(Sex="Unknown",Colour="Unknown",Cable.tie="FALSE",Dead="Alive",Retention.status="Released"))%>%
   mutate(Count=1)%>% # Count for Abundance
   glimpse()
 
-unique(metadata$Date)
+names(metadata)
+
+unique(metadata$Source)
+unique(metadata$Trip)
+unique(metadata$Pot.type) # "C" "F" "13" NA 
+unique(metadata$Pot.remarks)
+unique(metadata$Date) 
+unique(metadata$Exclude.pots) # "No" "Yes" NA
+
+names(length)
+
+unique(length$Source)
+unique(length$Recapture) # NA     "TRUE"
+unique(length$Sex)
+unique(length$Colour)
+unique(length$Dead)
+unique(length$Individual.remarks)
+unique(length$Reproductive.stage)
+unique(length$Setose.state)
+unique(length$Egg.stage)
+unique(length$Moult.stage)
+unique(length$Cable.tie)
+unique(length$Outlier)
+unique(length$Tarspot)
+unique(length$Retention.status) # "Released" "Retained"
+unique(length$Tarspot)
 
 # Write data
 setwd(data.dir)
