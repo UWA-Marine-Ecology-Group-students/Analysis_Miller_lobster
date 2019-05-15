@@ -47,16 +47,16 @@ Theme1 <-
     panel.grid.minor = element_blank(),
     legend.background = element_rect(fill="white"),
     legend.key = element_blank(), # switch off the rectangle around symbols in the legend
-    legend.text = element_text(size=8),
-    legend.title = element_text(size=8, face="bold"),
+    legend.text = element_text(size=10),
+    legend.title = element_text(size=10, face="bold"),
     legend.position = "top",
     legend.direction="horizontal",
     text=element_text(size=10),
     strip.text.y = element_text(size = 10,angle = 0),
     axis.title.x=element_text(vjust=0.3, size=10),
     axis.title.y=element_text(vjust=0.6, angle=90, size=10),
-    axis.text.x=element_text(size=14,angle = 90, hjust=1,vjust=0.5,face="bold", colour = "black"),
-    axis.text.y=element_text(size=14,face="bold", colour = "black"),
+    axis.text.x=element_text(size=12,angle = 0,face = "bold", colour = "black"), #, hjust=1,vjust=0.5
+    axis.text.y=element_text(size=12,face="bold", colour = "black"),
     axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
     axis.line.y=element_line(colour="black", size=0.5,linetype='solid'),
     strip.background = element_blank())
@@ -86,7 +86,7 @@ dat.taxa.label<-dat.taxa%>%
 # Plot gg.importance.scores ----
 gg.importance.scores <- ggplot(dat.taxa.label, aes(x=predictor,y=resp.var,fill=importance))+
   geom_tile(show.legend=T) +
-  scale_fill_gradientn(legend_title,colours=c("white", re), na.value = "grey98",limits = c(0.0, max(dat.taxa.label$importance)))+
+  scale_fill_gradientn(legend_title,colours=c("white", re), na.value = "grey98",limits = c(0.05, max(dat.taxa.label$importance)))+
   scale_x_discrete(limits=c("Location","Hs.m.sw","T1.s.sw","sst"),
                    labels=c("Location","Swell height","Swell period","SST"
                    ))+
