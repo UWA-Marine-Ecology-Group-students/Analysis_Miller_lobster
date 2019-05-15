@@ -1,4 +1,4 @@
-# Explore catch data----
+# Clean catch data----
 rm(list=ls()) # Clears memory
 
 # librarys----
@@ -20,7 +20,7 @@ study<-"Lobster.Data"
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
-#work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+# work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -47,7 +47,7 @@ length.2018<-dat.2018%>%
   mutate(Setose.state=ifelse(Setose.state%in%c("M"),"Mature",Setose.state))%>%
   mutate(Egg.stage=ifelse(Egg.stage%in%c("E","I"),"Early",Egg.stage))%>%
   mutate(Egg.stage=ifelse(Egg.stage%in%c("M"),"Mid",Egg.stage))%>%
-  dplyr::select(Source,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Setose.state,Egg.stage,Moult.stage,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Outlier,Individual.Remarks)%>%
+  dplyr::select(Source,Trip,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Setose.state,Egg.stage,Moult.stage,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Outlier,Individual.Remarks)%>%
   glimpse()
 
 # Check formating of Lobster data
@@ -139,6 +139,7 @@ length.2017<-dat.2017%>%
   select(-c(Day,Trap.number,Trap.ID,Location,Pot.type,Date,Pot.Remarks,PWO,PWF,Tagged))%>%
   dplyr::select(Source,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Individual.Remarks,everything())%>%
   mutate(Recapture=as.character(Recapture))%>%
+  mutate(Trip=0)%>%
   glimpse()
 
 length(unique(length.2017$Sample)) #323
@@ -312,7 +313,7 @@ names(metadata.fisher)<-capitalise(names(metadata.fisher))
 names(metadata.sevenmile)<-capitalise(names(metadata.sevenmile))
 
 # Combine data ----
-metadata<-bind_rows(metadata.2017,metadata.2018,metadata.fisheries,metadata.fisher)%>%
+metadata<-bind_rows(metadata.2017,metadata.2018,metadata.fisheries,metadata.fisher,metadata.sevenmile)%>%
   replace_na(list(Exclude.pots="No"))%>%
   glimpse()
   

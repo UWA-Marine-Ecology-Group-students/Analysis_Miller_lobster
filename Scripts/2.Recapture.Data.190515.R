@@ -1,8 +1,7 @@
-# Explore catch data----
-
+# Explore catch data ----
 rm(list=ls()) #clear memory
 
-# librarys----
+# librarys ----
 library(tidyr)
 library(dplyr)
 library(googlesheets)
@@ -11,87 +10,84 @@ library(ggplot2)
 library(magrittr)
 library(readr)
 
-# Study name----
+# Study name ----
 study<-"Growth.Rate"
 
-# Set work directory----
+# Set work directory ----
+work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
+# work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
-work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
-work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
-
-# Set sub-directories----
+# Set sub-directories ----
 data.dir=paste(work.dir,"Data",sep="/")
 plot.dir=paste(work.dir,"Plots",sep="/")
 
+# Import data ----
+setwd(data.dir)
+dir()
 
-#### Import data from googlesheets ----
+metadata<-read.csv("metadata.csv")
+length<-read.csv("length.csv")
 
-# # For Rstudio Server
-options(httr_oob_default=TRUE)
-# options(httr_oob_default=FALSE) #for desktop
-# gs_auth(new_user = TRUE) #only run once
+names(metadata)
+names(length)
 
-Dat.Combined<-gs_title("Lobster_Data_All_Combined")%>% 
-  gs_read_csv(ws = "Sheet1" )%>%
-  filter(!is.na(Tag.number))%>% #Filter out individuals with no tag.no
-  filter(Tag.number!="CT")%>%   #Filter out weird 'CT' tags from Oscars data  
-  filter(!is.na(Carapace.length))%>% #Filter out individuals with no length measurements
-  mutate(mini.site=Site)%>% #Create mini.site= Later this will be 'site' 
-  mutate(Site=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile","Little Horseshoe"="Cliff Head", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Long Reef"="Irwin Reef", "South Dummy"="Irwin Reef","South Rig"= "Irwin Reef","Whites Lump"= "Irwin Reef","WP"= "Irwin Reef","Whitepoint"="Irwin Reef")))%>% 
-  mutate(mini.site=str_replace_all(.$mini.site, c("Jim Bailey"="White Point" ,"WP"="White Point" , "Whitepoint"="White Point" , "CHS"="Cliff Head South","CHM"="Cliff Head Mid","CHN"="Cliff Head North", "Seven Mile Beach"= "Seven Mile.out")))%>%
+# Filter out issues in metadata ----
+metadata.clean<-metadata%>%
+  filter(Exclude.pots%in%c("No"))%>% # Remove bad pots
+  filter(is.na(Pwo))%>% # Remove any pots with an Octopus
+  filter(!Fisher%in%c("Bruce Cockman"))%>% # Filter out Bruce Cockmans data
+  dplyr::filter(!Location%in%c("Rivermouth"))%>% # Filter out Rivermouth
+  select(-c(Repeated.samples,Exclude.pots,Depth.echosounder,Distance.from.shore.perpendicular.kilometer,Distance.from.shore.nearestpoint.kilometer,Days.from.new.moon,Slope,Aspect,Curv.profile,Curvature,Curv.plan,Rugosity,Depth.lidar,Sd.10m,Sd.15m,Sd.20m,Sd.25m,Sd.50m,Sd.75m,Sd.100m,Sd.200m,Sd.500m,Sd.1000m,Puerulus.count.1k,Puerulus.count.2k,Puerulus.count.3k,Substrate,Depth.fms,Fisher.email,Site.code))%>%
   glimpse()
 
-#filter out Bruce Cockmans data, Rive mouth Data & obvious outliers----
-
-Dat.Combined <- Dat.Combined%>%  
-  dplyr::filter(is.na(Fisher) | Fisher!="Bruce Cockman")%>%
-  dplyr::filter(Tag.number!="K2400"&Tag.number!="K1617"&Tag.number!="K1221"&Tag.number!="K0653" & Tag.number!="K0457" & Tag.number!="K1045"& Tag.number!="K0755")%>% 
-  #Obvious fisher return measures (more than -10 growth) & Oscars recaptures
-  dplyr::filter(Tag.number!="198428" & Tag.number!="196072" & Tag.number!="K4501")%>% #Outliers from Cliff Head 
-  dplyr::filter(Tag.number!="198821" & Tag.number!="K2519" & Tag.number!="K2402")%>% #Outliers from Irwin Reef
-  dplyr::filter(Tag.number!="K3805")%>% 
-  dplyr:: filter(is.na(Site)| Site!="Rivermouth")%>% 
+# Filter out issues in length data ---
+length.clean<-length%>%
+  filter(!Dead%in%c("Dead"))%>% # Remove any dead lobsters
+  #filter(!Outlier%in%c("y"))%>% # Remove any that have been marked as an outlier
+  filter(!is.na(Tag.number))%>% # Filter out individuals without Tag
+  filter(!is.na(Carapace.length))%>% #Filter out individuals with no length measurement
+  filter(!Tag.number%in%c("K2400","K1617","K1221","K0653","K0457","K1045","K0755","198428","196072","K4501","198821","K2519","K2402","K3805","K1019"))%>% # Filter out some more outliers
+  semi_join(.,metadata.clean)%>% # Keep only those that have metadata
+  select(-c(Outlier,Dead))%>%
   glimpse()
 
-  
-#Bring in Ben's Seven Mile data----
+# Test for lobsters that have changed sex
+changed.sex<-length%>%
+  filter(!is.na(Tag.number))%>%
+  group_by(Tag.number)%>%
+  summarise(no.sex=length(unique(Sex)),no.times.caught=n())%>%
+  filter(no.sex>1)
 
-dat.smb <- gs_title("Lobster_Data_Fisheries_SMB")%>%
-  gs_read_csv("Dat.smb")%>%
-  mutate(Tag.number=as.character(Tag.number))%>%
-  mutate(Site=str_replace_all(.$Site,c("Seven Mile Beach"="Seven Mile")))%>%
-  filter(Tag.number!="190428" & Tag.number!="190188" & Tag.number!="190124" &Tag.number!="190443")%>% #four tags have more than -7 growth
-  mutate(Trip=paste("T",Trip,sep=""))%>%
-  mutate(mini.site="Seven Mile.in")%>%
-  glimpse()
+no.fem<-semi_join(length,changed.sex)%>%
+  filter(Sex=="Female")%>%
+  group_by(Tag.number)%>%
+  summarise(no.fem=n())
 
+no.male<-semi_join(length,changed.sex)%>%
+  filter(Sex=="Male")%>%
+  group_by(Tag.number)%>%
+  summarise(no.male=n())
 
-#Create another Dataframe for SM with Jan-April removed----
-dat.smb.edit<-dat.smb%>%
-     mutate(month=format(as.Date(Date),'%m'))%>%
-     mutate(month=month((as_date(Date))))%>%
-     filter(month%in%c(5:12))%>% #Remove Jan-April
-     select(Date, Tag.number, Carapace.length, Sex, Total.damage, Trip, Source, Fisher, Colour, Recapture, Longitude, Latitude, Site, mini.site)%>%
-     glimpse()
-
+changed.sex<-left_join(changed.sex,no.fem)%>%
+  left_join(.,no.male)
 
 
-### new recaptured ----
+# Join datasets together ----
+dat<-left_join(length.clean,metadata.clean)
 
-#All recaptures: including from same trip)
-recaps<- Dat.Combined%>%
+# New recaptured ----
+# All recaptures: including from same trip)
+recaps<- dat%>%
   select(Tag.number)%>%
-  mutate(duplicates = duplicated(recaps) | duplicated(recaps, fromLast = TRUE))%>%
+  mutate(duplicates = duplicated(.) | duplicated(., fromLast = TRUE))%>%
   filter(duplicates=="TRUE")%>%
   glimpse()
 
-
-All.recaps<-semi_join(Dat.Combined,recaps)%>% 
+all.recaps<-semi_join(dat,recaps)%>% 
   group_by(Tag.number,Trip)%>%
   glimpse()
 
-
-#For Seven Mile without months 1->4----
+# For Seven Mile without months 1->4----
 
 growth.sm<-dat.smb.edit%>%
   select(Trip,Date,Tag.number, Carapace.length, Site, Sex, Colour, Total.damage, Longitude, Latitude, mini.site)%>% 
@@ -99,7 +95,7 @@ growth.sm<-dat.smb.edit%>%
   mutate(Trip=paste("T",Trip,sep=""))%>%
   glimpse()
 
-#For data including recaps from same trip----
+# For data including recaps from same trip----
 growth.all<-All.recaps%>%
   select(Trip, Date,Tag.number, Carapace.length, Site, Sex, Colour, Total.damage, mini.site, Longitude, Latitude)%>% 
   group_by(Tag.number)%>%
