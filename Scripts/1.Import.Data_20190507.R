@@ -10,7 +10,7 @@ library(measurements)
 library(lubridate)
 library(readr)
 library(devtools)
-install_github("UWAMEGFisheries/GlobalArchive", dependencies = TRUE) # to check for updates
+#install_github("UWAMEGFisheries/GlobalArchive", dependencies = TRUE) # to check for updates
 library(GlobalArchive) # Have to add how to download for Ash
 
 # Study name----
@@ -20,7 +20,7 @@ study<-"Lobster.Data"
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
-# work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -299,11 +299,7 @@ unique(metadata$Date)
 
 # Write data
 setwd(data.dir)
+dir()
 
 write.csv(metadata, "metadata.csv",row.names = FALSE)
 write.csv(length, "length.csv",row.names = FALSE)
-
-
-  
-  
-  
