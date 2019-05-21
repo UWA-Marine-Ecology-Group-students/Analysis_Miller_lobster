@@ -353,6 +353,8 @@ length<-bind_rows(length.2017,length.2018,length.fisheries,length.fisher,length.
 
 names(metadata)
 
+unique(metadata$Site)
+unique(metadata$Location)
 unique(metadata$Source)
 unique(metadata$Trip)
 unique(metadata$Pot.type) # "C" "F" "13" NA 
