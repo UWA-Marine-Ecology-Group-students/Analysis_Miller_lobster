@@ -20,7 +20,7 @@ study<-"Lobster.Data"
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
-# work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -34,7 +34,7 @@ dat.2018<-gs_title("Lobsters_data_2018_All")%>%
   glimpse()
 
 length.2018<-dat.2018%>%
-  filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>% # now filters out where all are blank (empty pots)
+  filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>% # now filters out where all are blank (empty pots) 
   mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
   mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
@@ -85,7 +85,7 @@ metadata.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
   mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>% 
   mutate(Site=str_replace_all(.$Site.Name,c( "SM"="Seven Mile", "DM"="Davids Marks",  "RM"="Rivermouth", "IR"="Irwin Reef", "LR"="Long Reef", "SD"="South Dummy", "LH"="Little Horseshoe", "CHin1_"="Cliff Head Mid","CHin2_"="Cliff Head South","CHout1_" = "Cliff Head OUT1","CHout2_" = "Cliff Head North", "JB"="Jim Bailey", "GR"="Golden Ridge", "SR"="South Rig", "WL"="Whites Lump")))%>% 
   mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile","Little Horseshoe"="Cliff Head", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Long Reef"="Irwin Reef", "South Dummy"="Irwin Reef","South Rig"= "Irwin Reef","Whites Lump"= "Irwin Reef","WP"= "Irwin Reef","Whitepoint"="Irwin Reef")))%>% 
-  mutate(Site=str_replace_all(.$Site, c("Jim Bailey"="White Point" ,"WP"="White Point" , "Whitepoint"="White Point" , "CHS"="Cliff Head South","CHM"="Cliff Head Mid","CHN"="Cliff Head North", "Seven Mile Beach"= "Seven Mile.out")))%>%
+  mutate(Site=str_replace_all(.$Site, c("Jim Bailey"="White Point" ,"WP"="White Point" , "Whitepoint"="White Point" , "CHS"="Cliff Head South","CHM"="Cliff Head Mid","CHN"="Cliff Head North", "Seven Mile Beach"= "Seven Mile South", "Cliff Head OUT1"="Cliff Head North", "Davids Marks"="Cliff Head North")))%>%
   filter(Johns=="No")%>% # turn off when I add in john's data (if ever) -  I am not uploading John's data to GlobalArchive BG
   dplyr::rename(Latitude=Latitude.y, Longitude=Longitude.x,Date=Date.Recovered)%>%
   mutate(Latitude=as.numeric(Latitude))%>%
@@ -101,11 +101,12 @@ metadata.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
   glimpse()
 
 names(metadata.2018)
+unique(metadata.2018$Site)
 
 unique(metadata.2018$Date)
 
 unique(metadata.2018$Location)%>%sort() # "Cliff Head"   "Golden Ridge" "Irwin Reef"   "Rivermouth"   "Seven Mile"  
-unique(metadata.2018$Site)%>%sort() # Would be nice to rename "Cliff Head OUT1"
+unique(metadata.2018$Site)%>%sort() 
 unique(metadata.2018$Site.Code)%>%sort()
 
 length(unique(metadata.2018$Sample)) # 1461 (1163 non-empty, 298 empty)
@@ -120,12 +121,13 @@ rm(info.2018,duplicate.pots,duplicate.remarks,dat.2018)
 # Import 2017 length data----
 # Using original 2017 Data -----
 dat.2017<-gs_title("1_Lobsters_data_171210.xlsx")%>% # To use GoogleSheets
-  gs_read_csv(ws = "Sheet1",col_types = "nccccnccccccccnnnnccccc")%>% #
+  gs_read_csv(ws = "Sheet1",col_types = "nccccnccccccccnnnnccccc")%>% 
   mutate(Trap.ID=str_replace_all(.$Trap.number,c("CH6F6"="CH6C6")))%>%
   mutate(Pot.type=ifelse(Trap.ID%in%c("CH6C6"),"C",Pot.type))%>%
   mutate(Sample=paste(Day,Trap.ID,sep="."))%>%  #New column for Day and trap.number
   mutate(Source='oscar-doncel-canons-masters')%>%
   glimpse()
+
 
 length.2017<-dat.2017%>%
   filter(!(is.na(Carapace.length)&is.na(Sex)&is.na(Colour)))%>%
@@ -174,7 +176,8 @@ metadata.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   dplyr::rename(Longitude=Longitud.relocated,Latitude=Latitude.relocated,Day.Pull=Soking.time.days,Trap.ID=Trap.number,Pot.Number=Number,Pot.Type=Pot.type)%>%
   left_join(.,info.2017)%>%
   mutate(Exclude.pots=capitalise(Exclude.pots))%>%
-  mutate(Site=str_replace_all(.$Names.to.display,c("7 Mile"="Seven Mile")))%>%
+  mutate(Site=str_replace_all(.$Names.to.display,c("7 Mile"="Seven Mile Mid")))%>%
+  mutate(Site=str_replace_all(.$Site, c("Cliff Head Sand Strips"="Cliff Head","Cliff Head"="Cliff Head North","South Whites Lump"= "White Point", "White Point Reef"="White Point", "South West Dummy"="South Dummy", "Big Horseshoe"="Little Horseshoe", "Sand Hole"="Little Horseshoe", "Darwin"="White Point", "Dry Shallows"="Little Horseshoe", "Power Pack"="Little Horseshoe", "Outside CH1"="Kevin Healy", "Outside CH2"="Cliff Head North")))%>%
   separate(Trap.ID,into=c("Site.Code","Extra"),sep=-2)%>%
   mutate(Site.Code=str_replace_all(.$Site.Code,c("F"="","5C"="5","0C"="0","7C"="7","2C"="2","4C"="4","3C"="3","6C"="6")))%>%
   select(-c(John.site.names,Names.to.display,Extra))%>%
@@ -188,6 +191,9 @@ missing.pot.var<-anti_join(length.2017,metadata.2017) # Two pots that arent in t
 
 # Clean up enviroment
 rm(missing.pot.var,duplicates,info.2017,dat.2017)
+
+unique(metadata.2017$Site)
+unique(metadata.2018$Site)
 
 # Import Tag Return data sent to Fisheries----
 fisheries.returns <- gs_title("Fisheries.Tag.Returns")%>%
@@ -284,20 +290,53 @@ sevenmile <- gs_title("Lobster_Data_Fisheries_SMB")%>%
   mutate(Tag.number=as.character(Tag.number))%>%
   mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"="Seven Mile")))%>%
   mutate(Outlier=ifelse(Tag.number%in%c("190428","190188","190124","190443"),"y",NA))%>% # four tags have more than -7 growth
-  mutate(Site="Seven Mile.in")%>%
+  mutate(Site="Seven Mile North")%>%
   mutate(month=format(as.Date(Date),'%m'))%>%
   mutate(month=month((as_date(Date))))%>%
   filter(month%in%c(5:12))%>% # Remove Jan-April
   dplyr::mutate(Date=lubridate::as_date(ymd(Date)))%>%
   glimpse()
 
+#Ash's edit-to bring in new SM data- Need Brooke to double check
+sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
+  gs_read_csv("SMB2",col_types = "cccnnnnnccnnnnnnnccnnnnnnnn")%>%
+  mutate(Source="ben-seven-mile")%>%
+  mutate(Location="Seven Mile")%>%
+  mutate(Site="Seven Mile North")%>%
+  mutate(Trip="10")%>%
+  mutate(Trip=as.numeric(Trip))%>%
+  mutate(Sample=as.character(POT_TYPE_ID))%>%
+  dplyr::rename(Tag.number=VTAGNO)%>%
+  mutate(Tag.number=as.character(Tag.number))%>%
+  mutate(Tag.number=str_replace_all(.$Tag.number,c("V"="")))%>% #Removes V
+  dplyr::filter(m%in%c(5:12))%>% #filter Jan-April
+  mutate(Date=lubridate::ymd(sprintf('%04d%02d%02d',y,m,d)))%>% #Make date col
+  mutate(Outlier=ifelse(Tag.number%in%c("190428","190188","190124","190443"),"y",NA))%>%
+  dplyr::rename(Recapture= REC, Sex=SEX, Colour=COLOUR, Carapace.length=CLENGTH, Setose.state= SETOSE, Individual.Remarks=REMARKS, Damage.new.a=NEW_ANT, Damage.new.L=NEW_LEGS, Damage.old.a=OLD_ANT, Damage.old.L=OLD_LEGS,Pot.Number=POT_NO, Pot.Type=POT_TYPE_ID, Day.Pull=DAY_PULL)%>%
+  mutate(Damage.old.a=if_else(Damage.new.a==9,0,Damage.old.a))%>% # Fix Damaged data
+  mutate(Damage.new.L=if_else(Damage.new.a==9,0,Damage.new.L))%>%
+  mutate(Damage.old.L=if_else(Damage.new.a==9,0,Damage.old.L))%>%
+  mutate(Damage.new.a=if_else(Damage.new.a==9,0,Damage.new.a))%>%
+  mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
+  mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
+  mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
+  mutate(Recapture=str_replace_all(.$Recapture, c("1"= "TRUE")))%>%
+  glimpse()
+ 
+#Need to do:
+#Fix Remarks from SM 
+#Change Recapture: 1= TRUE
+  
+
+
+#begin brooke
 names(sevenmile)
 
 metadata.sevenmile<-sevenmile%>%
   distinct(Source,Trip,Sample,Date,Longitude,Latitude,Location,Site)
 
 length.sevenmile<-sevenmile%>%
-  select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Total.damage,Outlier)
+  select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Damage.new.a, Damage.new.L, Damage.old.a, Damage.old.L, Outlier)
 
 # Tidy names of data frames ----
 names(length.2017)<-capitalise(names(length.2017))
@@ -313,14 +352,15 @@ names(metadata.fisher)<-capitalise(names(metadata.fisher))
 names(metadata.sevenmile)<-capitalise(names(metadata.sevenmile))
 
 # Combine data ----
+
 metadata<-bind_rows(metadata.2017,metadata.2018,metadata.fisheries,metadata.fisher,metadata.sevenmile)%>%
   replace_na(list(Exclude.pots="No"))%>%
   glimpse()
-  
-length<-bind_rows(length.2017,length.2018,length.fisheries,length.fisher)%>%
+
+
+length<-bind_rows(length.2017,length.2018,length.fisheries,length.fisher,length.sevenmile)%>%
   replace_na(list(Damage.old.a = 0, Damage.old.l = 0,Damage.new.a = 0, Damage.new.l = 0))%>%
   mutate(Total.damage=(Damage.old.a+Damage.old.l+Damage.new.a+Damage.new.l))%>%
-  bind_rows(.,length.sevenmile)%>%
   replace_na(list(Sex="Unknown",Colour="Unknown",Cable.tie="FALSE",Dead="Alive",Retention.status="Released"))%>%
   mutate(Count=1)%>% # Count for Abundance
   glimpse()
