@@ -297,7 +297,7 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
   mutate(Site="Seven Mile North")%>%
   mutate(Trip="10")%>%
   mutate(Trip=as.numeric(Trip))%>%
-  mutate(Sample=as.character(POT_TYPE_ID))%>%
+  mutate(Sample=as.character(POT_NO))%>%
   dplyr::rename(Tag.number=VTAGNO)%>%
   mutate(Tag.number=as.character(Tag.number))%>%
   mutate(Tag.number=str_replace_all(.$Tag.number,c("V"="")))%>% #Removes V
@@ -313,6 +313,7 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
   mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
   mutate(Recapture=str_replace_all(.$Recapture, c("1"= "TRUE")))%>%
+  filter(!is.na(Sample))%>%
   glimpse()
 
 #Need to do:
@@ -324,7 +325,8 @@ metadata.sevenmile<-sevenmile%>%
   distinct(Source,Trip,Sample,Date,Longitude,Latitude,Location,Site)
 
 length.sevenmile<-sevenmile%>%
-  select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Outlier)
+  select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Outlier)%>%
+  filter(!is.na(Carapace.length)&!is.na(Sex))
 
  # Tidy names of data frames ----
 names(length.2017)<-capitalise(names(length.2017))
