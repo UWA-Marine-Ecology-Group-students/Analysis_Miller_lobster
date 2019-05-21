@@ -13,9 +13,6 @@ library(devtools)
 #install_github("UWAMEGFisheries/GlobalArchive", dependencies = TRUE) # to check for updates
 library(GlobalArchive) # Have to add how to download for Ash
 
-# Study name----
-study<-"Lobster.Data"
-
 # Set work directory----
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
@@ -351,6 +348,22 @@ unique(length$Outlier)
 unique(length$Tarspot)
 unique(length$Retention.status) # "Released" "Retained"
 unique(length$Tarspot)
+
+# Remove lobsters that have changed length
+changed.sex<-length%>%
+  filter(!is.na(Tag.number))%>%
+  group_by(Tag.number)%>%
+  summarise(no.sex=length(unique(Sex)),no.times.caught=n())%>%
+  filter(no.sex>1)
+
+cant.keep<-changed.sex%>%
+  filter(no.times.caught==2)%>%
+  distinct(Tag.number)
+
+list.tags <- as.vector(changed.sex$Tag.number) # change to cant.keep if filtered out only those caught twice
+
+length<-length%>%
+  filter(!Tag.number%in%c(list.tags))
 
 # Write data
 setwd(data.dir)

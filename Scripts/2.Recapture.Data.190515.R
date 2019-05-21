@@ -51,27 +51,6 @@ length.clean<-length%>%
   select(-c(Outlier,Dead))%>%
   glimpse()
 
-# Test for lobsters that have changed sex
-changed.sex<-length%>%
-  filter(!is.na(Tag.number))%>%
-  group_by(Tag.number)%>%
-  summarise(no.sex=length(unique(Sex)),no.times.caught=n())%>%
-  filter(no.sex>1)
-
-no.fem<-semi_join(length,changed.sex)%>%
-  filter(Sex=="Female")%>%
-  group_by(Tag.number)%>%
-  summarise(no.fem=n())
-
-no.male<-semi_join(length,changed.sex)%>%
-  filter(Sex=="Male")%>%
-  group_by(Tag.number)%>%
-  summarise(no.male=n())
-
-changed.sex<-left_join(changed.sex,no.fem)%>%
-  left_join(.,no.male)
-
-
 # Join datasets together ----
 dat<-left_join(length.clean,metadata.clean)
 
