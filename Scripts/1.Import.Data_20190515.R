@@ -17,6 +17,7 @@ library(GlobalArchive) # Have to add how to download for Ash
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
+
 work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Sub directories ----
@@ -31,7 +32,8 @@ dat.2018<-gs_title("Lobsters_data_2018_All")%>%
   glimpse()
 
 length.2018<-dat.2018%>%
-  filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>% # now filters out where all are blank (empty pots) 
+  filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>% 
+  # now filters out where all are blank (empty pots)
   mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
   mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
@@ -58,7 +60,7 @@ unique(length.2018$Recapture)
 # Counts
 length(unique(length.2018$Tag.number)) # 7537 tagged individuals
 length(length.2018$Carapace.length) # 9318 total indiviuals caught
-length(unique(length.2018$Sample)) # 1163 pots
+length(unique(length.2018$Sample)) # 1163 pots with crays
 
 # Things that should actually be in the metadata not the lobster data
 info.2018<-dat.2018%>%
@@ -66,7 +68,7 @@ info.2018<-dat.2018%>%
   distinct()%>%
   glimpse()
 
-length(unique(info.2018$Sample)) # 1440 
+length(unique(info.2018$Sample)) # 1440 total pot lifts
 
 duplicate.remarks<-info.2018%>%
   group_by(Sample)%>%
@@ -280,23 +282,23 @@ length.fisher<-fisher.returns%>%
 rm(dd,dm,fisher.returns,fisheries.returns)
 
 # Seven Mile Data ----
-sevenmile <- gs_title("Lobster_Data_Fisheries_SMB")%>%
-  gs_read_csv("Dat.smb",col_types = "nnnnnccncnnccccnnc")%>%
-  mutate(Source="ben-seven-mile")%>%
-  mutate(Sample=as.character(Pot.ID))%>%
-  mutate(Tag.number=as.character(Tag.number))%>%
-  mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"="Seven Mile")))%>%
-  mutate(Outlier=ifelse(Tag.number%in%c("190428","190188","190124","190443"),"y",NA))%>% # four tags have more than -7 growth
-  mutate(Site="Seven Mile North")%>%
-  mutate(month=format(as.Date(Date),'%m'))%>%
-  mutate(month=month((as_date(Date))))%>%
-  filter(month%in%c(5:12))%>% # Remove Jan-April
-  dplyr::mutate(Date=lubridate::as_date(ymd(Date)))%>%
-  glimpse()
+# sevenmile <- gs_title("Lobster_Data_Fisheries_SMB")%>%
+#   gs_read_csv("Dat.smb",col_types = "nnnnnccncnnccccnnc")%>%
+#   mutate(Source="ben-seven-mile")%>%
+#   mutate(Sample=as.character(Pot.ID))%>%
+#   mutate(Tag.number=as.character(Tag.number))%>%
+#   mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"="Seven Mile")))%>%
+#   mutate(Outlier=ifelse(Tag.number%in%c("190428","190188","190124","190443"),"y",NA))%>% # four tags have more than -7 growth
+#   mutate(Site="Seven Mile.in")%>%
+#   mutate(month=format(as.Date(Date),'%m'))%>%
+#   mutate(month=month((as_date(Date))))%>%
+#   filter(month%in%c(5:12))%>% # Remove Jan-April
+#   dplyr::mutate(Date=lubridate::as_date(ymd(Date)))%>%
+#   glimpse()
 
 #Ash's edit-to bring in new SM data- Need Brooke to double check
 sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
-  gs_read_csv("SMB2",col_types = "cccnnnnnccnnnnnnnccnnnnnnnn")%>%
+  gs_read_csv("SMB2",col_types = "cccnnnnnccnnnnnnncccnnnnnnnn")%>%
   mutate(Source="ben-seven-mile")%>%
   mutate(Location="Seven Mile")%>%
   mutate(Site="Seven Mile North")%>%
@@ -318,29 +320,30 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
   mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
   mutate(Recapture=str_replace_all(.$Recapture, c("1"= "TRUE")))%>%
+  filter(!is.na(Sample))%>%
   glimpse()
  
 #Need to do:
-#Fix Remarks from SM 
-#Change Recapture: 1= TRUE
-  
+#Fix remarks
 
-
-#begin brooke
 names(sevenmile)
 
 metadata.sevenmile<-sevenmile%>%
   distinct(Source,Trip,Sample,Date,Longitude,Latitude,Location,Site)
 
 length.sevenmile<-sevenmile%>%
-  select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Damage.new.a, Damage.new.L, Damage.old.a, Damage.old.L, Outlier)
+  select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Damage.new.a, Damage.new.L, Damage.old.a, Damage.old.L, Outlier)%>%
+  filter(!is.na(Carapace.length)&!is.na(Sex))%>%
+  glimpse()
 
+ 
 # Tidy names of data frames ----
 names(length.2017)<-capitalise(names(length.2017))
 names(length.2018)<-capitalise(names(length.2018))
 names(length.fisheries)<-capitalise(names(length.fisheries))
 names(length.fisher)<-capitalise(names(length.fisher))
 names(length.sevenmile)<-capitalise(names(length.sevenmile))
+
 
 names(metadata.2017)<-capitalise(names(metadata.2017))
 names(metadata.2018)<-capitalise(names(metadata.2018))
@@ -354,7 +357,6 @@ metadata<-bind_rows(metadata.2017,metadata.2018,metadata.fisheries,metadata.fish
   replace_na(list(Exclude.pots="No"))%>%
   glimpse()
 
-
 length<-bind_rows(length.2017,length.2018,length.fisheries,length.fisher,length.sevenmile)%>%
   replace_na(list(Damage.old.a = 0, Damage.old.l = 0,Damage.new.a = 0, Damage.new.l = 0))%>%
   mutate(Total.damage=(Damage.old.a+Damage.old.l+Damage.new.a+Damage.new.l))%>%
@@ -364,6 +366,8 @@ length<-bind_rows(length.2017,length.2018,length.fisheries,length.fisher,length.
 
 names(metadata)
 
+unique(metadata$Site)
+unique(metadata$Location)
 unique(metadata$Source)
 unique(metadata$Trip)
 unique(metadata$Pot.type) # "C" "F" "13" NA 
@@ -389,7 +393,7 @@ unique(length$Tarspot)
 unique(length$Retention.status) # "Released" "Retained"
 unique(length$Tarspot)
 
-# Remove lobsters that have changed length
+# Remove lobsters that have changed sex
 changed.sex<-length%>%
   filter(!is.na(Tag.number))%>%
   group_by(Tag.number)%>%
@@ -399,6 +403,8 @@ changed.sex<-length%>%
 cant.keep<-changed.sex%>%
   filter(no.times.caught==2)%>%
   distinct(Tag.number)
+
+#35
 
 list.tags <- as.vector(changed.sex$Tag.number) # change to cant.keep if filtered out only those caught twice
 
