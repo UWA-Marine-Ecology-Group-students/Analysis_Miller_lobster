@@ -48,12 +48,13 @@ metadata.raw<-read.csv("metadata.csv")%>%
   glimpse()
 
 length.raw<-read.csv("length.csv")%>%
-  rename(Length=Carapace.length)%>%
+  dplyr::rename(Length=Carapace.length)%>%
   mutate(Family="Palinuridae",Genus="Panulirus",Species="cygnus")%>%
   filter(Source%in%c("oscar-doncel-canons-masters","ash-millers-masters"))%>%
   mutate(Source=str_replace_all(.$Source,c("oscar-doncel-canons-masters"="Dongara.Canons.Masters","ash-millers-masters"="Dongara.Millers.Masters")))%>%
   replace_na(list(Length=(-9999)))%>%
-    glimpse()
+  semi_join(metadata.raw)%>%
+  glimpse()
 
 # Make a more GlobalArchive-y CampaignID
 campaigns<-metadata.raw%>%
@@ -116,5 +117,13 @@ for (i in 1:length(campaigns)){
   write.csv(temp.count, file=paste(unique(id),"_Count.csv",sep=""), quote=FALSE,row.names = FALSE,na = "") # write file
 }
 
+test.length<-length%>%
+  filter(CampaignID=="2017-11_Dongara.Canons.Masters_Trapping")%>%
+  select(-c(Trip,Source))
+test.metadata<-metadata%>%
+  filter(CampaignID=="2017-11_Dongara.Canons.Masters_Trapping")%>%
+  select(-c(Trip,Source))
+
+missing.met<-anti_join(test.length,test.metadata)
 
 
