@@ -74,7 +74,12 @@ metadata <-ga.list.files("Metadata.csv")%>%
 length <-ga.list.files("Length.csv")%>%
   purrr::map_df(~ga.read.files_csv(.))%>%
   dplyr::mutate(Carapace.length=as.numeric(length))%>%
-  dplyr::select(-c(length))%>%
+  dplyr::mutate(Trip=as.numeric(trip))%>%
+  dplyr::mutate(Damage.new.a=as.numeric(damage.new.a))%>%
+  dplyr::mutate(Damage.old.a=as.numeric(damage.old.a))%>%
+  dplyr::mutate(Damage.new.l=as.numeric(damage.new.l))%>%
+  dplyr::mutate(Damage.old.l=as.numeric(damage.old.l))%>%
+  dplyr::select(-c(length,trip,damage.new.a,damage.new.l,damage.old.a,damage.old.l))%>%
   glimpse()
 
 # Import Tag Return data sent to Fisheries----
@@ -120,9 +125,10 @@ metadata.fisheries<-fisheries.returns%>%
 
 length.fisheries<-fisheries.returns%>%
   dplyr::mutate(Recapture=as.character(Recapture))%>%
+  dplyr::mutate(Tarspot=as.character(Tarspot))%>%
   dplyr::select(Source,Sample,Tag.number,Sex,Colour,Carapace.length,Recapture,Setose.state,Tarspot,Individual.Remarks,Retention.Status,Dead)
 
-#Import Tag Return data sent to UWA----
+# Import Tag Return data sent to UWA----
 fisher.returns <- gs_title("UWA.Tag.Returns")%>%
   gs_read_csv(ws="Sheet1")%>%
   dplyr::mutate(Recapture=TRUE)%>%
@@ -204,7 +210,10 @@ names(metadata.sevenmile)<-ga.capitalise(names(metadata.sevenmile))
 
 # Add data from other sources to UWA data
 metadata.final<-bind_rows(metadata,metadata.fisheries,metadata.fisher,metadata.sevenmile)
-length.final<-bind_rows(length,length.fisheries,length.fisher,metadata.sevenmile)
+length.final<-bind_rows(length,length.fisheries,length.fisher,length.sevenmile)
+
+names(metadata.final)
+names(length.final)
 
 ## Save metadata, count and length files ----
 setwd(data.dir)
