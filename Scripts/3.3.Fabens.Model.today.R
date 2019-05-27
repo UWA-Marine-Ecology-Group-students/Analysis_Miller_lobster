@@ -19,8 +19,9 @@ library(stringr)
 
 # Set work directory----
 
-work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
-work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+# work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
+# work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+work.dir=("Z://Analysis_Miller_lobster") #for laptop
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -36,9 +37,7 @@ sd.max <- function(x) (mean(x)) + sd(x)
 scaleFUN <- function(x) sprintf("%.0f", x)
 
 #Import Data
-# Bring in from ecocloud----
-# dir()
-setwd("~/workspace/Analysis_Miller_WRL/Data")
+setwd(data.dir)
 
 dat.rr<-read_csv("dat.rr.clean.csv")%>%
 #dat.rr<-read_csv("dat.rr.all.csv")%>%
@@ -270,7 +269,7 @@ dum$Mir<- pars[1]*(1-exp(-pars[6]*dum$age))
 dum$Msm<- pars[1]*(1-exp(-pars[7]*dum$age))
 
 par(mfrow=c(1,1))
-plot(dum$age, dum$Fir, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l') #or  ylim=c(20,110)
+plot(dum$age, dum$Fir, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=2, cex.axis=1.7) #or  ylim=c(20,110)
 lines(dum$age, dum$Fch, type='l', col=3, lwd=2)
 lines(dum$age, dum$Fsm, type='l', col=6, lwd=2)
 
@@ -282,7 +281,65 @@ lines(dum$age, dum$Msm, type='l', lwd=2, lty=2, col=6)
 legend("bottomright", title = "Location                      ",
        legend=c("Irwin Reef", "Cliff Head", "Seven Mile", "Female", "Male"), 
        col = c("blue", "3", "6", "black", "black"), 
-       lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=1.1)
+       lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=1.3)
+#TEst
+plot(dum$age, dum$Fir, type='1', col="blue", lwd=1, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130) ,bty='l', cex.lab=1.5, cex.axis=1.6) #or  ylim=c(20,110)
+lines(dum$age, dum$Fch, type='l', col=3, lwd=2)
+lines(dum$age, dum$Fsm, type='l', col=6, lwd=2)
+
+#plot(dum$age, dum$Mir, type='l', col='red',lwd=2, lty=2, xlab='Relative age (years)',ylab='', ylim=c(20,140), bty='l') #or  ylim=c(20,110)
+lines(dum$age, dum$Mir, type='l', lwd=2, lty=2, col="blue")
+lines(dum$age, dum$Mch, type='l', lwd=2, lty=2, col=3)
+lines(dum$age, dum$Msm, type='l', lwd=2, lty=2, col=6)
+
+legend("bottomright", title = "Location                      ",
+       legend=c("Irwin Reef", "Cliff Head", "Seven Mile", "Female", "Male"), 
+       col = c("blue", "3", "6", "black", "black"), 
+       lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=0.9)
+
+
+jpeg("Fabens.Plot.jpg", width = 800, height=600, res=0.95)
+plot(dum$age, dum$Fir, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=1.7, cex.axis=1.6) #or  ylim=c(20,110)
+lines(dum$age, dum$Fch, type='l', col=3, lwd=2)
+lines(dum$age, dum$Fsm, type='l', col=6, lwd=2)
+
+#plot(dum$age, dum$Mir, type='l', col='red',lwd=2, lty=2, xlab='Relative age (years)',ylab='', ylim=c(20,140), bty='l') #or  ylim=c(20,110)
+lines(dum$age, dum$Mir, type='l', lwd=2, lty=2, col="blue")
+lines(dum$age, dum$Mch, type='l', lwd=2, lty=2, col=3)
+lines(dum$age, dum$Msm, type='l', lwd=2, lty=2, col=6)
+
+legend("bottomright", title = "Location                      ",
+       legend=c("Irwin Reef", "Cliff Head", "Seven Mile", "Female", "Male"), 
+       col = c("blue", "3", "6", "black", "black"), 
+       lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=1.5)
+dev.off()
+
+
+
+plot(dum$age, dum$Fir, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=1.5, cex.axis=1.3) #or  ylim=c(20,110)
+lines(dum$age, dum$Fch, type='l', col=3, lwd=2)
+lines(dum$age, dum$Fsm, type='l', col=6, lwd=2)
+
+#plot(dum$age, dum$Mir, type='l', col='red',lwd=2, lty=2, xlab='Relative age (years)',ylab='', ylim=c(20,140), bty='l') #or  ylim=c(20,110)
+lines(dum$age, dum$Mir, type='l', lwd=2, lty=2, col="blue")
+lines(dum$age, dum$Mch, type='l', lwd=2, lty=2, col=3)
+lines(dum$age, dum$Msm, type='l', lwd=2, lty=2, col=6)
+
+legend("bottomright", title = "Location                      ",
+       legend=c("Irwin Reef", "Cliff Head", "Seven Mile", "Female", "Male"), 
+       col = c("blue", "3", "6", "black", "black"), 
+       lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=1.5)
+
+
+
+
+
+# Save plots----
+setwd(plots.dir)
+
+
+jpeg("rplot.jpg", width = 350, height = "350")
+
 
 #Plot growth----
 # Plotting Themes ----
@@ -352,7 +409,7 @@ box.plot <-ggplot(tmp, aes(x=rlloc, y=growth))+
 box.plot
 
 
-
+#OLD SCRIPT----
 #Female ----
 tmp <- rec[rec$Lyrs>0.1 & rec$rlloc!='Golden Ridge' & rec$sex=='f',] #Filtered to more than 2 months at liberty
 tmp <- tmp[!is.na(tmp$Sex),]
