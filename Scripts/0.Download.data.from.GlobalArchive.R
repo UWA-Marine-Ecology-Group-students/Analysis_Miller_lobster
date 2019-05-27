@@ -33,7 +33,6 @@ working.dir=("C:/GitHub/Analysis_Miller_lobster")
 
 ## Save these directory names to use later----
 data.dir<-paste(working.dir,"Data",sep="/") 
-staging.dir<-paste(data.dir,"Staging",sep="/") 
 download.dir<-paste(data.dir,"Downloads",sep="/")
 tidy.dir<-paste(data.dir,"Tidy data",sep="/")
 
@@ -205,12 +204,10 @@ names(metadata.sevenmile)<-ga.capitalise(names(metadata.sevenmile))
 
 # Add data from other sources to UWA data
 metadata.final<-bind_rows(metadata,metadata.fisheries,metadata.fisher,metadata.sevenmile)
-
 length.final<-bind_rows(length,length.fisheries,length.fisher,metadata.sevenmile)
 
-
 ## Save metadata, count and length files ----
-setwd(staging.dir)
+setwd(data.dir)
 
-write.csv(metadata,paste(study,"metadata.csv",sep="_"),row.names = FALSE)
-write.csv(length,paste(study,"length.csv",sep="_"),row.names = FALSE)
+write.csv(metadata,"metadata.csv",row.names = FALSE)
+write.csv(length,"length.csv",row.names = FALSE)
