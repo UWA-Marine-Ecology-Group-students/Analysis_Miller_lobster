@@ -130,9 +130,9 @@ dat.2017<-gs_title("1_Lobsters_data_171210.xlsx")%>% # To use GoogleSheets
 
 length.2017<-dat.2017%>%
   filter(!(is.na(Carapace.length)&is.na(Sex)&is.na(Colour)))%>%
-  mutate(Sex=capitalise(Sex))%>%
+  mutate(Sex=ga.capitalise(Sex))%>%
   mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
-  mutate(Colour=capitalise(Colour))%>%
+  mutate(Colour=ga.capitalise(Colour))%>%
   mutate(Colour=if_else(Colour%in%c("Unkown"),"Unknown",Colour))%>%
   mutate(Cable.Tie=ifelse(Tag.number%in%c("CT"),TRUE,FALSE))%>%
   mutate(Recapture=ifelse(Tagged%in%c("EXISTING"),TRUE,NA))%>%
@@ -174,7 +174,7 @@ metadata.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   select(-c(ID,Notes,Code,Latitude,Longitude,Longitude.original,Latitude.original))%>%
   dplyr::rename(Longitude=Longitud.relocated,Latitude=Latitude.relocated,Day.Pull=Soking.time.days,Trap.ID=Trap.number,Pot.Number=Number,Pot.Type=Pot.type)%>%
   left_join(.,info.2017)%>%
-  mutate(Exclude.pots=capitalise(Exclude.pots))%>%
+  mutate(Exclude.pots=ga.capitalise(Exclude.pots))%>%
   mutate(Site=str_replace_all(.$Names.to.display,c("7 Mile"="Seven Mile Mid")))%>%
   mutate(Site=str_replace_all(.$Site, c("Cliff Head Sand Strips"="Cliff Head","Cliff Head"="Cliff Head North","South Whites Lump"= "White Point", "White Point Reef"="White Point", "South West Dummy"="South Dummy", "Big Horseshoe"="Little Horseshoe", "Sand Hole"="Little Horseshoe", "Darwin"="White Point", "Dry Shallows"="Little Horseshoe", "Power Pack"="Little Horseshoe", "Outside CH1"="Kevin Healy", "Outside CH2"="Cliff Head North")))%>%
   separate(Trap.ID,into=c("Site.Code","Extra"),sep=-2)%>%
@@ -329,7 +329,8 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
 names(sevenmile)
 
 metadata.sevenmile<-sevenmile%>%
-  distinct(Source,Trip,Sample,Date,Longitude,Latitude,Location,Site)
+  distinct(Source,Trip,Sample,Date,Longitude,Latitude,Location,Site,PWO,WKW,PWF,Pot.Remarks)%>%
+  mutate(PWO=as.character(PWO))
 
 length.sevenmile<-sevenmile%>%
   select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Damage.new.a, Damage.new.L, Damage.old.a, Damage.old.L, Outlier)%>%
@@ -338,18 +339,18 @@ length.sevenmile<-sevenmile%>%
 
  
 # Tidy names of data frames ----
-names(length.2017)<-capitalise(names(length.2017))
-names(length.2018)<-capitalise(names(length.2018))
-names(length.fisheries)<-capitalise(names(length.fisheries))
-names(length.fisher)<-capitalise(names(length.fisher))
-names(length.sevenmile)<-capitalise(names(length.sevenmile))
+names(length.2017)<-ga.capitalise(names(length.2017))
+names(length.2018)<-ga.capitalise(names(length.2018))
+names(length.fisheries)<-ga.capitalise(names(length.fisheries))
+names(length.fisher)<-ga.capitalise(names(length.fisher))
+names(length.sevenmile)<-ga.capitalise(names(length.sevenmile))
 
 
-names(metadata.2017)<-capitalise(names(metadata.2017))
-names(metadata.2018)<-capitalise(names(metadata.2018))
-names(metadata.fisheries)<-capitalise(names(metadata.fisheries))
-names(metadata.fisher)<-capitalise(names(metadata.fisher))
-names(metadata.sevenmile)<-capitalise(names(metadata.sevenmile))
+names(metadata.2017)<-ga.capitalise(names(metadata.2017))
+names(metadata.2018)<-ga.capitalise(names(metadata.2018))
+names(metadata.fisheries)<-ga.capitalise(names(metadata.fisheries))
+names(metadata.fisher)<-ga.capitalise(names(metadata.fisher))
+names(metadata.sevenmile)<-ga.capitalise(names(metadata.sevenmile))
 
 # Combine data ----
 
@@ -403,10 +404,12 @@ changed.sex<-length%>%
 cant.keep<-changed.sex%>%
   filter(no.times.caught==2)%>%
   distinct(Tag.number)
-
 #35
 
 list.tags <- as.vector(changed.sex$Tag.number) # change to cant.keep if filtered out only those caught twice
+
+changes<-length%>%
+  filter(Tag.number%in%c(list.tags))
 
 length<-length%>%
   filter(!Tag.number%in%c(list.tags))
@@ -417,3 +420,4 @@ dir()
 
 write.csv(metadata, "metadata.csv",row.names = FALSE)
 write.csv(length, "length.csv",row.names = FALSE)
+
