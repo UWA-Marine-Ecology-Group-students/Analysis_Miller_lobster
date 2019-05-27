@@ -19,10 +19,7 @@ library(R.utils)
 library(RCurl)
 # To tidy data
 library(plyr)
-library(dplyr)
-library(tidyr)
-library(purrr)
-library(readr)
+library(tidyverse)
 library(stringr)
 library(lubridate)
 # For googlesheets

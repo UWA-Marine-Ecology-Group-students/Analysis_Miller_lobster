@@ -2,17 +2,14 @@
 rm(list=ls()) # Clears memory
 
 # librarys----
-library(tidyr)
-library(dplyr)
 library(googlesheets)
 library(stringr)
 library(measurements)
 library(lubridate)
-library(readr)
 library(devtools)
 install_github("UWAMEGFisheries/GlobalArchive", dependencies = TRUE) # to check for updates
 library(GlobalArchive)
-library(purrr)
+library(tidyverse)
 
 # Set work directory----
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
