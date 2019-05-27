@@ -67,6 +67,7 @@ metadata <-ga.list.files("Metadata.csv")%>%
   dplyr::mutate(Trip=as.numeric(trip))%>%
   dplyr::mutate(Date=paste((str_sub(date,1,4)),(str_sub(date,5,6)),(str_sub(date,7,8)),sep="-"))%>%
   dplyr::mutate(Date=lubridate::as_date(ymd(Date)))%>%
+  dplyr::rename(Pot.remarks=comment)%>%
   dplyr::select(-c(date,latitude,longitude,trip))%>%
   glimpse()
 
@@ -196,24 +197,54 @@ length.sevenmile<-sevenmile%>%
   filter(!is.na(Carapace.length)&!is.na(Sex))%>%
   glimpse()
 
-# tidy names to join lenght
+# tidy names to join length ----
 names(length)<-ga.capitalise(names(length))
 names(length.fisheries)<-ga.capitalise(names(length.fisheries))
 names(length.fisher)<-ga.capitalise(names(length.fisher))
 names(length.sevenmile)<-ga.capitalise(names(length.sevenmile))
 
-# tidy names to join length
+# tidy names to join metadata ----
 names(metadata)<-ga.capitalise(names(metadata))
 names(metadata.fisheries)<-ga.capitalise(names(metadata.fisheries))
 names(metadata.fisher)<-ga.capitalise(names(metadata.fisher))
 names(metadata.sevenmile)<-ga.capitalise(names(metadata.sevenmile))
 
-# Add data from other sources to UWA data
-metadata.final<-bind_rows(metadata,metadata.fisheries,metadata.fisher,metadata.sevenmile)
-length.final<-bind_rows(length,length.fisheries,length.fisher,length.sevenmile)
+# Add data from other sources to UWA data ----
+metadata.final<-bind_rows(metadata,metadata.fisheries,metadata.fisher,metadata.sevenmile)%>%
+  select(-c(Time,Status,Depth,Observer,Depth.echosounder,Distance.from.shore.perpendicular.kilometer,Days.from.new.moon,Slope,Aspect,Rugosity,Curvature,Curv.plan,Curv.profile,Distance.from.shore.nearestpoint.kilometer,Sd.10m,Sd.15m,Sd.20m,Sd.25m,Sd.50m,Sd.75m,Sd.100m,Sd.200m,Sd.500m,Sd.1000m,Puerulus.count.1k,Puerulus.count.2k,Puerulus.count.3k,Substrate,Project,Campaignid))
+
+
+length.final<-bind_rows(length,length.fisheries,length.fisher,length.sevenmile)%>%
+  replace_na(list(Dead="Alive",Cable.tie=FALSE))%>%
+  select(-c(Family,Genus,Species,Project,Campaignid))
 
 names(metadata.final)
 names(length.final)
+
+# Final check of metadata format before saving ----
+unique(metadata.final$Source)
+unique(metadata.final$Location) # OK
+unique(metadata.final$Pot.remarks) # OK
+unique(metadata.final$Pwo) # OK
+unique(metadata.final$Pwf) # OK
+unique(metadata.final$Trip) # OK - one missing though?
+unique(metadata.final$Exclude.pots) # Ok
+
+# Final check of length format before saving ----
+unique(length.final$Source) # OK
+unique(length.final$Recapture) # OK
+unique(length.final$Sex) # OK
+unique(length.final$Colour) # OK
+unique(length.final$Dead) # OK
+unique(length.final$Individual.remarks) # OK
+unique(length.final$Reproductive.stage) # OK
+unique(length.final$Setose.state) # OK
+unique(length.final$Egg.stage) # OK
+unique(length.final$Moult.stage) # OK
+unique(length.final$Cable.tie) # OK
+unique(length.final$Outlier) # OK
+unique(length.final$Tarspot) # OK
+unique(length.final$Reproductive.stage) # OK
 
 ## Save metadata, count and length files ----
 setwd(data.dir)
