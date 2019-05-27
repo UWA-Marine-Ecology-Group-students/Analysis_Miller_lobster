@@ -25,7 +25,8 @@ study<-"Lobster.Data"
 
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
-work.dir=("C:/GitHub/Analysis_Miller_lobster")
+# work.dir=("C:/GitHub/Analysis_Miller_lobster")
+work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 
 

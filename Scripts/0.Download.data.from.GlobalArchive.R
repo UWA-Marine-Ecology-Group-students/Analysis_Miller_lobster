@@ -10,7 +10,7 @@ rm(list=ls()) # Clear memory
 ## Load Libraries ----
 # To connect to GlobalArchive
 library(devtools)
-# install_github("UWAMEGFisheries/GlobalArchive") #to check for updates
+install_github("UWAMEGFisheries/GlobalArchive") #to check for updates
 library(GlobalArchive)
 library(httr)
 library(jsonlite)
@@ -30,6 +30,7 @@ library(googlesheets)
 
 ## Set your working directory ----
 working.dir=("C:/GitHub/Analysis_Miller_lobster")
+working.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 ## Save these directory names to use later----
 data.dir<-paste(working.dir,"Data",sep="/") 
@@ -43,7 +44,6 @@ unlink(download.dir, recursive=TRUE)
 ## Create Downloads, Staging and Tidy data folders ----
 dir.create(file.path(working.dir, "Data"))
 dir.create(file.path(data.dir, "Downloads"))
-dir.create(file.path(data.dir, "Staging"))
 dir.create(file.path(data.dir, "Tidy data"))
 
 ## Query from GlobalArchive----
