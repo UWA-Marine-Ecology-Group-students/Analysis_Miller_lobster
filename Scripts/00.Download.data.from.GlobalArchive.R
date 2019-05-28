@@ -27,7 +27,7 @@ library(googlesheets)
 
 ## Set your working directory ----
 working.dir=("C:/GitHub/Analysis_Miller_lobster")
-working.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+#working.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 ## Save these directory names to use later----
 data.dir<-paste(working.dir,"Data",sep="/") 
@@ -246,5 +246,5 @@ unique(length.final$Reproductive.stage) # OK
 ## Save metadata, count and length files ----
 setwd(data.dir)
 
-write.csv(metadata,"metadata.csv",row.names = FALSE)
-write.csv(length,"length.csv",row.names = FALSE)
+write.csv(metadata.final,"metadata.csv",row.names = FALSE)
+write.csv(length.final,"length.csv",row.names = FALSE)
