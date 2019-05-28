@@ -165,6 +165,8 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
   dplyr::mutate(Trip="10")%>%
   dplyr::mutate(Trip=as.numeric(Trip))%>%
   dplyr::mutate(Sample=as.character(POT_NO))%>%
+  dplyr::mutate(sample.date=paste(y,m,d,sep="-"))%>%
+  dplyr::mutate(Sample=paste(Sample,sample.date,sep="."))%>%
   dplyr::rename(Tag.number=VTAGNO)%>%
   dplyr::mutate(Tag.number=as.character(Tag.number))%>%
   dplyr::mutate(Tag.number=str_replace_all(.$Tag.number,c("V"="")))%>% #Removes V
@@ -248,3 +250,4 @@ setwd(data.dir)
 
 write.csv(metadata.final,"metadata.csv",row.names = FALSE)
 write.csv(length.final,"length.csv",row.names = FALSE)
+
