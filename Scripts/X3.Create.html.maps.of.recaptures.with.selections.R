@@ -103,16 +103,26 @@ pal <- colorFactor(c( "hotpink","blue"), domain = c("Male", "Female"))
 
 map.all.leaflet <- leaflet(dat.dots.map) %>% 
   fitBounds(~min(Longitude), ~min(Latitude), ~max(Longitude), ~max(Latitude))%>%
-  addTiles(group="Base map")%>% # All Lobsters
+  addProviderTiles(providers$Stamen.TonerLite, group = "Black and white")%>%
+  addTiles(group="Open street map")%>% 
+  # All Lobsters
   addCircleMarkers(data=dat.dots.map,~Longitude,~Latitude,radius = 4,color = ~pal(Sex),stroke = FALSE, fillOpacity = 0.5,popup = ~as.character(Labels),group="All data")%>% # Sub legal
   addCircleMarkers(data=filter(dat.dots.map,Carapace.length<76),~Longitude,~Latitude,radius = 4,color = ~pal(Sex),stroke = FALSE, fillOpacity = 0.5,popup = ~as.character(Labels),group="Sub-legal")%>%# Legal
   addCircleMarkers(data=filter(dat.dots.map,Carapace.length>=76),~Longitude,~Latitude,radius = 4,color = ~pal(Sex),stroke = FALSE, fillOpacity = 0.5,popup = ~as.character(Labels),group="Legal")%>%# Legend
   addLegend("bottomright", pal = pal, values = ~Sex,title = "Sex",opacity = 1)%>%# Control Layers
+  addMiniMap(position = "bottomleft")%>%
+  addMeasure(
+    position = "bottomleft",
+    primaryLengthUnit = "meters",
+    primaryAreaUnit = "sqmeters",
+    activeColor = "#3D535D",
+    completedColor = "#7D4479")%>%
   addLayersControl(
-    baseGroups = c("Base map"),
+    baseGroups = c("Open street map","Black and white"),
     overlayGroups = c("All data","Legal","Sub-legal"),
     options = layersControlOptions(collapsed = FALSE)
-  )
+  )%>%
+  addScaleBar()
 
 map.all.leaflet  
 
