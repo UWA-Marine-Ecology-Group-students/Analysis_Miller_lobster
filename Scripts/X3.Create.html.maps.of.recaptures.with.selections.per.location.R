@@ -141,53 +141,106 @@ glimpse(dat.map.recaptures)
 
 dat.dots.recap<-dat.map.recaptures%>%
   dplyr::rename(Latitude=Recapture.latitude,Longitude=Recapture.longitude)%>%
-  dplyr::select(Tag.number,Latitude,Longitude,Labels,Carapace.length)
+  dplyr::select(Tag.number,Latitude,Longitude,Labels,Carapace.length)%>%
+  left_join(.,sizes)
 
 dat.dots.release<-dat.map.releases%>%
   dplyr::rename(Latitude=Release.latitude,Longitude=Release.longitude)%>%
-  dplyr::select(Tag.number,Latitude,Longitude,Labels,Carapace.length)
+  dplyr::select(Tag.number,Latitude,Longitude,Labels,Carapace.length)%>%
+  left_join(.,sizes)
 
-dat.dots<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+sub.legal.labels<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+  dplyr::filter(Size%in%c("Sub-legal"))%>%
   dplyr::group_by(Latitude,Longitude)%>%
-  dplyr::summarise(Labels=paste(strwrap(Labels), collapse = " <br> <br> "))%>%
-  ungroup()
-
-dat.dots.map<-bind_rows(dat.dots.recap,dat.dots.release)%>%
-  dplyr::select(-c(Labels))%>%
-  left_join(.,release.locations.and.sex)%>%
-  left_join(.,dat.dots)%>%
-  arrange((Latitude))%>%
-  #mutate(Release.location=factor(Release.location, levels=unique(Release.location[order(desc(Latitude))]), ordered=TRUE))%>%
-  mutate(Release.location = factor(Release.location, levels = c("Seven Mile","Rivermouth","Irwin Reef", "Cliff Head","Golden Ridge")))%>%
-  left_join(.,sizes)%>%
+  dplyr::summarise(Labels=paste(strwrap(Labels, width = 100), collapse = "<br> <br>"))%>%
+  ungroup()%>%
   glimpse()
 
-unique(dat.dots.map$Release.location)
+legal.labels<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+  dplyr::filter(Size%in%c("Legal"))%>%
+  dplyr::group_by(Latitude,Longitude)%>%
+  dplyr::summarise(Labels=paste(strwrap(Labels, width = 100), collapse = "<br> <br>"))%>%
+  ungroup()
+
+sub.legal.to.legal.labels<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+  dplyr::filter(Size%in%c("Changed to legal size"))%>%
+  dplyr::group_by(Latitude,Longitude)%>%
+  dplyr::summarise(Labels=paste(strwrap(Labels, width = 100), collapse = "<br> <br>"))%>%
+  ungroup()
+
+all.labels<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+  dplyr::group_by(Latitude,Longitude)%>%
+  dplyr::summarise(Labels=paste(strwrap(Labels, width = 100), collapse = "<br> <br>"))%>%
+  ungroup()
+
+dat.map.all<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+  dplyr::select(-c(Labels))%>%
+  left_join(.,release.locations.and.sex)%>%
+  left_join(.,all.labels)%>%
+  arrange((Latitude))%>%
+  mutate(Release.location = factor(Release.location, levels = c("Seven Mile","Rivermouth","Irwin Reef", "Cliff Head","Golden Ridge")))%>%
+  glimpse()
+
+dat.map.sub.legal<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+  dplyr::select(-c(Labels))%>%
+  left_join(.,release.locations.and.sex)%>%
+  left_join(.,sub.legal.labels)%>%
+  arrange((Latitude))%>%
+  mutate(Release.location = factor(Release.location, levels = c("Seven Mile","Rivermouth","Irwin Reef", "Cliff Head","Golden Ridge")))%>%
+  filter(Size%in%c("Sub-legal"))%>%
+  glimpse()
+
+dat.map.legal<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+  dplyr::select(-c(Labels))%>%
+  left_join(.,release.locations.and.sex)%>%
+  left_join(.,legal.labels)%>%
+  arrange((Latitude))%>%
+  mutate(Release.location = factor(Release.location, levels = c("Seven Mile","Rivermouth","Irwin Reef", "Cliff Head","Golden Ridge")))%>%
+  filter(Size%in%c("Legal"))%>%
+  glimpse()
+
+dat.map.sub.legal.to.legal<-bind_rows(dat.dots.recap,dat.dots.release)%>%
+  dplyr::select(-c(Labels))%>%
+  left_join(.,release.locations.and.sex)%>%
+  left_join(.,sub.legal.to.legal.labels)%>%
+  arrange((Latitude))%>%
+  mutate(Release.location = factor(Release.location, levels = c("Seven Mile","Rivermouth","Irwin Reef", "Cliff Head","Golden Ridge")))%>%
+  filter(Size%in%c("Changed to legal size"))%>%
+  glimpse()
+
+
+unique(dat.map.all$Release.location)
 
 sex.pal <- colorFactor(c( "hotpink","blue"), domain = c("Male", "Female"))
 
 # http://tools.medialab.sciences-po.fr/iwanthue/
-loc.pal <- colorFactor(c("#d37083","#d09148","#e1d17d","#92c46a","#af76d5"),domain=dat.dots.map$Release.location)
+loc.pal <- colorFactor(c("#d37083","#d09148","#e1d17d","#92c46a","#af76d5"),domain=dat.map.all$Release.location)
 
-map.all.leaflet <- leaflet(dat.dots.map) %>% 
+map.all.leaflet <- leaflet(dat.map.all) %>% 
   # Set Box
   fitBounds(~min(Longitude), ~min(Latitude), ~max(Longitude), ~max(Latitude))%>%
   
   # Add background maps
+  addProviderTiles(providers$Esri.OceanBasemap, group = "Ocean basemap") %>%
+  addProviderTiles(providers$Esri.WorldImagery, group = "World imagery") %>%
   addProviderTiles(providers$Stamen.TonerLite, group = "Black and white")%>%
   addTiles(group="Open street map")%>% 
   
+  # All data
+  addCircleMarkers(data=dat.map.all,~Longitude,~Latitude,radius = 4,color="black",fillColor = ~loc.pal(Release.location),stroke = TRUE,weight=1, fillOpacity = 1,popup = ~as.character(Labels),group="All sizes")%>%
+  
+  
   # Sub legal
-  addCircleMarkers(data=filter(dat.dots.map,Size%in%c("Sub-legal")),~Longitude,~Latitude,radius = 4,color="black",fillColor = ~loc.pal(Release.location),stroke = TRUE,weight=1, fillOpacity = 1,popup = ~as.character(Labels),group="Sub-legal")%>%
+  addCircleMarkers(data=dat.map.sub.legal,~Longitude,~Latitude,radius = 4,color="black",fillColor = ~loc.pal(Release.location),stroke = TRUE,weight=1, fillOpacity = 1,popup = ~as.character(Labels),group="Sub-legal")%>%
   
   # Legal
-  addCircleMarkers(data=filter(dat.dots.map,Size%in%c("Legal")),~Longitude,~Latitude,radius = 4,color="black",fillColor = ~loc.pal(Release.location),stroke = TRUE,weight=1, fillOpacity = 0.5,popup = ~as.character(Labels),group="Legal")%>%
+  addCircleMarkers(data=dat.map.legal,~Longitude,~Latitude,radius = 4,color="black",fillColor = ~loc.pal(Release.location),stroke = TRUE,weight=1, fillOpacity = 0.5,popup = ~as.character(Labels),group="Legal")%>%
   
   # Changed size
-  addCircleMarkers(data=filter(dat.dots.map,Size%in%c("Changed to legal size")),~Longitude,~Latitude,radius = 4,color="black",fillColor = ~loc.pal(Release.location),fillOpacity = 0.5,popup = ~as.character(Labels),stroke = TRUE,weight=1,group="Sub-legal to legal")%>% 
+  addCircleMarkers(data=dat.map.sub.legal.to.legal,~Longitude,~Latitude,radius = 4,color="black",fillColor = ~loc.pal(Release.location),fillOpacity = 0.5,popup = ~as.character(Labels),stroke = TRUE,weight=1,group="Sub-legal to legal")%>% 
   
   # Legend
-  addLegend("bottomright", pal = loc.pal, values = ~dat.dots.map$Release.location, title = "Release Location",opacity = 1)%>%# 
+  addLegend("bottomright", pal = loc.pal, values = ~dat.map.all$Release.location, title = "Release Location",opacity = 1)%>%# 
   # Inset Map
   addMiniMap(position = "bottomleft")%>% 
   # Measure tool
@@ -199,8 +252,8 @@ map.all.leaflet <- leaflet(dat.dots.map) %>%
     completedColor = "#7D4479")%>%
   # Control Layers
   addLayersControl(
-    baseGroups = c("Open street map","Black and white"),
-    overlayGroups = c("Legal","Sub-legal","Sub-legal to legal"),
+    baseGroups = c("Ocean basemap","World imagery","Open street map","Black and white"),
+    overlayGroups = c("All sizes","Legal","Sub-legal","Sub-legal to legal"),
     options = layersControlOptions(collapsed = FALSE))%>%
   # Scale Bar
   addScaleBar()
@@ -218,6 +271,7 @@ dat.map.all<-bind_rows(dat.map.releases,dat.map.recaptures)%>%
   left_join(.,sizes)%>%
   glimpse()
 
+
 # Loop through tags to add to map ----
 uniq <- unique(unlist(dat.map.all$Tag.number))
 uniq
@@ -228,6 +282,8 @@ for (i in 1:length(uniq)){
   print(paste("Plotting ",unique(temp.dat$Tag.number),", ",unique(temp.dat$Progress),"% finished",sep=""))
   
   map.all.leaflet <- map.all.leaflet%>%
+    addPolylines(data=temp.dat, ~Release.longitude,~Release.latitude,weight = 0.25,fillOpacity = 0.75,color = "black",group="All sizes")%>%
+    
     addPolylines(data=filter(temp.dat,Size%in%c("Sub-legal")), ~Release.longitude,~Release.latitude,weight = 0.25,fillOpacity = 0.75,color = "black",group="Sub-legal")%>%
     addPolylines(data=filter(temp.dat,Size%in%c("Legal")), ~Release.longitude,~Release.latitude,weight = 0.25,fillOpacity = 0.75,color = "black",group="Legal")%>%
     addPolylines(data=filter(temp.dat,Size%in%c("Changed to legal size")), ~Release.longitude,~Release.latitude,weight = 0.25,fillOpacity = 0.75,color = "black",group="Sub-legal to legal")
