@@ -4,31 +4,15 @@ rm(list=ls()) # Clears memory
 # librarys----
 library(tidyr)
 library(dplyr)
-library(googlesheets)
 library(stringr)
 library(lubridate)
+library(googlesheets)
 
 # Study name----
 study<-"Lobster.Data"
 
 # Set work directory----
-
-#For Desktop
-# work.dir=("C:/Users/00097191/Google Drive/MEG/Projects/Projects_WRL/Project_WRL_low-catch zone/Fieldwork and Reporting/03_Trapping/Analysis_WRL_Reds_2018")
-
-#For Laptop
-# setwd("~/Google Drive/Analysis_WRL_Reds_2018/Data")
-# setwd(work.dir)
-# dir()
-
-#For Tims Github 
-
-# work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
-# work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
-# work.dir=("C:/GitHub/Analysis_Miller_lobster")
 work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
-
-
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -151,103 +135,86 @@ get.sst<-function(data){
   if(anyNA(data$sst)){print("Email matt and say: There are a lot of sst NAs. You need to increase the number of nearest points to search")}
   return(data$sst)
 } #Matts Function for sst data
-# Import and make data----
-
-# # For Rstudio Server
-options(httr_oob_default=TRUE)
-# options(httr_oob_default=FALSE) #for desktop
-# gs_auth(new_user = TRUE) #only run once
-
-# Import length data
-
-dat.length<-read.csv("length.csv")%>%
-  mutate(ID=1:nrow(.))%>% #Need so Total damage line below is summed per row, not total
-  group_by(ID)%>%
-  dplyr::mutate(Total.damage=sum(Damage.old.a+Damage.old.l+Damage.new.a+Damage.new.l,na.rm = TRUE))%>%
-  ungroup()%>%
-  select(Sample, Tag.number, Carapace.length, Sex, Colour, Count)%>%
+# Import Catch data----
+dat.catch <- read.csv("dat.catch.csv")%>%
+  dplyr::mutate(Date=as_date(ymd(Date)))%>%
   glimpse()
 
-#Check
-length(unique(dat.length$Tag.number)) #9716
-length(dat.length$Carapace.length) #14503
-glimpse(dat.length)
-unique(dat.length$Location)
-
-#Import Pot data
-dat.pot<-read.csv("metadata.csv")%>%
-  filter(!Location=="Rivermouth")%>% #Removes NAs from Fishers as well. good.
-  dplyr::filter(!Pwo%in%c("1", "2", "X"))%>% #Removed 148 pots with Occy's.
-  select(Date, Location, Site,Day.pull, Sample, Longitude, Latitude )%>%
-  glimpse()
-
-#Check
-unique(dat.pot$Pwo)
-unique(dat.pot$Location) 
-unique(dat.pot$Source)
-
-#Join Length and Pot data----
-glimpse(dat.length) #14,503
-glimpse(dat.pot) #1,782
-
-length(unique(dat.length$Sample)) # 1482
-
-dat.all<- dplyr::semi_join(dat.length, dat.pot)%>%
-  left_join(.,dat.pot)%>%
-  glimpse()
-
-dat.all<-dplyr::inner_join(dat.length, dat.pot)%>%
-  glimpse()
-
-#Seperate into Legal and Sublegal
-
-dat.legal <-dat.all%>%
-  mutate(sizeclass= ifelse(Carapace.length>=76.0,"Legal", "Sublegal"))%>% 
-  filter(!is.na(Carapace.length))%>%
-  glimpse()
-
-sum.legal <-dat.legal%>%
-  group_by(Sample, sizeclass)%>%
-  dplyr::summarise(Count=sum(Count))%>%
-  ungroup()%>%
+#Bring in swell data for 2018----
+dat.swell.18 <-gs_title("JDW2018")%>%
+  gs_read_csv(ws="Sheet1", header=TRUE)%>%
+  mutate(Date=as.Date(Date,format= "%d/%m/%Y"))%>%
+  fill(2:12, .direction = c("down"))%>% #Some data is missing from certain days. k. cool. whatever.
+  group_by(Date) %>%
+  summarise_all(funs(mean))%>% #Find average per day
   distinct()%>%
-  glimpse()
-
-#FIND SUM PER POT----
-sum.dat <-dat.all%>%
-  group_by(Sample)%>%
-  dplyr::summarise(Count=sum(Count))%>%
+  dplyr::rename("Hs.m.sw"="Hs(m).sw",
+                "Hs.m.sea"="Hs(m).sea",
+                "T1.s.sw"="T1(s).sw",
+                "T1.s.sea"="T1(s).sea")%>%
+  select(Date, Hs.m.sw, Hs.m.sea, T1.s.sw, T1.s.sea)%>%
   ungroup()%>%
-  mutate(sizeclass="All")%>%
+  glimpse()
+
+#2017 data----
+# Added as sheet 2 to 2018 data. 
+
+dat.swell.17 <-gs_title("JDW2018")%>%
+  gs_read_csv(ws="Sheet2", header=TRUE)%>%
+  mutate(Date=as.Date(Date,format= "%d/%m/%Y"))%>%
+  fill(2:12, .direction = c("down"))%>%
+  group_by(Date) %>%
+  summarise_all(funs(mean))%>%
   distinct()%>%
-  bind_rows(.,sum.legal)%>%
-  arrange(Sample)%>%
+  dplyr::rename("Hs.m.sw"="Hs(m).sw",
+                "Hs.m.sea"="Hs(m).sea",
+                "T1.s.sw"="T1(s).sw",
+                "T1.s.sea"="T1(s).sea")%>%
+  select(Date, Hs.m.sw, Hs.m.sea, T1.s.sw, T1.s.sea)%>%
+  ungroup()%>%
   glimpse()
 
-dat.location <- dat.all%>%
-  select(Date, Sample, Location, Site, Longitude, Latitude)%>%
-  distinct()%>%
-  group_by(trip.day.trap)%>%
-  slice(1)%>% # Fix the 5 errors and turn off the group by and the slice
+#combine 2017 & 2018 swell data----  
+dat.swell<- rbind(dat.swell.17, dat.swell.18)%>%
   glimpse()
 
-test<-dat.location%>%
-  group_by(trip.day.trap)%>%
-  summarise(n=n())
 
-length(unique(dat.location$trip.day.trap)) # 1754
-
-#JOIN BACK WITH DATA: Trap.Id, Sum per pot, Location, Site----
-test.dat<-sum.dat%>%distinct(trip.day.trap)
-
-sum.per.pot<-full_join(sum.dat,dat.location)%>%
-  complete(sizeclass,nesting(trip.day.trap))%>%
-  select(sizeclass,trip.day.trap,Count)%>%
-  left_join(.,dat.location)%>%
-  replace_na(list(Count=0))%>%
-  arrange(trip.day.trap)%>%
+#Join Catch data  with Swell data (dat.swell)----
+glimpse(dat.catch)
+catch.swell <- left_join(dat.catch, dat.swell, by="Date")%>%
   glimpse()
 
-length(unique(sum.per.pot$trip.day.trap))
-1754*3
+#Now bring in SST data----
+catch.sst<-catch.swell%>%
+  select(Date, Longitude, Latitude)%>%
+  dplyr::rename("Lat"="Latitude", "Long"="Longitude")%>%
+  mutate(Lat=as.numeric(Lat))%>%
+  mutate(Long=as.numeric(Long))%>%
+  unite(SiteNo, c(Lat,Long), sep = "", remove = F)%>% 
+  glimpse()
+
+
+#Bring in SST data- using Mathew's function----
+catch.sst$sst<-get.sst(catch.sst) #Keeps getting an error: Server is down? Fixed!
+glimpse(catch.sst)
+
+#Find average
+av.catch.sst<-catch.sst%>% #Some have the same lats and longs and sst 
+  select(Date, SiteNo, sst)%>%
+  group_by(Date, SiteNo)%>%
+  summarise_all(funs(mean))%>%
+  glimpse()
+
+catch.swell%<>% # Need to create a similar column 'SiteNo'
+  unite(SiteNo, c(Latitude,Longitude), sep ="" , remove = F)%>% 
+  glimpse()
+
+#COMBINE CATCH, SST AND SWELL DATA---- 
+catch.sw.sst <- left_join(catch.swell, av.catch.sst, by=c("SiteNo", "Date"))%>%
+  glimpse()
+
+#Save for GAM-----
+setwd(data.dir)
+write.csv(catch.sw.sst,"catch.sw.sst.csv", row.names=F)
+
 

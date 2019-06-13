@@ -18,42 +18,29 @@ library(mclust)
 study<-"kmeanscluster"
 
 # Set work directory----
-
-work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
-work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Set sub-directories----
-
 data.dir=paste(work.dir,"Data",sep="/")
 plot.dir=paste(work.dir,"Plots",sep="/")
 
-#Bring in recapture data from ecocloud----
-
-setwd("~/workspace/Analysis_Miller_WRL/Data")
-
-dat.rr<- read_csv("dat.rr.clean.csv")%>% #Updated: cleaned and no Jan-April
+#Bring in recapture data ----
+#dat.rr<- read_csv("dat.rr.clean.csv")%>% #Updated: cleaned and no Jan-April
 #dat.rr<-read_csv("dat.rr.csv")%>% #data we used with simon and jason
 #dat.rr <- read_csv("dat.rr.all.csv")%>%  #updated data (cleaned)
 #dat.rr<- read_csv("dat.rr.new.csv")%>% #No Jan-April and old data
-   glimpse()
+#   glimpse()
 
-
-dat.rr<- dat.rr%>%
-  mutate(inc=recap.cl-initial.cl)%>% #Makes column for growth increment
-  dplyr::mutate(diff=recap.Date-Date)%>%
-  dplyr::rename(Site=mini.site.x)%>%
+k.dat<-read_csv("Growth.Data.csv")%>%
   glimpse()
 
-k.dat<- dat.rr%>%
-  select(Date, Tag.number, Location.int, Sex.int, initial.cl, recap.cl, recap.Date, inc, diff, Site )%>%
-  dplyr::filter(Tag.number!="198428" & Tag.number!="196072")%>% #Outliers from CH 
-  dplyr::filter(Tag.number!="K0653" & Tag.number!="K0457" & Tag.number!="K1045"& Tag.number!="K0755")%>%
-  glimpse()
-
+glimpse(k.dat)
 #check
-sum(k.dat$Sex.int=="UNKNOWN")
+unique(k.dat$Sex.recap)
+unique(k.dat$Sex)
 unique(k.dat$Site)
-unique(k.dat$Location.int)
+unique(k.dat$Location)
+unique(k.dat$Location.recap)
 
 #Removes negative growth data 
 # k.dat1 <- k.dat%>%
@@ -84,14 +71,17 @@ Theme1 <-
 glimpse(k.dat)
 #create length bins
 
-k.dat %<>% mutate(lbin=as.numeric(cut(initial.cl, c(0,50,60,70,100))), Cluster=NA, moult=NA) %>% filter(inc>=0)%>% glimpse
+k.dat %<>% mutate(lbin=as.numeric(cut(Carapace.length, c(0,50,60,70,100))), 
+  Cluster=NA, moult=NA) %>% 
+  filter(inc>=0)%>% 
+  glimpse
 
 #subset to SM
 sm.kdat<-k.dat%>%  
-  filter(Location.int=="Seven Mile")%>%  
+  filter(Location=="Seven Mile")%>%  
   glimpse()
 
-tapply(sm.kdat$inc, list(sm.kdat$lbin, sm.kdat$Sex.int), length)
+tapply(sm.kdat$inc, list(sm.kdat$lbin, sm.kdat$Sex), length)
 
 
 # par(mfrow=c(3,3))
@@ -112,20 +102,21 @@ tapply(sm.kdat$inc, list(sm.kdat$lbin, sm.kdat$Sex.int), length)
 #     sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s,] <- tmp
 #   }}
 
-par(mfrow=c(3,3))
-glimpse(sm.dat)
+par(mfrow=c(2,2))
+glimpse(sm.kdat)
 
-for(s in unique(sm.kdat$Sex.int)){
+for(s in unique(sm.kdat$Sex)){
    for(lb in sort(unique(sm.kdat$lbin))){
-    tmp <- sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s,]
+    tmp <- sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex==s,]
     #if(max(tmp$inc,na.rm=T)>18){ cent <- c(0,4,10)} else {cent <- c(0,4)} #,20 ,10
-    if( !(s=='Female'&lb==3)& !(s=='Male'&lb==3) & !(s=='Male'&lb==4)){cent<-c(0,4)} else {cent<- c(0,4,10)} #  
-    # tmp <- sm.kdat %>% filter(lbin==lb & Sex.int==s & !is.na(initial.cl))
-    #   if(!(s=='Female' & lb==3)){ cl.sm <- kmeans(tmp$inc,c(0,4,8))
-    #   } else {cl.sm <- kmeans(tmp$inc,c(0,4))}
+    
+    # if(!(s=='Female'&lb==3)& !(s=='Male'&lb==3)& !(s=='Male'&lb==4) ){cent<-c(0,4)} else if (!(s=='Male'&lb==3) & !(s=='Male'&lb==4)) {cent<- c(0,4,10,12)} else {cent<- c(0,4,10)}
+    
+    if(!(s=='Female'&lb==3) & !(s=='Female'&lb==4)& !(s=='Male'&lb==3)& !(s=='Male'&lb==1) & !(s=='Male'&lb==4)){cent<-c(0,4)} else if (!(s=='Female'&lb==3)) {cent<- c(0,4,8)} else {cent<- c(0,4,8,10)}
+    
     cl.sm <- kmeans(tmp$inc,cent)
     tmp$Cluster <- cl.sm$cluster
-    plot(tmp$initial.cl, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
+    plot(tmp$Carapace.length, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
     tmp2 <- tmp %>% 
     dplyr::group_by(Cluster) %>% 
     dplyr::summarise(mn=mean(inc))%>% 
@@ -133,7 +124,7 @@ for(s in unique(sm.kdat$Sex.int)){
     dplyr::arrange(mn) 
     tmp2$moults <- 0:(nrow(tmp2)-1)
     tmp$moult <- tmp2$moults[match(tmp$Cluster,tmp2$Cluster)]
-    sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s,] <- tmp
+    sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex==s,] <- tmp
   }}
 
 #check
@@ -145,7 +136,7 @@ glimpse(sm.kdat)
 #Look at just moult no. 1
 dat2 <- sm.kdat %>% 
   dplyr::filter(moult==1) %>% 
-  dplyr::group_by(Sex.int, lbin) %>% 
+  dplyr::group_by(Sex, lbin) %>% 
   dplyr::summarise(mn=mean(inc)) %>%
   glimpse()
 
@@ -153,154 +144,139 @@ dat.sm <- dat2
 
 #Plot mean inc per size class per sex for moult 1
 #should properly Plot this!!
-plot(dat.sm$lbin, dat.sm$mn, col=as.numeric(as.factor(dat.sm$Sex.int)),pch=16, ylim=c(0,7))
+plot(dat.sm$lbin, dat.sm$mn, col=as.numeric(as.factor(dat.sm$Sex)),pch=16, ylim=c(0,7))
 
 #Save moult data in k.dat dataframe
-k.dat[k.dat$Location.int=="Seven Mile",] <- sm.kdat
+k.dat[k.dat$Location=="Seven Mile",] <- sm.kdat
 
 #### Irwin Reef----
-k.dat %<>% filter(!is.na(Location.int))
+k.dat %<>% filter(!is.na(Location))
 
 #subset to Irwin Reef
-sm.kdat<-k.dat%>% 
-  dplyr::filter(Location.int=="Irwin Reef" & !is.na(Location.int)) %>%  
+ir.kdat<-k.dat%>% 
+  dplyr::filter(Location=="Irwin Reef" & !is.na(Location)) %>%  
   glimpse()
 
-
-
-
-
 #Create length bins
-sm.kdat %<>% mutate(lbin=as.numeric(cut(initial.cl, c(0,50,60,70,100)))) %>% filter(!is.na(sm.kdat$lbin))
+ir.kdat %<>% mutate(lbin=as.numeric(cut(Carapace.length, c(0,50,60,70,100)))) %>% filter(!is.na(ir.kdat$lbin))
 
-tapply(sm.kdat$inc, list(sm.kdat$lbin, sm.kdat$Sex.int), length)
+tapply(ir.kdat$inc, list(ir.kdat$lbin, ir.kdat$Sex), length)
 #Loop to can apply kmean to each sex and size class combination
-par(mfrow=c(3,3))
-for(s in unique(sm.kdat$Sex.int)){
-  for(lb in sort(unique(sm.kdat$lbin))){
-    tmp <- sm.kdat %>% filter(lbin==lb & Sex.int==s & !is.na(initial.cl))
-    if(max(tmp$inc,na.rm=T)>18){ cent <- c(0,4,10,20)} else {cent <- c(0,4,10)}
-    cl.sm <- kmeans(tmp$inc,cent)
-    tmp$Cluster <- cl.sm$cluster
-    plot(tmp$initial.cl, tmp$inc, ylim=c(0,22),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
+par(mfrow=c(2,2))
+for(s in unique(ir.kdat$Sex)){
+  for(lb in sort(unique(ir.kdat$lbin))){
+    tmp <- ir.kdat %>% filter(lbin==lb & Sex==s & !is.na(Carapace.length))
+    #if(max(tmp$inc,na.rm=T)>18){ cent <- c(0,4,10)} else {cent <- c(0,4)} #,20 ,10
+    if( !(s=='Female'&lb==3)& !(s=='Female'&lb==2) & !(s=='Female'&lb==1)& !(s=='Male'&lb==3) & !(s=='Male'&lb==2)& !(s=='Male'&lb==4)){cent<-c(0,4)} else {cent<- c(0,4,10)} #
+    cl.ir <- kmeans(tmp$inc,cent)
+    tmp$Cluster <- cl.ir$cluster
+    plot(tmp$Carapace.length, tmp$inc, ylim=c(0,22),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
     tmp2 <- tmp %>% 
       dplyr::group_by(Cluster) %>% 
       dplyr::summarise(mn=mean(inc)) %>% 
       dplyr::arrange(mn)
     tmp2$moults <- 0:(nrow(tmp2)-1)
     tmp$moult <- tmp2$moults[match(tmp$Cluster,tmp2$Cluster)]
-    sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s & !is.na(sm.kdat$initial.cl),] <- tmp
-    as.data.frame(sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s & !is.na(sm.kdat$lbin)& !is.na(sm.kdat$initial.cl)& !is.na(sm.kdat$Sex.int),])
+    ir.kdat[ir.kdat$lbin==lb & ir.kdat$Sex==s & !is.na(ir.kdat$Carapace.length),] <- tmp
+    as.data.frame(ir.kdat[ir.kdat$lbin==lb & ir.kdat$Sex==s & !is.na(ir.kdat$lbin)& !is.na(ir.kdat$Carapace.length)& !is.na(ir.kdat$Sex),])
     
   }}
 
 #check
 glimpse(tmp2)
 glimpse(tmp)
-glimpse(sm.kdat)
+glimpse(ir.kdat)
 #subset to only 1 moult recaps
-dat2 <- sm.kdat %>%  
+dat2 <- ir.kdat %>%  
   dplyr::filter(moult==1) %>%  
-  dplyr::group_by(Sex.int, lbin) %>%  
+  dplyr::group_by(Sex, lbin) %>%  
   dplyr::summarise(mn=mean(inc))%>%
   glimpse()
 
 #Plot av. increase per length bin
-plot(dat2$lbin, dat2$mn, col=as.numeric(as.factor(dat2$Sex.int)),pch=16, ylim=c(0,10))
+plot(dat2$lbin, dat2$mn, col=as.numeric(as.factor(dat2$Sex)),pch=16, ylim=c(0,10))
 
 dat.ir <-dat2
 
-glimpse(sm.kdat)
+glimpse(ir.kdat)
 
-k.dat[k.dat$Location.int=="Irwin Reef" & !is.na(k.dat$lbin)& !is.na(k.dat$initial.cl)& !is.na(k.dat$Sex.int),] <- sm.kdat
+k.dat[k.dat$Location=="Irwin Reef" & !is.na(k.dat$lbin)& !is.na(k.dat$Carapace.length)& !is.na(k.dat$Sex),] <- ir.kdat
 
 
 #### Cliff Head-----
-k.dat %<>% filter(!is.na(Location.int))
+k.dat %<>% filter(!is.na(Location))
 glimpse(k.dat)
 
 #filter to Cliff Head only
-sm.kdat<-k.dat%>% 
-  dplyr::filter(Location.int=="Cliff Head" & !is.na(Location.int)) %>%  
+ch.kdat<-k.dat%>% 
+  dplyr::filter(Location=="Cliff Head" & !is.na(Location)) %>%  
   glimpse()
 
-# help('mutate')
 #Create length bins
-sm.kdat %<>% dplyr::mutate(lbin=as.numeric(cut(initial.cl, c(0,50,60,70,100)))) %>% dplyr::filter(!is.na(sm.kdat$lbin))%>% glimpse()
+ch.kdat %<>% 
+  dplyr::mutate(lbin=as.numeric(cut(Carapace.length, c(0,50,60,70,100)))) %>%
+  dplyr::filter(!is.na(ch.kdat$lbin))%>% 
+  glimpse()
 
-tapply(sm.kdat$inc, list(sm.kdat$lbin, sm.kdat$Sex.int), length)
+tapply(ch.kdat$inc, list(ch.kdat$lbin, ch.kdat$Sex), length)
 
-# 
-# for(s in unique(sm.kdat$Sex.int)){
-#   for(lb in (2:4)){     #c(2,4)
-#     tmp <- sm.kdat %>% filter(lbin==lb & Sex.int==s & !is.na(initial.cl))
-#     if(max(tmp$inc,na.rm=T)>18){ cent <- c(0,4,10,20)} else {cent <- c(0,4,10)} #,20 #,10
-#     cl.sm <- kmeans(tmp$inc,cent)
-#     tmp$Cluster <- cl.sm$cluster
-#     plot(tmp$initial.cl, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
-#     tmp2 <- tmp %>% 
-#       dplyr::group_by(Cluster) %>% 
-#       dplyr::summarise(mn=mean(inc)) %>% 
-#       dplyr::arrange(mn)
-#     tmp2$moults <- 0:(nrow(tmp2)-1)
-#     tmp$moult <- tmp2$moults[match(tmp$Cluster,tmp2$Cluster)]
-#     sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s & !is.na(sm.kdat$initial.cl),] <- tmp
-#     as.data.frame(sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s & !is.na(sm.kdat$lbin)& !is.na(sm.kdat$initial.cl)& !is.na(sm.kdat$Sex.int),])
-#     
-#   }}
+#Very few in length 1 & 3-Will probably just exclude those
 
 par(mfrow=c(3,3))
-for(s in unique(sm.kdat$Sex.int)){
+for(s in unique(ch.kdat$Sex)){
   for(lb in c(2,4)) {     #c(2,4)
-    tmp <- sm.kdat %>% filter(lbin==lb & Sex.int==s & !is.na(initial.cl))
+    tmp <- ch.kdat %>% filter(lbin==lb & Sex==s & !is.na(Carapace.length))
     if(!(s=='Male'&lb==4) & !(s=='Male'&lb==2) & !(s=='Female'&lb==4)){cent<-c(1)} 
     else {cent<- c(0,4,10)}
-    cl.sm <- kmeans(tmp$inc,cent)
-    tmp$Cluster <- cl.sm$cluster
-    plot(tmp$initial.cl, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
+    cl.ch <- kmeans(tmp$inc,cent)
+    tmp$Cluster <- cl.ch$cluster
+    plot(tmp$Carapace.length, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
     tmp2 <- tmp %>% 
       dplyr::group_by(Cluster) %>% 
       dplyr::summarise(mn=mean(inc)) %>% 
       dplyr::arrange(mn)
     tmp2$moults <- 0:(nrow(tmp2)-1)
     tmp$moult <- tmp2$moults[match(tmp$Cluster,tmp2$Cluster)]
-    sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s & !is.na(sm.kdat$initial.cl),] <- tmp
-    as.data.frame(sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s & !is.na(sm.kdat$lbin)& !is.na(sm.kdat$initial.cl)& !is.na(sm.kdat$Sex.int),])
+    ch.kdat[ch.kdat$lbin==lb & ch.kdat$Sex==s & !is.na(ch.kdat$Carapace.length),] <- tmp
+    as.data.frame(ch.kdat[ch.kdat$lbin==lb & ch.kdat$Sex==s & !is.na(ch.kdat$lbin)& !is.na(ch.kdat$Carapace.length)& !is.na(ch.kdat$Sex),])
     
   }}
 
-dat2 <- sm.kdat %>% 
+
+dat2 <- ch.kdat %>% 
   dplyr::filter(moult==1) %>% 
-  dplyr::group_by(Sex.int, lbin) %>% 
+  dplyr::group_by(Sex, lbin) %>% 
   dplyr::summarise(mn=mean(inc)) %>%
   glimpse() 
 
-plot(dat2$lbin, dat2$mn, col=as.numeric(as.factor(dat2$Sex.int)),pch=16, ylim=c(0,20))
+plot(dat2$lbin, dat2$mn, col=as.numeric(as.factor(dat2$Sex)),pch=16, ylim=c(0,20))
 
 dat.ch <- dat2
 
-k.dat[k.dat$Location.int=="Cliff Head" & !is.na(k.dat$lbin)& !is.na(k.dat$initial.cl)& !is.na(k.dat$Sex.int),] <- sm.kdat
-glimpse(k.dat)
-
+k.dat[k.dat$Location=="Cliff Head" & !is.na(k.dat$lbin)& !is.na(k.dat$Carapace.length)& !is.na(k.dat$Sex),] <- ch.kdat
+glimpse(ch.kdat)
 
 
 #### Golden Ridge-----
-sm.kdat<-k.dat%>% 
-  dplyr::filter(Location.int=="Golden Ridge" & !is.na(Location.int)) %>%  
+gr.kdat<-k.dat%>% 
+  dplyr::filter(Location=="Golden Ridge" & !is.na(Location)) %>%  
   glimpse()
 
-sm.kdat %<>% mutate(lbin=as.numeric(cut(initial.cl, c(0,50,60,70,100)))) %>% filter(!is.na(sm.kdat$lbin))
-tapply(sm.kdat$inc, list(sm.kdat$lbin, sm.kdat$Sex.int), length)
+gr.kdat %<>% mutate(lbin=as.numeric(cut(Carapace.length, c(0,50,60,70,100)))) %>% filter(!is.na(gr.kdat$lbin))
+tapply(gr.kdat$inc, list(gr.kdat$lbin, gr.kdat$Sex), length)
+
+#Not that many in length bin 1- might be okay.
+#Or Male length bin 3
 
 par(mfrow=c(3,3))
-for(s in unique(sm.kdat$Sex.int)){
-  for(lb in c(1:4)){
-    if(!(s=='Male'&lb==3) & !(s=='Female'&lb==4)){
-    tmp <- sm.kdat %>% filter(lbin==lb & Sex.int==s & !is.na(initial.cl))
-      if(!(s=='Female' & lb>=3)){ cl.sm <- kmeans(tmp$inc,c(0,4,10))
-      } else {cl.sm <- kmeans(tmp$inc,c(0,10))}
-      tmp$Cluster <- cl.sm$cluster
-      plot(tmp$initial.cl, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
+for(s in unique(gr.kdat$Sex)) {
+  for(lb in c(1:4)) {
+    if(!(s=='Male'&lb==3) & !(s=='Female'&lb==4)) {
+    tmp <- gr.kdat %>% filter(lbin==lb & Sex==s & !is.na(Carapace.length))
+      if(!(s=='Female' & lb>=3)){ cl.gr <- kmeans(tmp$inc,c(0,4,10))
+      } else {cl.gr <- kmeans(tmp$inc,c(0,10))}
+      tmp$Cluster <- cl.gr$cluster
+      plot(tmp$Carapace.length, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
   #    plot(tmp$initial.cl, tmp$inc, ylim=c(0,20),col=1,pch=16, main=paste(s, lb))
       tmp2 <- tmp %>% 
         dplyr::group_by(Cluster) %>% 
@@ -308,7 +284,7 @@ for(s in unique(sm.kdat$Sex.int)){
         dplyr::arrange(mn)
       tmp2$moults <- 0:(nrow(tmp2)-1)
       tmp$moult <- tmp2$moults[match(tmp$Cluster,tmp2$Cluster)]
-      sm.kdat[sm.kdat$lbin==lb & sm.kdat$Sex.int==s & !is.na(sm.kdat$initial.cl),] <- tmp}
+      gr.kdat[gr.kdat$lbin==lb & gr.kdat$Sex==s & !is.na(gr.kdat$Carapace.length),] <- tmp}
   }}
 
 #check
@@ -316,108 +292,221 @@ glimpse(tmp)
 glimpse(tmp2)
 
 #av inc per size class/sex for moult 1 only
-dat2 <- sm.kdat %>% 
+dat2 <- gr.kdat %>% 
   dplyr::filter(moult==1) %>% 
-  dplyr::group_by(Sex.int, lbin) %>% 
+  dplyr::group_by(Sex, lbin) %>% 
   dplyr::summarise(mn=mean(inc)) %>%
   glimpse()
 
-plot(dat2$lbin, dat2$mn, col=as.numeric(as.factor(dat2$Sex.int)),pch=16, ylim=c(0,10))
+plot(dat2$lbin, dat2$mn, col=as.numeric(as.factor(dat2$Sex)),pch=16, ylim=c(0,10))
 
 dat.gr <-dat2
 
-k.dat[k.dat$Location.int=="Golden Ridge" & !is.na(k.dat$lbin)& !is.na(k.dat$initial.cl)& !is.na(k.dat$Sex.int),] <- sm.kdat
+k.dat[k.dat$Location=="Golden Ridge" & !is.na(k.dat$lbin)& !is.na(k.dat$Carapace.length)& !is.na(k.dat$Sex),] <- gr.kdat
+
+#White Point----
+wp.kdat<-k.dat%>% 
+  dplyr::filter(Location=="White Point" & !is.na(Location)) %>%  
+  glimpse()
+
+wp.kdat %<>% 
+  mutate(lbin=as.numeric(cut(Carapace.length, c(0,50,60,70,100)))) %>%      filter(!is.na(wp.kdat$lbin))%>%
+  glimpse()
+
+tapply(wp.kdat$inc, list(wp.kdat$lbin, wp.kdat$Sex), length)
+
+#Very few in length bin 1
+
+par(mfrow=c(2,2))
+for(s in unique(wp.kdat$Sex)) {
+  for(lb in c(2:4)) {
+    tmp <- wp.kdat %>% filter(lbin==lb & Sex==s & !is.na(Carapace.length))
+    if(!(s=='Male'&lb==4) & !(s=='Female'&lb==4)& !(s=='Male'&lb==2)){cent <-c(0,4)} else if (!(s=='Female'&lb==4)){cent<- c(0,4,10)}
+    else {cent<- c(0,4,10, 12)}
+    cl.wp <- kmeans(tmp$inc,cent)
+      tmp$Cluster <- cl.wp$cluster
+      plot(tmp$Carapace.length, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
+      #    plot(tmp$initial.cl, tmp$inc, ylim=c(0,20),col=1,pch=16, main=paste(s, lb))
+      tmp2 <- tmp %>% 
+        dplyr::group_by(Cluster) %>% 
+        dplyr::summarise(mn=mean(inc)) %>% 
+        dplyr::arrange(mn)
+      tmp2$moults <- 0:(nrow(tmp2)-1)
+      tmp$moult <- tmp2$moults[match(tmp$Cluster,tmp2$Cluster)]
+      wp.kdat[wp.kdat$lbin==lb & wp.kdat$Sex==s & !is.na(wp.kdat$Carapace.length),] <- tmp}
+  }
+
+#check
+glimpse(tmp)
+glimpse(tmp2)
+
+#av inc per size class/sex for moult 1 only
+dat2 <- wp.kdat %>% 
+  dplyr::filter(moult==1) %>% 
+  dplyr::group_by(Sex, lbin) %>% 
+  dplyr::summarise(mn=mean(inc)) %>%
+  glimpse()
+
+plot(dat2$lbin, dat2$mn, col=as.numeric(as.factor(dat2$Sex)),pch=16, ylim=c(0,10))
+
+dat.wp <-dat2
+
+k.dat[k.dat$Location=="White Point" & !is.na(k.dat$lbin)& !is.na(k.dat$Carapace.length)& !is.na(k.dat$Sex),] <- wp.kdat
+
+#Little Horseshoe----
+
+lh.kdat<-k.dat%>% 
+  dplyr::filter(Location=="Little Horseshoe" & !is.na(Location)) %>%
+  glimpse()
+
+lh.kdat %<>% 
+  mutate(lbin=as.numeric(cut(Carapace.length, c(0,50,60,70,100)))) %>%      filter(!is.na(lh.kdat$lbin))%>%
+  glimpse()
+
+tapply(lh.kdat$inc, list(lh.kdat$lbin, lh.kdat$Sex), length)
+
+#Woah almost none in length 1,2 & 3
+
+par(mfrow=c(1,2))
+for(s in unique(lh.kdat$Sex)) {
+  for(lb in 4) {
+    tmp <- lh.kdat %>% filter(lbin==lb & Sex==s & !is.na(Carapace.length))
+    if(!(s=='Male'&lb==4)){cent<-c(0,2,8,12)} 
+    else {cent<- c(0,2,8)} #!(s=='Female'&lb==4)&
+    cl.lh <- kmeans(tmp$inc,cent)
+    tmp$Cluster <- cl.lh$cluster
+    plot(tmp$Carapace.length, tmp$inc, ylim=c(0,20),col=as.numeric(as.factor(tmp$Cluster)),pch=16, main=paste(s, lb))
+    #    plot(tmp$initial.cl, tmp$inc, ylim=c(0,20),col=1,pch=16, main=paste(s, lb))
+    tmp2 <- tmp %>% 
+      dplyr::group_by(Cluster) %>% 
+      dplyr::summarise(mn=mean(inc)) %>% 
+      dplyr::arrange(mn)
+    tmp2$moults <- 0:(nrow(tmp2)-1)
+    tmp$moult <- tmp2$moults[match(tmp$Cluster,tmp2$Cluster)]
+    lh.kdat[lh.kdat$lbin==lb & lh.kdat$Sex==s & !is.na(lh.kdat$Carapace.length),] <- tmp}
+}
+
+#check
+glimpse(tmp)
+glimpse(tmp2)
+
+#av inc per size class/sex for moult 1 only
+dat2 <- lh.kdat %>% 
+  dplyr::filter(moult==1) %>% 
+  dplyr::group_by(Sex, lbin) %>% 
+  dplyr::summarise(mn=mean(inc)) %>%
+  glimpse()
+
+plot(dat2$lbin, dat2$mn, col=as.numeric(as.factor(dat2$Sex)),pch=16, ylim=c(0,10))
+
+dat.lh <-dat2
+
+k.dat[k.dat$Location=="Little Horseshoe" & !is.na(k.dat$lbin)& !is.na(k.dat$Carapace.length)& !is.na(k.dat$Sex),] <- lh.kdat
+
+glimpse(lh.kdat)
+glimpse(wp.kdat)
+
+glimpse(k.dat)
+
 
 #save data----
 glimpse(k.dat)
 setwd(data.dir)
-write.csv(k.dat, "k.data.csv", row.names= FALSE)
+write.csv(k.dat, "kmeans.data.new.csv", row.names= FALSE)
 
-
-#Bring in Data-----
-k.dat.1<-read_csv("k.data.csv")%>%
-  glimpse()
-
+# #Bring in Data-----
+# k.dat.1<-read_csv("k.data.csv")%>%
+#   glimpse()
 #Changes diff from 'time' to 'int'
 # Maybe that's chill- Who needs 'days' anyway? not me. 
 
-unique(k.dat.1$Site)
+
 #Plots----
 #subset to only moult 1
-moult1 <- k.dat.1%>%
+glimpse(k.dat)
+
+moult1 <- k.dat%>%
   filter(moult==1)%>%
   glimpse()
 
 glimpse(moult1)
+unique(moult1$Location)
 
 #Order sites for boxplot
-moult1$Location.int<-factor(moult1$Location.int, levels = c("Seven Mile", "Irwin Reef", "Cliff Head", "Golden Ridge"))
+moult1$Location<-factor(moult1$Location, levels = c("Golden Ridge","Cliff Head","Little Horseshoe", "White Point", "Irwin Reef", "Seven Mile"))
 
-moult1%<>%
-  mutate(Location.int=factor(Location.int, levels = c("Seven Mile", "Irwin Reef", "Cliff Head", "Golden Ridge")))%>%
-  glimpse()
-
-boxplot <- ggplot(data=moult1, aes(x=Location.int, y= inc))+
+boxplot <- ggplot(data=moult1, aes(x=Location, y= inc))+
   geom_boxplot(outlier.color = NA, notch=FALSE)+
   geom_jitter(width = 0.1, height = NULL, alpha=0.5)+
   theme(panel.background = element_blank(),axis.line = element_line(colour = "black"))+
   guides(fill=FALSE)+
   stat_summary(fun.y=mean, geom="point", shape=23, size=4)+ #this is for the mean
   theme_bw()+Theme1+
-  ylim(0,8)+
+  #ylim(0,8)+
   theme(axis.text.x = element_text(angle=90, size=12))+  
   theme(plot.title = element_text(hjust = 0, size=14, face = "plain"))+
   theme(axis.title.x = element_text(size= 14))+
   theme(axis.title.y = element_text(size = 14))+
-  ylab("Growth (mm)")+
+  ylab("Growth per moult (mm)")+
   xlab("Location") +
-  facet_grid(.~Sex.int)+
+  facet_grid(.~Sex)+
   #theme(strip.text.x = element_text(size=14))+
   theme(axis.text.y = element_text(size=14))
 boxplot 
 
 #Plot multiple moults
 glimpse(k.dat.1)
-moults <- k.dat.1%>%
+moults <- k.dat%>%
   filter(moult!="0")%>%
   glimpse()
 
-moults$Location.int<-factor(moults$Location.int, levels = c("Seven Mile", "Irwin Reef", "Cliff Head", "Golden Ridge"))
+moults$Location<-factor(moults$Location, levels = c("Golden Ridge","Cliff Head","Little Horseshoe", "White Point", "Irwin Reef", "Seven Mile"))
 
 unique(moults$moult)
 
-boxplot1 <- ggplot(data=moults, aes(x=Location.int, y= inc))+
+boxplot1 <- ggplot(data=moults, aes(x=Location, y= inc))+
   geom_boxplot(outlier.color = NA, notch=FALSE)+
   geom_jitter(width = 0.1, height = NULL, alpha=0.5, col=moults$moult)+
   theme(panel.background = element_blank(),axis.line = element_line(colour = "black"))+
   guides(fill=FALSE)+
   stat_summary(fun.y=mean, geom="point", shape=23, size=4)+ #this is adding the dot for the mean
   theme_bw()+Theme1+
-  ylim(0,25)+
+  ylim(0,20)+
   theme(axis.text.x = element_text(angle=90, size=12))+  
   #ggtitle ("Moulting increment (mm)")+
   theme(plot.title = element_text(hjust = 0, size=14, face = "plain"))+
   theme(axis.title.x = element_text(size= 14))+
   theme(axis.title.y = element_text(size = 14))+
-  ylab("Growth (mm)")+
+  ylab("Growth per moult (mm)")+
   xlab("Location") +
-  facet_grid(.~Sex.int)+
+  facet_grid(.~Sex)+
   #theme(strip.text.x = element_text(size=14))+
   theme(axis.text.y = element_text(size=12))
 boxplot1
 
+# Save plots----
+setwd("Z://Analysis_Miller_lobster/Plots")
+
+#Plot for 1 moult
+ggsave(boxplot,file="Growth.per.1moult.png", width = 18, height = 13,units = "cm")
+
+#Plot for multiple moults
+ggsave(boxplot1,file="Growth.Multi.Moults.png", width = 18, height = 13,units = "cm")
+
+
+
 #Plot for release CL x growth for moult 1----
 glimpse(moult1)
-rlcl.plot<- ggplot(moult1, aes(x=initial.cl, y=inc, col=Location.int, shape=Location.int))+
+rlcl.plot<- ggplot(moult1, aes(x=Carapace.length, y=inc, col=Location, shape=Location))+
   geom_point(size=4)+
-  scale_color_manual(values = c("Irwin Reef"="plum3","Cliff Head"="darkorange3", "Seven Mile"= "turquoise4", "Golden Ridge"= "red1"))+
-  ylim(0, 7)+
-  scale_shape_manual(values=c(16, 17, 15, 4))+
+ # scale_color_manual(values = c("Irwin Reef"="plum3","Cliff Head"="darkorange3", "Seven Mile"= "turquoise4", "Golden Ridge"= "red1"))+
+  #ylim(0, 7)+
+  #scale_shape_manual(values=c(16, 17, 15, 4))+
   theme_bw()+Theme1+
   xlab("Release Carapace Length (CL:mm)")+
   ylab("Growth (mm)")+
   labs(col="Location" ,shape="Location")+
-  facet_wrap(~Sex.int)
+  facet_wrap(~Sex)
 rlcl.plot
 
 

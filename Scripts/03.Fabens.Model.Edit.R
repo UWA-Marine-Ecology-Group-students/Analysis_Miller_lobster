@@ -13,14 +13,8 @@ library(dplyr)
 library(googlesheets)
 library(stringr)
 
-#For Simon
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-# getwd()
-
 # Set work directory----
 
-# work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
-# work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
 work.dir=("Z://Analysis_Miller_lobster") #for laptop
 
 ## Sub directories ----
@@ -39,24 +33,44 @@ scaleFUN <- function(x) sprintf("%.0f", x)
 #Import Data
 setwd(data.dir)
 
-dat.rr<-read_csv("dat.rr.clean.csv")%>%
-#dat.rr<-read_csv("dat.rr.all.csv")%>%
-glimpse()
-
-
-#2,235 with all of seven mile data (dat.rr.all)
-
-dat.rr%<>%
-  dplyr::rename(rel.date = Date, Date= recap.Date, rlloc= Location.int, Sex=Sex.int, Carapace.length=recap.cl, Total.damage=Total.damage.int, Colour= Colour.int, rlclength=initial.cl, site=mini.site.x)%>%
-  select(Date, Tag.number, Carapace.length, Sex, rlloc, Total.damage, rel.date, rlclength)%>%
+#New data making four location
+dat.rr<- read.csv("Growth.Data.csv")%>%
+  ##   Transform variables
+  mutate(Date=as.Date(Date))%>%
+  mutate(Date.recap=as.Date(Date.recap))%>%
+  mutate(Location=str_replace_all(.$Location,c("Golden Ridge"="Low", "Little Horseshoe"="Low","White Point"= "Medium","Irwin Reef"="Medium")))%>%
+  mutate(Location.recap=str_replace_all(.$Location,c("Golden Ridge"="Low", "Little Horseshoe"="Low","White Point"= "Medium","Irwin Reef"="Medium")))%>%
   glimpse()
 
-dat.rr<-dat.rr%>%
-  #mutate(Lyrs=(rel.date-Date)/365, growth=rlclength-Carapace.length)%>%
-  mutate(Lyrs=as.numeric(as.Date(Date, '%d/%m/%Y')-as.Date(rel.date, '%d/%m/%Y'))/365,growth=Carapace.length-rlclength)%>%
-  mutate(sex=tolower(substr(Sex,1,1))) %>% filter(sex%in% c('f','m'), !is.na(sex)) %>%
-  mutate(rcyear=format(as.Date(Date, '%d/%m/%Y'),'%Y'),rlyear=format(as.Date(rel.date, '%d/%m/%Y'),'%Y')) %>%
-  mutate(rcmonth=format(as.Date(Date, '%d/%m/%Y'),'%m'),rlmonth=format(as.Date(rel.date, '%d/%m/%Y'),'%m'))%>%
+unique(dat.rr$Location)
+unique(dat.rr$Location.recap)
+
+  
+#1,768
+length(unique(dat.rr$Tag.number)) #1348
+unique(dat.rr$Location) 
+names(dat.rr)
+
+dat.rr%<>%
+  dplyr::rename(rel.date = Date, 
+                rec.date = Date.recap, 
+                rlloc= Location, 
+                rec.length=Carapace.length.recap, 
+                rlclength=Carapace.length, 
+                site=Site,
+                growth=inc)%>%
+  select(rec.date, Tag.number, rec.length, Sex, rlloc, site, Total.damage, rel.date, rlclength, growth, Lyrs)%>%
+  glimpse()
+
+
+dat.rr%<>%
+  mutate(Lyrs=as.numeric(as.Date(rec.date, '%d/%m/%Y')-as.Date(rel.date, '%d/%m/%Y'))/365,growth=rec.length-rlclength)%>%
+  mutate(sex=tolower(substr(Sex,1,1))) %>% 
+  filter(sex%in% c('f','m'), !is.na(sex)) %>%
+  mutate(rcyear=format(as.Date(rec.date,'%d/%m/%Y'),'%Y'),
+         rlyear=format(as.Date(rel.date,'%d/%m/%Y'),'%Y')) %>%
+  mutate(rcmonth=format(as.Date(rec.date,'%d/%m/%Y'),'%m'),
+         rlmonth=format(as.Date(rel.date, '%d/%m/%Y'),'%m'))%>%
   glimpse()
 
 
@@ -69,51 +83,6 @@ rec<-dat.rr%>%
 
 unique(rec$rlloc)
 
-
-#OR Simon's from googlesheets: however includes individuals caught within same sampling trip
-#and missing dates?
-# rec1<-gs_title("Lobster_Data_Simon")%>%
-#   gs_read_csv("data.w.smb")%>%
-#   glimpse()
-  
-
-# rec<- gs_title("data.w.smb")%>%
-#   gs_read_csv(ws="data.w.smb")%>%
-#   glimpse()
-# 
-
-# glimpse(rec1)
-
-#For Simon
-##Open up link to IBSS and down load latest
-# library(TagLoss)
-# dat <- read.csv('data.csv')
-# dat %<>% filter(!is.na(Tag.number), !is.na(Carapace.length), !is.na(Sex)) %>%
-#   mutate(Site=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile","Little Horseshoe"="Horse", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Horse","CHM"="Cliff Head", "Davids Marks"="Horse","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Rivermouth"="River", "Long Reef"="Irwin Reef", "South Dummy"="Irwin Reef","South Rig"= "White","Whites Lump"= "White","WP"= "White","Whitepoint"="White")))
-
-# rec <- dat %>% filter(!is.na(Recapture))
-# rec$rel.date <- dat$Date[match(rec$Tag.number, dat$Tag.number)]
-# rec$rlclength <- dat$Carapace.length[match(rec$Tag.number, dat$Tag.number)]
-# rec$rlloc <- dat$Site[match(rec$Tag.number, dat$Tag.number)]
-# rec %<>% 
-# %>%
-#   mutate(sex=tolower(substr(Sex,1,1))) %>% filter(sex%in% c('f','m'), !is.na(sex)) %>%
-#   mutate(rcyear=format(as.Date(Date, '%d/%m/%Y'),'%Y'),rlyear=format(as.Date(rel.date, '%d/%m/%Y'),'%Y')) %>%
-#   mutate(rcmonth=format(as.Date(Date, '%d/%m/%Y'),'%m'),rlmonth=format(as.Date(rel.date, '%d/%m/%Y'),'%m'))
-# rec2 <- rec %>% dplyr::select(Date, Tag.number,Carapace.length, Sex,rlloc, Total.damage, rel.date, rlclength)
-# smdat %<>% mutate(Date=as.Date(Date,'%Y-%m-%d'), rel.date=as.Date(rel.date,'%Y-%m-%d'))
-# rec2 %<>% mutate(Date=as.Date(Date,'%d/%m/%Y'), rel.date=as.Date(rel.date,'%d/%m/%Y'))
-# rec2 <- rbind(rec2,smdat)
-# rec2 %<>% mutate() %>%
-#   mutate(Lyrs=as.numeric(as.Date(Date)-as.Date(rel.date))/365,growth=Carapace.length-rlclength) %>%
-#   mutate(sex=tolower(substr(Sex,1,1))) %>% filter(sex%in% c('f','m'), !is.na(sex)) %>%
-#   mutate(rcyear=format(as.Date(Date),'%Y'),rlyear=format(as.Date(rel.date),'%Y')) %>%
-#   mutate(rcmonth=format(as.Date(Date),'%m'),rlmonth=format(as.Date(rel.date),'%m'))
-# head(rec2)
-# write.csv(rec2, 'data.w.smb.csv', row.names = F)
-
-#For Simon
-# rec <- read.csv('C:/Users/snd/Rock Lobster/Minor stuff/Other people/Ash/data.w.smb.csv')
 
 #Set Fabens model
 fab <- function(pin,tmp=tmp,flag='solve',sex='split'){
@@ -130,29 +99,44 @@ fab <- function(pin,tmp=tmp,flag='solve',sex='split'){
   if(flag=='solve') return(LL)
 }
 
-rec %<>% filter(rlloc!='Golden Ridge') %>% mutate(loc=as.numeric(as.factor(rlloc))) %>% 
-  mutate(sloc=(as.numeric(as.factor(sex))-1)*3+loc)
-tapply(rec$sloc, list(rec$sex,rec$rlloc), mean)
 
-tmp <- rec[rec$Lyrs>0.1 & rec$rlloc!='Golden Ridge' ,] #Filtered to more than 2 months at liberty
+rec %<>% 
+  #filter(rlloc!='Golden Ridge') %>% 
+  mutate(loc=as.numeric(as.factor(rlloc))) %>% 
+  mutate(sloc=(as.numeric(as.factor(sex))-1)*4+loc)
+tapply(rec$sloc, list(rec$sex,rec$rlloc), mean)
+tapply(rec$sloc, list(rec$sex,rec$rlloc), length)
+
+
+tmp <- rec[rec$Lyrs>0.1 ,] # & rec$rlloc!='Golden Ridge' #Filtered to more than 2 months at liberty
+tapply(tmp$sloc, list(tmp$sex,tmp$rlloc), length)
+
 tmp <- tmp[!is.na(tmp$Sex),]
 
 head(tmp)
 sort(unique(rec$rlloc))
-pin <- log(c(1,rep(0.3,6),1))
+pin <- log(c(1,rep(0.3,8),1)) # locations-AM
 head(tmp)
+pin
 
+#So now we have 4 locations instead of 3.
+unique(tmp$sloc)
+
+#fab3 now has 10 parameters
 fab3 <- function(pin,tmp=tmp,flag='solve',split=T){   ## split by all
   pin <- exp(as.numeric(pin))
   Linf <- pin[1]*100
-  K <- pin[2:7][tmp$sloc] 
-  sd <- pin[8]
+  #K <- pin[2:7][tmp$sloc] 
+  K <- pin[2:9][tmp$sloc] 
+  #sd <- pin[8]
+  sd <- pin[10]
   est <- (Linf-tmp$rlclength)*(1-exp(-K*tmp$Lyrs))
   LL <- -sum(dnorm(tmp$growth, est, sd,T))
   if(flag=='print') return(est)
   if(flag=='solve') return(LL)
 }
 
+#fab 5 has same parameters
 fab5 <- function(pin,tmp=tmp,flag='solve',split=T){   ## split by sex
   pin <- exp(as.numeric(pin))
   Linf <- pin[1]*100
@@ -164,6 +148,7 @@ fab5 <- function(pin,tmp=tmp,flag='solve',split=T){   ## split by sex
   if(flag=='solve') return(LL)
 }
 
+#same
 fab4 <- function(pin,tmp=tmp,flag='solve'){  ## no splits
   pin <- exp(as.numeric(pin))
   Linf <- pin[1]*100
@@ -175,12 +160,15 @@ fab4 <- function(pin,tmp=tmp,flag='solve'){  ## no splits
   if(flag=='solve') return(LL)
 }
 
+#now 6
 fab2 <- function(pin,tmp=tmp,flag='solve',split=T){  ### splits by loc
   pin <- exp(as.numeric(pin))
   Linf <- pin[1]*100
   if(split){ 
-    K <- pin[2:4][tmp$loc] 
-    sd <- pin[5]
+    #K <- pin[2:4][tmp$loc] 
+    K <- pin[2:5][tmp$loc] 
+    # sd <- pin[5]
+    sd <- pin[6]
   }else {
     K <- pin[2]
     sd <- pin[3]}
@@ -189,37 +177,71 @@ fab2 <- function(pin,tmp=tmp,flag='solve',split=T){  ### splits by loc
   if(flag=='print') return(est)
   if(flag=='solve') return(LL)
 }
+tmp %<>% mutate(twoloc=ifelse(loc==1,2,1))
+head(tmp[grepl('cliff', tmp$rlloc,ignore.case = T),])
 
+twoloc <- function(pin,tmp=tmp,flag='solve'){  ### splits by loc
+  pin <- exp(as.numeric(pin))
+  Linf <- pin[1]*100
+    K <- pin[2:3][tmp$twoloc] 
+    sd <- pin[4]
+  est <- (Linf-tmp$rlclength)*(1-exp(-K*tmp$Lyrs))
+  LL <- -sum(dnorm(tmp$growth, est, sd,T))
+  if(flag=='print') return(est)
+  if(flag=='solve') return(LL)
+}
+
+(aout.2loc <- nlminb(c(100,1,1,1), twoloc, tmp=tmp, control = list(iter.max=1000, eval.max=1000)))
+tmp %<>% mutate(twoloc=ifelse(loc==4,2,1))
+(aout.2loc <- nlminb(c(10,1,1,1), twoloc, tmp=tmp, control = list(iter.max=1000, eval.max=1000)))
+
+
+#Split by all- Now 10 pars
 (aout.spl <- nlminb(pin, fab3, tmp=tmp, control = list(iter.max=1000, eval.max=1000)))
-exp(aout.spl$par)*c(100,1,1,1,1,1,1,1)
+aout.spl$par
 
-(aout.splLoc <- nlminb(log(c(1,0.5,0.5,0.5,1)), fab2, tmp=tmp, control = list(iter.max=1000, eval.max=1000)))
-exp(aout.splLoc$par)*c(100,1,1,1,1)
+exp(aout.spl$par)*c(100,1,1,1,1,1,1,1,1,1)
 
+#Split by Location -Now 6 pars
+(aout.splLoc <- nlminb(log(c(1,0.5,0.5,0.5,0.5,1)), fab2, tmp=tmp, control = list(iter.max=1000, eval.max=1000)))
+
+exp(aout.splLoc$par)*c(100,1,1,1,1,1)
+
+#Split by Sex - Same
 (aout.splSex <- nlminb(log(c(1,0.5,0.5,1)), fab5, tmp=tmp, control = list(iter.max=1000, eval.max=1000)))
 exp(aout.splSex$par)*c(100,1,1,1)
 
-# (aout.comb <- nlminb(log(c(1,0.5,1)), fab4, tmp=tmp, control = list(iter.max=1000, eval.max=1000)))
+(aout.comb <- nlminb(log(c(1,0.5,1)), fab4, tmp=tmp, control = list(iter.max=1000, eval.max=1000)))
 # exp(aout.comb$par)*c(100,1,1)
 
 #all split vs split by location 
-LR_test = 1-pchisq(abs(aout.splLoc$objective-aout.spl$objective), 2)
-LR_test  ## very much an improvement therefore sexes are different
-         ## We should split by sex and keep looking
+LR_test = 1-pchisq(abs(aout.splLoc$objective-aout.spl$objective), 4)
+LR_test  
+
+#Sex is not signifcant
+
 
 #all split vs split by sex 
-LR_test = 1-pchisq(abs(aout.splSex$objective-aout.spl$objective), 2)
-LR_test  ## very much an improvement therefore sexes are different
-## We should split by location as well
+LR_test = 1-pchisq(abs(aout.splSex$objective-aout.spl$objective), 6)
+LR_test  
 
-pars <- exp(aout.spl$par)*c(100,1,1,1,1,1,1,1)
+# Location is
+#0.0241107
+
+#So we need a 6 parameter model
+#pars <- exp(aout.splSex$par)*c(100,1,1,1) #For just Sex
+pars <- exp(aout.splLoc$par)*c(100,1,1,1,1,1) #For loc
+
+glimpse(pars)
+aout.spl$par
+
 
 #Plot Residuals----
 par(mfrow=c(3,3))
 
 #Seven Mile----
 tmp.sm <- rec[rec$Lyrs>0.1 & rec$growth<20 & rec$rlloc=='Seven Mile',]
-glimpse(tmpsm)
+glimpse(tmp.sm)
 
 tmp.sm$est <- fab3(aout.spl$par, tmp=tmp.sm, flag='print',  split=T)
 glimpse(tmp.sm)
@@ -257,31 +279,194 @@ abline(h=0, lty=3)
 with(tmp.ir,plot(Lyrs, resid, pch=16, ylab='IR Residual', xlab='Liberty (years)', col=alpha(ifelse(sex=='f',2,4),0.2), bty='l', cex.lab=1.5, cex.axis=1.3, ylim=c(-5, 15)))
 abline(h=0, lty=3)
 
+#Edit to plot residuals in ggplot----
+# Theme-----
+Theme1 <-
+  theme( # use theme_get() to see available options
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "none",
+    text=element_text(size=12),
+    strip.text.y = element_text(size = 12,angle = 0),
+    axis.title.x=element_text(vjust=0.3, size=12, face = "bold"),
+    axis.title.y=element_text(vjust=0.6, angle=90, size=12, face = "bold"),
+    axis.text.x=element_text(size=12,angle = 0, colour = "black"), #, hjust=1,vjust=0.5
+    axis.text.y=element_text(size=12,colour = "black"),
+    axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
+    axis.line.y=element_line(colour="black", size=0.5,linetype='solid'),
+    strip.text = element_text(size=12, face="bold"),
+    strip.background = element_blank())
+
+#Set up data----
+glimpse(rec)
+tmp.rec <- rec[rec$Lyrs>0.1 & rec$growth<20,]
+glimpse(tmp.rec)
+tmp.rec <- tmp.rec[!is.na(tmp.rec$sex),]
+tmp.rec$est <- fab3(aout.spl$par, tmp=tmp.rec, flag='print',  split=T)
+glimpse(tmp.rec)
+tmp.rec$rr<-tmp.rec$growth-tmp.rec$est
+glimpse(tmp.rec)
+
+#Plot in ggplot----
+#Release month residuals
+#labels <- c("Cliff Head"= "a) Cliff Head", "Irwin Reef"="b) Irwin Reef", "Seven Mile"="c) Seven Mile") 
+
+residual.month<-ggplot(data=tmp.rec, aes(x=rlmonth, y=rr, col=sex))+
+  geom_point(size=1.7, alpha=0.5)+
+  scale_colour_manual(values = c("f"="red", "m"="blue"))+ #2=red
+  theme_bw()+Theme1+
+  ylab("(a) residual")+
+  xlab("Release Month")+
+  geom_hline(aes(yintercept=0), linetype="dashed")+
+  facet_grid(~rlloc) #, labeller = as_labeller(labels)
+residual.month
+
+#Carapace length residuals
+glimpse(tmp.rec)
+residual.cl<-ggplot(data=tmp.rec, aes(x=rlclength, y=rr, col=sex))+
+  geom_point(size=1.7, alpha=0.5)+
+  scale_colour_manual(values = c("f"="red", "m"="blue"))+ 
+  theme_bw()+Theme1+
+  ylab("(b) residual")+
+  xlab("Carapace length at release (mm)")+
+  theme(strip.text = element_blank())+
+  geom_hline(aes(yintercept=0), linetype="dashed")+
+  facet_grid(~rlloc)
+residual.cl
+
+#Liberty residuals
+residual.liberty<-ggplot(data=tmp.rec, aes(x=Lyrs, y=rr, col=sex))+
+  geom_point(size=1.7, alpha=0.5)+
+  scale_colour_manual(values = c("f"="red", "m"="blue"))+ 
+  theme_bw()+Theme1+
+  ylab("(c) residual")+
+  xlab("Time at liberty (yr)")+
+  geom_hline(aes(yintercept=0), linetype="dashed")+
+  theme(strip.text = element_blank())+
+  #scale_x_continuous(limits=c(0, 1.25)) +
+  scale_x_continuous(breaks = c(0,0.3, 0.6, 0.9, 1.2, 1.5))+
+  facet_grid(~rlloc)
+residual.liberty
+
+#Save ggplots----
+library(grid)
+library(gridExtra)
+setwd(plots.dir)
+
+# To see what they will look like use grid.arrange() 
+grid.arrange(residual.month,residual.cl,residual.liberty,nrow=3,ncol=1)
+
+# Use arrangeGrob ONLY - as we can pass this to ggsave! 
+combine.plot<-arrangeGrob(residual.month,residual.cl,residual.liberty,nrow=3,ncol=1)
+
+#save
+ggsave(combine.plot,file="fabens.residuals.new.png", width = 22, height = 16,units = "cm")
+
+
 #Dummy plot----
+
+glimpse(tmp)
 
 sort(unique(tmp$rlloc))
 dum <- data.frame(age=2:15) #Or (age=2:10)
+
+#With 4 locations
+dum$Fch<- pars[1]*(1-exp(-pars[2]*dum$age))
+dum$Flow<- pars[1]*(1-exp(-pars[3]*dum$age))
+dum$Fmed<- pars[1]*(1-exp(-pars[4]*dum$age))
+dum$Fsm<- pars[1]*(1-exp(-pars[5]*dum$age))
+
+dum$Mch<- pars[1]*(1-exp(-pars[6]*dum$age))
+dum$Mlow<- pars[1]*(1-exp(-pars[7]*dum$age))
+dum$Mmed<- pars[1]*(1-exp(-pars[8]*dum$age))
+dum$Msm<- pars[1]*(1-exp(-pars[9]*dum$age))
+#With 6 locations----
 dum$Fch<- pars[1]*(1-exp(-pars[2]*dum$age))
 dum$Fir<- pars[1]*(1-exp(-pars[3]*dum$age))
 dum$Fsm<- pars[1]*(1-exp(-pars[4]*dum$age))
-dum$Mch<- pars[1]*(1-exp(-pars[5]*dum$age))
-dum$Mir<- pars[1]*(1-exp(-pars[6]*dum$age))
-dum$Msm<- pars[1]*(1-exp(-pars[7]*dum$age))
+dum$Fwp<- pars[1]*(1-exp(-pars[5]*dum$age))
+dum$Flh<- pars[1]*(1-exp(-pars[6]*dum$age))
+dum$Fgr<- pars[1]*(1-exp(-pars[7]*dum$age))
 
+dum$Mch<- pars[1]*(1-exp(-pars[8]*dum$age))
+dum$Mir<- pars[1]*(1-exp(-pars[9]*dum$age))
+dum$Msm<- pars[1]*(1-exp(-pars[10]*dum$age))
+dum$Mwp<- pars[1]*(1-exp(-pars[11]*dum$age))
+dum$Mlh<- pars[1]*(1-exp(-pars[12]*dum$age))
+dum$Mgr<- pars[1]*(1-exp(-pars[13]*dum$age))
+glimpse(dum)
+
+#With only sex as significant----
+
+dum$F<- pars[1]*(1-exp(-pars[2]*dum$age))
+dum$M<- pars[1]*(1-exp(-pars[3]*dum$age))
+
+
+# par(mfrow=c(1,1))
+# plot(dum$age, dum$Fir, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=2, cex.axis=1.7) #or  ylim=c(20,110)
+# lines(dum$age, dum$Fch, type='l', col=3, lwd=2)
+# lines(dum$age, dum$Fsm, type='l', col=6, lwd=2)
+# 
+# #Males
+# lines(dum$age, dum$Mir, type='l', lwd=2, lty=2, col="blue")
+# lines(dum$age, dum$Mch, type='l', lwd=2, lty=2, col=3)
+# lines(dum$age, dum$Msm, type='l', lwd=2, lty=2, col=6)
+# 
+# legend("bottomright", title = "Location                      ",
+#        legend=c("Irwin Reef", "Cliff Head", "Seven Mile", "Female", "Male"), 
+#        col = c("blue", "3", "6", "black", "black"), 
+#        lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=1.3)
+
+#Plot for three locations
+par(mfrow=c(1,1))
+plot(dum$age, dum$Fch, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=2, cex.axis=1.7) #or  ylim=c(20,110)
+lines(dum$age, dum$Flow, type='l', col=3, lwd=2)
+lines(dum$age, dum$Fmed, type='l', col=7, lwd=2)
+lines(dum$age, dum$Fsm, type='l', col=6, lwd=2)
+
+legend("bottomright", title = "Location",
+       legend=c("Cliff Head", "Low", "Medium", "Seven Mile"), 
+       col = c("blue", "3", "7", "6"), 
+       lty= c(1,1,1,1), lwd=c(2,2,2,2), box.lty=0, ncol=1, cex=1.3)
+
+#Plot
+plot(dum$age, dum$Mch, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=2, cex.axis=1.7) #or  ylim=c(20,110)
+#Males
+# lines(dum$age, dum$Mch, type='l', lwd=2, lty=2, col="blue")
+lines(dum$age, dum$Mlow, type='l', lwd=2, lty=2, col=3)
+lines(dum$age, dum$Mmed, type='l', lwd=2, lty=2, col=7)
+lines(dum$age, dum$Msm, type='l', lwd=2, lty=2, col=6)
+
+
+legend("bottomright", title = "Location",
+       legend=c("Cliff Head", "Low", "Medium", "Seven Mile"), 
+       col = c("blue", "3", "7", "6"), 
+       lty= c(1,1,1,1), lwd=c(2,2,2,2), box.lty=0, ncol=1, cex=1.3)
+
+
+
+
+#Old dummy plot----
 par(mfrow=c(1,1))
 plot(dum$age, dum$Fir, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=2, cex.axis=1.7) #or  ylim=c(20,110)
 lines(dum$age, dum$Fch, type='l', col=3, lwd=2)
 lines(dum$age, dum$Fsm, type='l', col=6, lwd=2)
-
-#plot(dum$age, dum$Mir, type='l', col='red',lwd=2, lty=2, xlab='Relative age (years)',ylab='', ylim=c(20,140), bty='l') #or  ylim=c(20,110)
+lines(dum$age, dum$Fwp, type='l', col=3, lwd=2)
+lines(dum$age, dum$Flh, type='l', col=6, lwd=2)
+lines(dum$age, dum$Fgr, type='l', col=6, lwd=2)
+#Males
 lines(dum$age, dum$Mir, type='l', lwd=2, lty=2, col="blue")
 lines(dum$age, dum$Mch, type='l', lwd=2, lty=2, col=3)
 lines(dum$age, dum$Msm, type='l', lwd=2, lty=2, col=6)
+lines(dum$age, dum$Mwp, type='l', lwd=2, lty=2, col="blue")
+lines(dum$age, dum$Mlh, type='l', lwd=2, lty=2, col=3)
+lines(dum$age, dum$Mgr, type='l', lwd=2, lty=2, col=6)
 
 legend("bottomright", title = "Location                      ",
        legend=c("Irwin Reef", "Cliff Head", "Seven Mile", "Female", "Male"), 
        col = c("blue", "3", "6", "black", "black"), 
        lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=1.3)
+
 #TEst
 plot(dum$age, dum$Fir, type='1', col="blue", lwd=1, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130) ,bty='l', cex.lab=1.5, cex.axis=1.6) #or  ylim=c(20,110)
 lines(dum$age, dum$Fch, type='l', col=3, lwd=2)
@@ -330,8 +515,11 @@ legend("bottomright", title = "Location                      ",
        col = c("blue", "3", "6", "black", "black"), 
        lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=1.5)
 
+#New Plot for Sex----
 
-
+par(mfrow=c(1,1))
+plot(dum$age, dum$F, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=2, cex.axis=1.7) #or  ylim=c(20,110)
+lines(dum$age, dum$M, type='l', col=3, lwd=2)
 
 
 # Save plots----

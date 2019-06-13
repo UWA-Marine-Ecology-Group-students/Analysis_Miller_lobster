@@ -26,8 +26,8 @@ library(lubridate)
 library(googlesheets)
 
 ## Set your working directory ----
-working.dir=("C:/GitHub/Analysis_Miller_lobster")
-#working.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+#working.dir=("C:/GitHub/Analysis_Miller_lobster")
+working.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 ## Save these directory names to use later----
 data.dir<-paste(working.dir,"Data",sep="/") 
@@ -79,6 +79,7 @@ length <-ga.list.files("Length.csv")%>%
   dplyr::mutate(Damage.old.l=as.numeric(damage.old.l))%>%
   dplyr::select(-c(length,trip,damage.new.a,damage.new.l,damage.old.a,damage.old.l))%>%
   glimpse()
+
 
 # Import Tag Return data sent to Fisheries----
 fisheries.returns <- gs_title("Fisheries.Tag.Returns")%>%
@@ -174,10 +175,14 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
   dplyr::mutate(Date=lubridate::ymd(sprintf('%04d%02d%02d',y,m,d)))%>% #Make date col
   dplyr::mutate(Outlier=ifelse(Tag.number%in%c("190428","190188","190124","190443"),"y",NA))%>%
   dplyr::rename(Recapture= REC, Sex=SEX, Colour=COLOUR, Carapace.length=CLENGTH, Setose.state= SETOSE, Individual.Remarks=REMARKS, Damage.new.a=NEW_ANT, Damage.new.L=NEW_LEGS, Damage.old.a=OLD_ANT, Damage.old.L=OLD_LEGS,Pot.Number=POT_NO, Pot.Type=POT_TYPE_ID, Day.Pull=DAY_PULL)%>%
-  dplyr::mutate(Damage.old.a=if_else(Damage.new.a==9,0,Damage.old.a))%>% # Fix Damaged data
-  dplyr::mutate(Damage.new.L=if_else(Damage.new.a==9,0,Damage.new.L))%>%
-  dplyr::mutate(Damage.old.L=if_else(Damage.new.a==9,0,Damage.old.L))%>%
-  dplyr::mutate(Damage.new.a=if_else(Damage.new.a==9,0,Damage.new.a))%>%
+  replace_na(list(Damage.old.a = 0, Damage.old.L = 0,Damage.new.a = 0, Damage.new.L = 0))%>%
+  dplyr::mutate(Damage.old.a=if_else(is.na(Damage.old.a),0,Damage.old.a))%>% # Fix Damaged data
+  mutate(Damage.old.a=if_else(Damage.new.a==9,0,Damage.old.a))%>% # Fix Damaged data
+  mutate(Damage.new.L=if_else(Damage.new.a==9,0,Damage.new.L))%>%
+  mutate(Damage.old.L=if_else(Damage.new.a==9,0,Damage.old.L))%>%
+  mutate(Damage.new.a=if_else(Damage.new.a==9,0,Damage.new.a))%>%
+  dplyr::mutate(Total.damage=(Damage.old.a+Damage.old.L+Damage.new.a+Damage.new.L))%>%
+  dplyr::mutate(Total.damage=as.character(Total.damage))%>%
   dplyr::mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
   dplyr::mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
   dplyr::mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
@@ -185,6 +190,7 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
   filter(!is.na(Sample))%>%
   glimpse()
 
+unique(sevenmile$Total.damage)
 names(sevenmile)
 
 metadata.sevenmile<-sevenmile%>%
@@ -192,7 +198,7 @@ metadata.sevenmile<-sevenmile%>%
   dplyr::mutate(PWO=as.character(PWO))
 
 length.sevenmile<-sevenmile%>%
-  dplyr::select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Damage.new.a, Damage.new.L, Damage.old.a, Damage.old.L, Outlier)%>%
+  dplyr::select(Source,Trip,Sample,Tag.number,Carapace.length,Sex,Colour,Recapture,Damage.new.a, Damage.new.L, Damage.old.a, Damage.old.L,Total.damage, Outlier)%>%
   filter(!is.na(Carapace.length)&!is.na(Sex))%>%
   glimpse()
 
@@ -244,6 +250,13 @@ unique(length.final$Cable.tie) # OK
 unique(length.final$Outlier) # OK
 unique(length.final$Tarspot) # OK
 unique(length.final$Reproductive.stage) # OK
+
+#Change Location now, will change later in first script if analysis is good- AM
+unique(metadata.final$Site)
+unique(metadata.final$Location)
+metadata.final%<>%
+  mutate(Location=str_replace_all(.$Site,c("Little Horseshoe"="Little Horseshoe", "White Point"="White Point", "Whites Lump"="White Point", "South Dummy"="White Point","Cliff Head North"= "Cliff Head", "Kevin Healy"="Cliff Head", "Long Reef"="Irwin Reef","South Rig" ="Irwin Reef",  "Cliff Head Mid"="Cliff Head", "Cliff Head South"= "Cliff Head", "Seven Mile Mid"="Seven Mile","Seven Mile North" ="Seven Mile")))%>%
+  glimpse()
 
 ## Save metadata, count and length files ----
 setwd(data.dir)

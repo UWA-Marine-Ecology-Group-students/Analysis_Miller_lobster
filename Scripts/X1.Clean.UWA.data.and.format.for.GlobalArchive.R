@@ -14,8 +14,8 @@ library(tidyverse)
 # Set work directory----
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
-work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
-# work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+# work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
+ work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -69,9 +69,18 @@ unique(length.2018$Dead) # NA     "Dead"
 unique(length.2018$Individual.Remarks) 
 unique(length.2018$Recapture)
 # Counts
-length(unique(length.2018$Tag.number)) # 7537 tagged individuals
+length(unique(length.2018$Tag.number)) # 7553 tagged individuals
 length(length.2018$Carapace.length) # 9318 total indiviuals caught
 length(unique(length.2018$Sample)) # 1163 pots with crays
+#Count of recaptures
+total.recaps<- length.2018%>%
+  select(Tag.number)%>%
+  mutate(duplicates = duplicated(.) | duplicated(., fromLast = TRUE))%>%
+  filter(duplicates=="TRUE")%>%
+  glimpse()
+#2,769 total recaptures
+length(unique(total.recaps$Tag.number))
+#1004 unique recaptures
 
 # Things that should actually be in the metadata not the lobster data
 info.2018<-dat.2018%>%
@@ -94,7 +103,9 @@ metadata.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
   mutate(Source = 'Dongara.Millers.Masters')%>%
   mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>% 
   mutate(Site=str_replace_all(.$Site.Name,c( "SM"="Seven Mile", "DM"="Davids Marks",  "RM"="Rivermouth", "IR"="Irwin Reef", "LR"="Long Reef", "SD"="South Dummy", "LH"="Little Horseshoe", "CHin1_"="Cliff Head Mid","CHin2_"="Cliff Head South","CHout1_" = "Cliff Head OUT1","CHout2_" = "Cliff Head North", "JB"="Jim Bailey", "GR"="Golden Ridge", "SR"="South Rig", "WL"="Whites Lump")))%>% 
-  mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile","Little Horseshoe"="Cliff Head", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Long Reef"="Irwin Reef", "South Dummy"="Irwin Reef","South Rig"= "Irwin Reef","Whites Lump"= "Irwin Reef","WP"= "Irwin Reef","Whitepoint"="Irwin Reef")))%>% 
+  # mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile","Little Horseshoe"="Cliff Head", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Long Reef"="Irwin Reef", "South Dummy"="Irwin Reef","South Rig"= "Irwin Reef","Whites Lump"= "Irwin Reef","WP"= "Irwin Reef","Whitepoint"="Irwin Reef")))%>%
+  #Change of Locations- AM
+  mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Long Reef"="Irwin Reef", "South Dummy"="White Point","South Rig"= "White Point","Whites Lump"= "White Point","WP"= "White Point","Whitepoint"="White Point")))%>% 
   mutate(Site=str_replace_all(.$Site, c("Jim Bailey"="White Point" ,"WP"="White Point" , "Whitepoint"="White Point" , "CHS"="Cliff Head South","CHM"="Cliff Head Mid","CHN"="Cliff Head North", "Seven Mile Beach"= "Seven Mile South", "Cliff Head OUT1"="Cliff Head North", "Davids Marks"="Cliff Head North")))%>%
   filter(Johns=="No")%>% # turn off when I add in john's data (if ever) -  I am not uploading John's data to GlobalArchive BG
   dplyr::rename(Latitude=Latitude.y, Longitude=Longitude.x,Date=Date.Recovered)%>%
@@ -111,9 +122,8 @@ metadata.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
   glimpse()
 
 names(metadata.2018)
-
 unique(metadata.2018$Date)
-unique(metadata.2018$Location)%>%sort() # "Cliff Head"   "Golden Ridge" "Irwin Reef"   "Rivermouth"   "Seven Mile"
+unique(metadata.2018$Location)%>%sort() # "Cliff Head"   "Golden Ridge" "Irwin Reef"   "Rivermouth"   "Seven Mile", "Little Horseshoe", "White Point"
 unique(metadata.2018$Site)%>%sort() 
 unique(metadata.2018$Site.Code)%>%sort()
 
@@ -157,6 +167,8 @@ unique(length.2017$Sex) # Character
 unique(length.2017$Colour) # character
 unique(length.2017$Dead)
 unique(length.2017$Individual.Remarks)
+length(unique(length.2017$Tag.number)) #1683
+
 names(dat.2017)
 
 info.2017<-dat.2017%>%
@@ -177,7 +189,7 @@ metadata.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   gs_read_csv(ws = "Pot.var")%>%
   mutate(Source='Dongara.Canons.Masters')%>%
   mutate(Sample=paste(Day,Trap.number,sep="."))%>% 
-  mutate(Location=str_replace_all(.$Location,c("Seven Mile Beach"= "Seven Mile","Whitepoint"="Irwin Reef")))%>% 
+  mutate(Location=str_replace_all(.$Location,c("Seven Mile Beach"= "Seven Mile")))%>% 
   mutate(Trip=0)%>%
   select(-c(ID,Notes,Code,Latitude,Longitude,Longitude.original,Latitude.original))%>%
   dplyr::rename(Longitude=Longitud.relocated,Latitude=Latitude.relocated,Day.Pull=Soking.time.days,Trap.ID=Trap.number,Pot.Number=Number,Pot.Type=Pot.type)%>%
@@ -185,6 +197,7 @@ metadata.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
   mutate(Exclude.pots=ga.capitalise(Exclude.pots))%>%
   mutate(Site=str_replace_all(.$Names.to.display,c("7 Mile"="Seven Mile Mid")))%>%
   mutate(Site=str_replace_all(.$Site, c("Cliff Head Sand Strips"="Cliff Head","Cliff Head"="Cliff Head North","South Whites Lump"= "White Point", "White Point Reef"="White Point", "South West Dummy"="South Dummy", "Big Horseshoe"="Little Horseshoe", "Sand Hole"="Little Horseshoe", "Darwin"="White Point", "Dry Shallows"="Little Horseshoe", "Power Pack"="Little Horseshoe", "Outside CH1"="Kevin Healy", "Outside CH2"="Cliff Head North")))%>%
+  mutate(Location=str_replace_all(.$Site,c("Seven Mile Mid"="Seven Mile", "Cliff Head North"="Cliff Head", "Cliff Head"="Cliff Head", "White Point"="White Point", "Little Horseshoe"="Little Horseshoe", "South Dummy"="White Point", "Kevin Healy"="Cliff Head", "Whites Lump"="White Point", "Long Reef"="Irwin Reef")))%>%
   separate(Trap.ID,into=c("Site.Code","Extra"),sep=-2)%>%
   mutate(Site.Code=str_replace_all(.$Site.Code,c("F"="","5C"="5","0C"="0","7C"="7","2C"="2","4C"="4","3C"="3","6C"="6")))%>%
   select(-c(John.site.names,Names.to.display,Extra))%>%
@@ -200,6 +213,8 @@ missing.pot.var<-anti_join(length.2017,metadata.2017) # Two pots that arent in t
 rm(missing.pot.var,duplicates,info.2017,dat.2017)
 
 unique(metadata.2017$Site)
+unique(metadata.2017$Location)
+length(unique(metadata.2017$Sample)) #467 total pot pulls
 unique(metadata.2018$Site)
 
 # Tidy names of data frames ----
@@ -247,17 +262,19 @@ unique(length$Moult.stage)
 unique(length$Cable.tie)
 unique(length$Outlier)
 
+
 # Remove lobsters that have changed sex
 changed.sex<-length%>%
   filter(!is.na(Tag.number))%>%
   group_by(Tag.number)%>%
-  summarise(no.sex=length(unique(Sex)),no.times.caught=n())%>%
+  dplyr::summarise(no.sex=length(unique(Sex)),no.times.caught=n())%>%
   filter(no.sex>1)
 
 cant.keep<-changed.sex%>%
   filter(no.times.caught==2)%>%
   distinct(Tag.number)
-#35
+
+#36
 
 list.tags <- as.vector(changed.sex$Tag.number) # change to cant.keep if filtered out only those caught twice
 
@@ -267,12 +284,12 @@ changes<-length%>%
 length<-length%>%
   filter(!Tag.number%in%c(list.tags))
 
-## Write data
-# setwd(data.dir)
-# dir()
+#Write data
+setwd(data.dir)
+dir()
 
-# write.csv(metadata, "metadata.csv",row.names = FALSE)
-# write.csv(length, "length.csv",row.names = FALSE)
+  write.csv(metadata, "metadata.csv",row.names = FALSE)
+  write.csv(length, "length.csv",row.names = FALSE)
 
 metadata.raw<-metadata%>%
   dplyr::rename(Comment=Pot.remarks)%>%
@@ -340,3 +357,4 @@ for (i in 1:length(campaigns)){
   temp.length <- subset(length, CampaignID == campaigns[i])%>%select(-c(CampaignID)) # Remove CampaignID from dataframe
   write.csv(temp.length, file=paste(unique(id),"_Length.csv",sep=""), quote=FALSE,row.names = FALSE,na = "") # write file
 }
+
