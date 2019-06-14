@@ -26,8 +26,8 @@ library(lubridate)
 library(googlesheets)
 
 ## Set your working directory ----
-#working.dir=("C:/GitHub/Analysis_Miller_lobster")
-working.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+working.dir=("C:/GitHub/Analysis_Miller_lobster")
+#working.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 ## Save these directory names to use later----
 data.dir<-paste(working.dir,"Data",sep="/") 

@@ -27,7 +27,7 @@ library(gamm4)
 library(RCurl) #needed to download data from GitHub
 # install package----
 # library(devtools) #run once
-# devtools::install_github("beckyfisher/FSSgam_package") #run once
+devtools::install_github("beckyfisher/FSSgam_package") #run once
 library(FSSgam)
 
 # Set work directory----
