@@ -43,24 +43,45 @@ model.dir<-paste(work.dir,"Model_out_catch",sep="/")
 # Bring in and format the data----
 name<-"catch"
 setwd(data.dir)
-dir()
+
 
 dat <-read_csv("catch.sw.sst.csv")%>%
+  #change locations> to four
   dplyr::rename(response=Count,
                 Taxa=sizeclass)%>%
+  drop_na(Taxa)%>%
+  drop_na(response)%>%
   ##   Transform variables
   mutate(Date=as.factor(yday(Date)))%>% #as julian day
   mutate(Site=as.factor(Site))%>%
   mutate(Location=as.factor(Location))%>%
   glimpse()
 
-#Getting errors with Gam, perhaps too small samples, try LHS and CH together
+dat%<>%
+  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid")))%>%
+  mutate(Location=as.factor(Location))%>%
+  glimpse()
+
+unique(dat$Location)
+
+zeros <- dat%>%
+  filter(Location=="Cliff Head")%>%
+  filter(Taxa=="All")%>%
+  filter(response=="0")%>%
+  glimpse()
+
+length(zeros$Sample)
+
+
+dat<-as.data.frame(dat)
+glimpse(dat)
+unique(dat$Location)
+unique(dat$response)
+
 
 #dat%<>%
   # mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Cliff Head", "White Point"="Irwin Reef")))%>%
   # glimpse()
-
-unique(dat$Location)
 
 
 ggplot(data=dat,aes(y=response,x=Location))+
@@ -116,14 +137,14 @@ use.dat=dat
 out.all=list()
 var.imp=list()
 
-# Model1=gam(response~s(sst,k=3,bs='cr')+ s(Site,bs='re')+s(Date,bs='re'),family=tw(),  data=use.dat)
-# Model1
+Model1=gam(response~s(sst,k=3,bs='cr')+ s(Site,bs='re')+s(Date,bs='re'),family=tw(),  data=use.dat)
+ summary(Model1)
 
 # # Loop through the FSS function for each Taxa----
 for(i in 1:length(resp.vars)){
   use.dat=dat[which(dat$Taxa==resp.vars[i]),]
   
-  Model1=gam(response~s(sst,k=3,bs='cr')+ s(Site,bs='re')+s(Date,bs='re'),family=tw(),  data=use.dat)
+Model1=gam(response~s(sst,k=3,bs='cr')+ s(Site,bs='re')+s(Date,bs='re'),family=tw(),  data=use.dat)
   # gam.check(Model1)
   # plot.gam(Model1)
   # summary(Model1)
@@ -175,6 +196,6 @@ names(out.all)=resp.vars
 names(var.imp)=resp.vars
 all.mod.fits=do.call("rbind",out.all)
 all.var.imp=do.call("rbind",var.imp)
-write.csv(all.mod.fits[,-2],file=paste(name,"all.mod.fits.csv",sep="_"))
-write.csv(all.var.imp,file=paste(name,"all.var.imp.csv",sep="_"))
+write.csv(all.mod.fits[,-2],file=paste(name,"all.mod.fits.180619.csv",sep="_"))
+write.csv(all.var.imp,file=paste(name,"all.var.imp.180619.csv",sep="_"))
 

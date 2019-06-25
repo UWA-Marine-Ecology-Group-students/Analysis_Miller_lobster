@@ -66,7 +66,7 @@ dat<-left_join(length.clean,metadata.clean)%>%
   dplyr::mutate(Date=lubridate::as_date(ymd(Date)))%>%
   glimpse()
 
-#Add in 2019 data---
+#Add in 2019 data----
 
 # #Bring 2019 pot data
 # potdata.19<-gs_title("Lobsters_data_2019_All")%>% 
@@ -159,11 +159,15 @@ just.recaps.new<-just.recaps%>%
 #Combine Initial and Recaptures----
 dat.rr<- dplyr::left_join(just.initial, just.recaps.new, by="Tag.number")%>%
   mutate(inc=Carapace.length.recap-Carapace.length)%>% #growth increment
-  dplyr::mutate(Lyrs=Date.recap-Date)%>% #Days between capture
+  dplyr::mutate(Ldys=Date.recap-Date)%>% #Days between capture
   glimpse()
 
-#Save for k-means and fabens
+#Filter 0 = Ldys, weird number of repeats in Hebbos----
+dat.rr%<>%
+  filter(!Ldys=="0")%>%
+  glimpse()
+#119-mostly hebbos and a few of oscars
 
-
+#Save for k-means and fabens----
 setwd(data.dir)
 write.csv(dat.rr, "Growth.Data.csv", row.names = F)

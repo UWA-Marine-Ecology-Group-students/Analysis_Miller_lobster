@@ -33,8 +33,7 @@ scaleFUN <- function(x) sprintf("%.0f", x)
 #Import Data
 setwd(data.dir)
 
-dat.rr<-read_csv("dat.rr.clean.csv")%>%
-glimpse()
+
 
 #New data
 dat.rr<- read.csv("Recapture.Date.csv")%>%
@@ -172,6 +171,8 @@ LR_test  ## very much an improvement therefore sexes are different
 ## We should split by location as well
 pars <- exp(aout.spl$par)*c(100,1,1,1,1,1,1,1)
 View(pars)
+
+
 #Plot Residuals----
 par(mfrow=c(3,3))
 
@@ -246,6 +247,11 @@ glimpse(tmp.rec)
 #Plot in ggplot----
 #Release month residuals
 #labels <- c("Cliff Head"= "a) Cliff Head", "Irwin Reef"="b) Irwin Reef", "Seven Mile"="c) Seven Mile") 
+tmp.rec%<>%
+  mutate(rlloc=str_replace_all(.$rlloc("Low-catch"="Cliff Head", "Boundary"="Low", "Mid"="Medium")))%>%
+  glimpse()
+
+unique(tmp.rec$rlloc)
 
 residual.month<-ggplot(data=tmp.rec, aes(x=rlmonth, y=rr, col=sex))+
   geom_point(size=1.7, alpha=0.5)+
@@ -360,7 +366,7 @@ dev.off()
 
 
 
-plot(dum$age, dum$Fir, type='l', col="blue",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=1.5, cex.axis=1.3) #or  ylim=c(20,110)
+plot(dum$age, dum$Fir, type='l', col="red",lwd=2, xlab='Relative age (years)', ylab='Carapace length (mm)', ylim=c(20,130), bty='l', cex.lab=1.5, cex.axis=1.3) #or  ylim=c(20,110)
 lines(dum$age, dum$Fch, type='l', col=3, lwd=2)
 lines(dum$age, dum$Fsm, type='l', col=6, lwd=2)
 
@@ -371,17 +377,11 @@ lines(dum$age, dum$Msm, type='l', lwd=2, lty=2, col=6)
 
 legend("bottomright", title = "Location                      ",
        legend=c("Irwin Reef", "Cliff Head", "Seven Mile", "Female", "Male"), 
-       col = c("blue", "3", "6", "black", "black"), 
+       col = c("red", "3", "6", "black", "black"), 
        lty= c(1,1,1,1,2), lwd=c(2,2,2,2,2), box.lty=0, ncol=2, cex=1.5)
-
-
-
-
 
 # Save plots----
 setwd(plots.dir)
-
-
 jpeg("rplot.jpg", width = 350, height = "350")
 
 

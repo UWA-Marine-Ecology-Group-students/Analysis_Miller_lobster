@@ -1,3 +1,4 @@
+
 rm(list=ls()) # Clears memory
 # Part 3 - plots of the most parsimonious models----
 
@@ -25,7 +26,7 @@ Theme1 <-
     text=element_text(size=15),
     strip.text.y = element_text(size = 15,angle = 0, colour="black"),
     axis.title.x=element_text(vjust=0, size=15, colour="black",face="bold"),
-    axis.title.y=element_text(vjust=0.6, angle=90, size=15,,face="bold", colour="black"),
+    axis.title.y=element_text(vjust=0.6, angle=90, size=15,face="bold", colour="black"),
     axis.text.x=element_text(size=15, colour="black"),
     axis.text.y=element_text(size=15, colour="black"),
     axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
@@ -43,7 +44,6 @@ data.dir<-paste(work.dir,"Data",sep="/")
 map.dir<-paste(work.dir,"Map Layers",sep="/")
 plots.dir<-paste(work.dir,"Plots",sep="/")
 model.dir<-paste(work.dir,"Model_out_catch",sep="/")
-
 
 # Bring in and format the data----
 name<-"catch"
@@ -63,6 +63,13 @@ dat <-read_csv("catch.sw.sst.csv")%>%
   # na.omit()%>%
   glimpse()
 
+dat%<>%
+  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid", "Cliff Head"="Low-catch", "Seven Mile"="Control")))%>%
+  mutate(Location=as.factor(Location))%>%
+  glimpse()
+
+unique(dat$Location)
+dat<-as.data.frame(dat)
 names(dat)
 
 # Model for legal----
@@ -174,7 +181,7 @@ testdata <- expand.grid(Hs.m.sw=mean(mod$model$Hs.m.sw),
                         sst=mean(mod$model$sst),
                         Date=(mod$model$Date),
                         Site=(mod$model$Site),
-                        Location = c("Golden Ridge","Cliff Head","Little Horseshoe", "White Point", "Irwin Reef","Seven Mile"))%>%
+                        Location = c("Low-catch","Boundary", "Mid","Control"))%>%
   distinct()%>%
   glimpse()
 
@@ -206,7 +213,7 @@ catch.sublegal.location
 # Save plots----
 setwd(plots.dir)
 
-ggsave(catch.sublegal.location,file="catch.sublegal.gamm.png", width = 25, height = 18,units = "cm")
+ggsave(catch.sublegal.location,file="catch.sublegal.gamm.190619.png", width = 20, height = 15,units = "cm")
 
 # To see what they will look like use grid.arrange() - make sure Plot window is large enough! - or will error!
 grid.arrange(catch.legal.location,catch.sublegal.location,nrow=1,ncol=2)

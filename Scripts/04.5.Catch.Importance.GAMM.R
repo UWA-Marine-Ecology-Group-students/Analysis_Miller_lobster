@@ -22,9 +22,8 @@ model.dir<-paste(work.dir,"Model_out_catch",sep="/")
 # Bring in and format the data----
 name<-"catch"
 setwd(model.dir)
-dir()
 
-dat.taxa <-read.csv("catch_all.var.imp.csv")%>% #from local copy
+dat.taxa <- read.csv("catch_all.var.imp.190619.csv")%>% #from local copy
   rename(resp.var=X)%>%
   gather(key=predictor,value=importance,2:ncol(.))%>%
   filter(!resp.var=="All")%>%
@@ -68,26 +67,27 @@ unique(dat.taxa$resp.var)
 
 dat.taxa.label<-dat.taxa%>%
   mutate(label=NA)%>%
-  mutate(label=ifelse(predictor=="sst" & resp.var=="Legal","X",
-                      ifelse(predictor=="T1.s.sw"&resp.var=="Legal","X",
-                      ifelse(predictor=="Hs.m.sw"&resp.var=="Legal","X",label))))%>%
-  
   mutate(label=ifelse(predictor=="Hs.m.sw"&resp.var=="Sublegal","X",
                       ifelse(predictor=="sst"&resp.var=="Sublegal","X",
-                      ifelse(predictor=="Location"&resp.var=="Sublegal","X",label))))%>%
+                             ifelse(predictor=="Location"&resp.var=="Sublegal","X",label))))%>%
+  mutate(label=ifelse(predictor=="sst" & resp.var=="Legal","X",
+                      ifelse(predictor=="T1.s.sw"&resp.var=="Legal","X",
+                      ifelse(predictor=="Hs.m.sw"&resp.var=="Legal","X"
+                             ,label))))%>%
+  
+  
   
   glimpse()
 
 # Plot gg.importance.scores ----
 gg.importance.scores <- ggplot(dat.taxa.label, aes(x=predictor,y=resp.var,fill=importance))+
   geom_tile(show.legend=T) +
-  scale_fill_gradientn(legend_title,colours=c("white", re), na.value = "grey98", limits = c(0.1, max(dat.taxa.label$importance)))+
+  scale_fill_gradientn(legend_title,colours=c("white", re), na.value = "grey98", limits = c(0.01, max(dat.taxa.label$importance)))+
   scale_x_discrete(limits=c("Location","Hs.m.sw","T1.s.sw","sst"),
                    labels=c("Location","Swell height","Swell period","SST"
                    ))+
-  scale_y_discrete(limits = c("Sublegal","Legal"
-  ),
-  labels=c("Sublegal","Legal"))+
+  scale_y_discrete(limits = c("Legal", "Sublegal"),
+  labels=c("Legal", "Sublegal"))+
   xlab(NULL)+
   ylab(NULL)+
   theme_classic()+
@@ -100,4 +100,4 @@ setwd(plots.dir)
 
 # ggsave(gg.importance.scores,file="catch.location.importance.new.png", width = 30, height = 10,units = "cm")
 
-ggsave(gg.importance.scores,file="catch.location.importance.new.png", width = 20, height = 6,units = "cm")
+ggsave(gg.importance.scores,file="catch.location.importance.190619.png", width = 20, height = 6,units = "cm")

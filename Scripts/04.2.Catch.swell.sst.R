@@ -158,7 +158,6 @@ dat.swell.18 <-gs_title("JDW2018")%>%
 
 #2017 data----
 # Added as sheet 2 to 2018 data. 
-
 dat.swell.17 <-gs_title("JDW2018")%>%
   gs_read_csv(ws="Sheet2", header=TRUE)%>%
   mutate(Date=as.Date(Date,format= "%d/%m/%Y"))%>%
@@ -217,4 +216,18 @@ catch.sw.sst <- left_join(catch.swell, av.catch.sst, by=c("SiteNo", "Date"))%>%
 setwd(data.dir)
 write.csv(catch.sw.sst,"catch.sw.sst.csv", row.names=F)
 
+#Option for when sst function is down
+old.sst <- read.csv("catch.sw.sst.csv")%>%
+  select(-Count)%>%
+  glimpse()
 
+new.count<-catch.swell%>%
+  select(Count, Sample, sizeclass)%>%
+  glimpse()
+
+new.data<-left_join(old.sst, new.count)%>%
+  glimpse()
+
+
+setwd(data.dir)
+write.csv(new.data,"catch.sw.sst.csv", row.names=F)

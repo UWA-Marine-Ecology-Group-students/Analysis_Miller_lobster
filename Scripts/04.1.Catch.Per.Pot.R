@@ -46,18 +46,21 @@ scaleFUN <- function(x) sprintf("%.0f", x)
 
 dat.length<-read.csv("length.csv")%>%
   filter(!Source%in%c("fisheries-returns", "fisher-returns"))%>% #I want these removed
-  select(Sample, Tag.number, Carapace.length, Sex, Colour, Count)%>% #To simplify for Ash, Brooke can remove
+  select(Sample, Tag.number, Carapace.length, Sex, Colour, Count, Source)%>% #To simplify for Ash, Brooke can remove
   replace_na(list(Count=1))%>% #Seven Mile North count as NA
+  filter(!is.na(Carapace.length))%>%
   glimpse()
 
 #Check
 length(unique(dat.length$Tag.number)) #9687
 length(dat.length$Carapace.length) #14254
 
+unique(dat.length$Source)
+
 #Import Pot data----
 dat.pot<-read.csv("metadata.csv")%>%
   filter(!Location=="Rivermouth")%>% #Removes NAs from Fishers as well. good.
-  dplyr::filter(!Pwo%in%c("1", "2", "X"))%>% #Removed 148 pots with Occy's.
+  #dplyr::filter(!Pwo%in%c("1", "2", "X"))%>% #Removed 148 pots with Occy's.
   select(Date, Location, Site,Day.pull, Sample, Longitude, Latitude )%>%
   glimpse()
 
@@ -77,7 +80,6 @@ length(unique(dat.length$Sample)) #1557
 # dat.all<- dplyr::semi_join(dat.length, dat.pot)%>%
 #   left_join(.,dat.pot)%>%
 #   glimpse()
-
 
 #This does keep empty pots
 dat.all <- dplyr::full_join(dat.length, dat.pot)%>%
@@ -145,65 +147,21 @@ setwd(data.dir)
 write.csv(sum.per.pot,"dat.catch.csv", row.names=F)
 
 
-
-#Find mean catch per pot per date per location----
-glimpse(dat.pot)
-glimpse(dat.length)
-
-dat <- dplyr::full_join(dat.length, dat.pot)%>%
-  filter(!is.na(Location))%>% #Removes the pwo/rivermouth data from the length data. 587 removed
-  glimpse()
-
-legal.sum<- dat%>%
-  mutate(sizeclass= ifelse(Carapace.length>=76.0,"Legal", "Sublegal"))%>% 
-  filter(!is.na(Carapace.length))%>%
-  group_by(Sample, sizeclass)%>%
-  dplyr::summarise(Count=sum(Count))%>%
-  ungroup()%>%
-  distinct()%>%
-  glimpse()
-
-all.sum <-dat%>%
-  group_by(Sample)%>%
-  dplyr::summarise(Count=sum(Count))%>%
-  ungroup()%>%
-  mutate(sizeclass="All")%>%
-  distinct()%>%
-  bind_rows(.,legal.sum)%>%
-  arrange(Sample)%>%
-  glimpse()
-
-location <- dat%>%
-  select(Date, Sample, Location, Site, Longitude, Latitude)%>%
-  distinct()%>%
-  group_by(Sample)%>%
-  slice(1)%>% # Fix the 5 errors and turn off the group by and the slice
-  glimpse()
-
-sum.pot<-full_join(legal.sum,location)%>%
-  complete(sizeclass,nesting(Sample))%>%
-  select(sizeclass,Sample,Count)%>%
-  left_join(.,dat.location)%>%
-  replace_na(list(Count=0))%>%
-  arrange(Sample)%>%
-  glimpse()
-
-length(unique(sum.per.pot$Sample))
-1433*3
-
-
-#Okay I give up on the legal/sublegal/all above----
-#New bit, sum per pot all
-
+#Plot-----
 all <- dplyr::full_join(dat.length, dat.pot)%>%
-  filter(!is.na(Location))%>% #Removes the pwo/rivermouth data from the length data.
+  #filter(!is.na(Location))%>% #Removes the pwo/rivermouth data from the length data.
+  drop_na(Location)%>%
   dplyr::mutate(Date=lubridate::as_date(ymd(Date)))%>%
   mutate(month=format(as.Date(Date, 'd%%m%Y'), '%m'))%>%
+  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid", "Cliff Head"="Low-catch")))%>%
+  mutate(Location=as.factor(Location))%>%
   glimpse()
+
 
 #check
 unique(all$month)
 length(unique(all$Sample)) #1857
+unique(all$Location)
 
 #sum per pot (Sample)
 sum.all<- all%>%
@@ -221,14 +179,6 @@ sum.pot<-all%>%
   filter(!Count==0)%>%
   glimpse()
 
-#Find the mean per trip/location
-# sum.loc<-sum.pot%>%
-#   group_by(month, Location)%>%
-#   dplyr::summarise(Count=mean(Count))%>%
-#   ungroup()%>%
-#   filter(!Count==0)%>%
-#   #dplyr::mutate(month=str_replace_all(.$month,c("05"="May", "06"="June", "07"="July", "08"="August", "09"="September","11"= "November", "12"= "December")))%>%
-#   glimpse()
 
 #Plot mean catch per pot----
 # Theme-----
@@ -250,12 +200,18 @@ Theme1 <-
 
 #Plot All----
 plot.dat<-sum.pot%>%
-  filter(!Location%in%c("Golden Ridge", "Seven Mile"))%>%
+  filter(!Location%in%c("Seven Mile"))%>%
   glimpse()
+
+unique(plot.dat$Location)
+
+plot.dat$Location<- factor(plot.dat$Location, levels=c("Mid", "Boundary", "Low-catch"))
+
 
 mean.plot<- ggplot(plot.dat, aes(x=month, y=Count, group=Location, color=Location)) + 
   stat_summary(fun.y=mean, geom="line", size=1) +
   stat_summary(fun.ymin = se.min, fun.ymax = se.max, geom = "errorbar", width = 0.1)+
+  scale_color_manual(values = c("#00AFBB","#E7B800","red"))+
   theme_bw()+Theme1+ 
   xlab("Month")+
   ylab("Average Lobster per pot (+/- SE)")+
@@ -263,72 +219,7 @@ mean.plot<- ggplot(plot.dat, aes(x=month, y=Count, group=Location, color=Locatio
                    labels=c("May", "June", "July", "Aug", "Sept", "Nov", "Dec"))
 mean.plot
 
-setwd(plots.di)
+setwd(plots.dir)
 
-ggsave(mean.plot,file="mean.plot.png", width = 20, height = 12,units = "cm")
-
-#Divide into Legal and Sublegal----
-
-#Create sizeclass
-legal<-all%>%
-  mutate(sizeclass= ifelse(Carapace.length>=76.0,"Legal", "Sublegal"))%>% 
-  filter(!is.na(Carapace.length))%>%
-  glimpse()
-
-#find sum per sizeclass----
-sum.legal <-legal%>%
-  group_by(Sample, sizeclass)%>%
-  dplyr::summarise(Count=sum(Count))%>%
-  ungroup()%>%
-  distinct()%>%
-  glimpse()
-
-#find sum per pot----
-sum.all <-all%>%
-  group_by(Sample)%>%
-  dplyr::summarise(Count=sum(Count))%>%
-  ungroup()%>%
-  mutate(sizeclass="All")%>%
-  distinct()%>%
-  bind_rows(.,sum.legal)%>%
-  arrange(Sample)%>%
-  glimpse()
-
-dat.location <- all%>%
-  select(Date, Sample, Location, Site, Longitude, Latitude)%>%
-  distinct()%>%
-  group_by(Sample)%>%
-  slice(1)%>% # Fix the 5 errors and turn off the group by and the slice
-  glimpse()
-
-#JOIN BACK WITH DATA: Trap.Id, Sum per pot, Location, Site----
-sum.per.pot<-full_join(sum.all,dat.location)%>%
-  complete(sizeclass,nesting(Sample))%>%
-  select(sizeclass,Sample,Count)%>%
-  left_join(.,dat.location)%>%
-  replace_na(list(Count=0))%>%
-  arrange(Sample)%>%
-  mutate(month=format(as.Date(Date, 'd%%m%Y'), '%m'))%>%
-  glimpse()
-
-glimpse(sum.per.pot)
-
-sum.plot<-sum.per.pot%>%
-  filter(!sizeclass=="All")%>%
-  filter(!Count==0)%>%
-  glimpse()
-
-#Plot legal and sublegal----
-legal.plot<- ggplot(sum.plot, aes(x=month, y=Count, group=Location, color=Location)) + 
-  stat_summary(fun.y=mean, geom="line") +
-  stat_summary(fun.ymin = se.min, fun.ymax = se.max, geom = "errorbar", width = 0.1)+
-  theme_bw()+Theme1+ 
-  xlab("Month")+
-  ylab("Average Lobster per pot (+/- SE)")+
-  scale_x_discrete(breaks=c("05","06","07", "08", "09", "11", "12"),
-                   labels=c("May", "June", "July", "Aug", "Sept", "Nov", "Dec"))+
-  facet_wrap(.~sizeclass)
-legal.plot
-
-
+ggsave(mean.plot,file="mean.plot.250619.png", width = 20, height = 12,units = "cm")
 
