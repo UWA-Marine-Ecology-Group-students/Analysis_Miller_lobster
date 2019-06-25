@@ -190,6 +190,23 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
   filter(!is.na(Sample))%>%
   glimpse()
 
+#####"))%>%
+#Lots of repeats in SM data i.e. same tag numbers in same pots (Sample)
+#Need to filter out
+sevenmile<- sevenmile[!duplicated(sevenmile[,c("Tag.number","Sample")]),]%>%
+  glimpse
+
+######
+catch.sm<-sevenmile%>%
+  select(Carapace.length, Tag.number, Date, m)%>%
+  mutate(Count=1)%>%
+  mutate(sizeclass=ifelse(Carapace.length>=76.0,"Legal", "Sublegal"))%>%
+  glimpse()
+
+mutate(sizeclass= ifelse(Carapace.length>=76.0,"Legal", "Sublegal"))%>% 
+  
+#####
+
 unique(sevenmile$Total.damage)
 names(sevenmile)
 
@@ -221,7 +238,8 @@ metadata.final<-bind_rows(metadata,metadata.fisheries,metadata.fisher,metadata.s
 
 length.final<-bind_rows(length,length.fisheries,length.fisher,length.sevenmile)%>%
   replace_na(list(Dead="Alive",Cable.tie=FALSE))%>%
-  select(-c(Family,Genus,Species,Project,Campaignid))
+  select(-c(Family,Gunique(metadata.final$Pwo) # OK
+enus,Species,Project,Campaignid))
 
 names(metadata.final)
 names(length.final)
@@ -230,7 +248,6 @@ names(length.final)
 unique(metadata.final$Source)
 unique(metadata.final$Location) # OK
 unique(metadata.final$Pot.remarks) # OK
-unique(metadata.final$Pwo) # OK
 unique(metadata.final$Pwf) # OK
 unique(metadata.final$Trip) # OK - one missing though?
 unique(metadata.final$Exclude.pots) # Ok
