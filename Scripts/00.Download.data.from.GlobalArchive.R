@@ -238,8 +238,9 @@ metadata.final<-bind_rows(metadata,metadata.fisheries,metadata.fisher,metadata.s
 
 length.final<-bind_rows(length,length.fisheries,length.fisher,length.sevenmile)%>%
   replace_na(list(Dead="Alive",Cable.tie=FALSE))%>%
-  select(-c(Family,Gunique(metadata.final$Pwo) # OK
-enus,Species,Project,Campaignid))
+  select(-c(Family,Genus,Species,Project,Campaignid))
+
+unique(metadata.final$Pwo)
 
 names(metadata.final)
 names(length.final)
