@@ -12,6 +12,7 @@ library(googlesheets)
 study<-"Lobster.Data"
 
 # Set work directory----
+work.dir=("C:/GitHub/Analysis_Miller_lobster") # Brooke
 work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 ## Sub directories ----
