@@ -43,7 +43,7 @@ dat.2018<-gs_title("Lobsters_data_2018_All")%>%
   glimpse()
 
 length.2018<-dat.2018%>%
-  filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>% 
+  filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>%  
   # now filters out where all are blank (empty pots)
   mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
@@ -57,7 +57,7 @@ length.2018<-dat.2018%>%
   mutate(Setose.state=ifelse(Setose.state%in%c("M"),"Mature",Setose.state))%>%
   mutate(Egg.stage=ifelse(Egg.stage%in%c("E","I"),"Early",Egg.stage))%>%
   mutate(Egg.stage=ifelse(Egg.stage%in%c("M"),"Mid",Egg.stage))%>%
-  dplyr::select(Source,Trip,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Setose.state,Egg.stage,Moult.stage,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Outlier,Individual.Remarks)%>%
+  dplyr::select( Date,Source,Trip,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Setose.state,Egg.stage,Moult.stage,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Outlier,Individual.Remarks)%>%
   glimpse()
 
 # Check formating of Lobster data
@@ -69,33 +69,97 @@ unique(length.2018$Dead) # NA     "Dead"
 unique(length.2018$Individual.Remarks) 
 unique(length.2018$Recapture)
 # Counts
-length(unique(length.2018$Tag.number)) # 7553 tagged individuals
+length(unique(length.2018$Tag.number)) # 7565 tagged individuals
 length(length.2018$Carapace.length) # 9318 total indiviuals caught
 length(unique(length.2018$Sample)) # 1163 pots with crays
-#Count of recaptures
-total.recaps<- length.2018%>%
-  select(Tag.number)%>%
-  mutate(duplicates = duplicated(.) | duplicated(., fromLast = TRUE))%>%
-  filter(duplicates=="TRUE")%>%
-  glimpse()
-#2,769 total recaptures
-length(unique(total.recaps$Tag.number))
-#1004 unique recaptures
 
-# Things that should actually be in the metadata not the lobster data
+names(dat.2018)
 info.2018<-dat.2018%>%
-  dplyr::select(Sample,Day.Pull,Pot.Remarks,PWO,WKW,PWF)%>% # Trap.Number, Date
+  dplyr::select(Trip,Sample, Day,Trap.ID, Trap.Number, Day.Pull, Pot.Remarks,PWO,PWF, WKW)%>% # Location, Date,
   distinct()%>%
   glimpse()
 
-length(unique(info.2018$Sample)) # 1440 total pot lifts
+unique(info.2018$Pot.Remarks)
+unique(info.2018$PWO)
 
-duplicate.remarks<-info.2018%>%
+duplicates<-info.2018%>%
   group_by(Sample)%>%
   summarise(n=n())%>%
   filter(n>1)
+#####################################################
+#Count recaptures per trip---
+glimpse(length.2018) #9318
+test<-length.2018%>%
+  dplyr::mutate(Date=as_date(dmy(Date)))%>%
+  select(Sample, Date, Trip, Tag.number, Carapace.length)%>%
+  glimpse()
 
-unique(info.2018$Pot.Remarks)
+glimpse(test)
+meta<-metadata.2018%>%
+  select(Sample, Location)%>%
+  glimpse()
+
+catch<- left_join(test, meta, by="Sample")%>%
+  mutate(sizeclass= ifelse(Carapace.length>=76.0,"Legal", "Sublegal"))%>% 
+  filter(!is.na(Carapace.length))%>%
+  filter(!is.na(Tag.number))%>%
+  mutate(Count=1)%>%
+  glimpse()
+
+#order by date
+catch%<>%
+  arrange(Date)%>%
+  glimpse()
+
+#filter to initial tags
+int<-catch%>%
+  dplyr::distinct(Tag.number,.keep_all = TRUE)%>% 
+  #filters out the duplicates (recaptues)
+  filter(!Trip=="8")%>% #Added !Trip=="1" & 
+  glimpse()
+
+unique(int$Trip)
+tapply(int$Count, list(int$Location, int$sizeclass), length)
+
+#Thin data to recaps
+rec <- catch[duplicated(catch$Tag.number), ]%>%
+  filter(!Trip=="8")%>% #Added
+  glimpse()
+
+tapply(rec$Count, list(rec$Location, rec$sizeclass), length)
+
+#Join with other data----
+all.recaps <- semi_join(test, recaps)%>%
+  glimpse()
+
+#isolate recaps
+rec <- all.recaps[duplicated(all.recaps$Tag.number), ]%>%
+  glimpse()
+#join recaps
+int.rec <-full_join(int, rec, by="Tag.number")%>%
+  dplyr::rename(int.date=Date.x,
+                int.trip=Trip.x,
+                rec.date=Date.y,
+                rec.trip=Trip.y)%>%
+  glimpse()
+
+
+#count of recaptures per trip-----
+count<-int.rec%>%
+  group_by(int.trip)%>%
+  summarise(Sum=sum(n()))%>%
+  glimpse()
+
+trip<-int.rec%>%
+  filter(rec.trip=="8")%>%
+  glimpse()
+
+trip%<>%
+  group_by(int.trip)%>%
+  summarise(Sum=sum(n()))%>%
+  glimpse()
+
+#######################################################
 
 # Import 2018 metadata----
 metadata.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
@@ -121,20 +185,30 @@ metadata.2018<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
   select(Source,Sample,Trip,Day,Site.Code,Pot.Number,Location,Site,Date,Day.Pull,Latitude,Longitude,Depth.lidar,Pot.Type,Pot.Remarks,PWO,PWF,WKW)%>% # Trap.ID,
   glimpse()
 
+
 names(metadata.2018)
 unique(metadata.2018$Date)
 unique(metadata.2018$Location)%>%sort() # "Cliff Head"   "Golden Ridge" "Irwin Reef"   "Rivermouth"   "Seven Mile", "Little Horseshoe", "White Point"
 unique(metadata.2018$Site)%>%sort() 
 unique(metadata.2018$Site.Code)%>%sort()
-
 length(unique(metadata.2018$Sample)) # 1461 (1163 non-empty, 298 empty)
 
 duplicate.pots<-metadata.2018%>%
   group_by(Sample)%>%
   dplyr::summarise(n=n())%>%filter(n>1) # No longer any duplicates
 
+unique(metadata.2018$PWO)
+
+pwo<-metadata.2018%>%
+  dplyr::filter(PWO%in%c("1", "2", "X"))%>% #&PWO=="2"PWO=="X")%>%
+  mutate(Count=1)%>%
+  glimpse()
+
+tapply(pwo$Count, list(pwo$Location), length)
+
+
 # Clean up environment
-rm(info.2018,duplicate.pots,duplicate.remarks,dat.2018)
+rm(info.2018,duplicate.pots,dat.2018)
 
 # Import 2017 length data----
 # Using original 2017 Data -----
@@ -167,9 +241,11 @@ unique(length.2017$Sex) # Character
 unique(length.2017$Colour) # character
 unique(length.2017$Dead)
 unique(length.2017$Individual.Remarks)
+length(length.2017$Carapace.length) #4133
 length(unique(length.2017$Tag.number)) #1683
 
-names(dat.2017)
+
+
 
 info.2017<-dat.2017%>%
   dplyr::select(Sample,Day,Trap.ID,Pot.Remarks,PWO,PWF)%>% # Location, Date,
@@ -210,7 +286,7 @@ metadata.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
 missing.pot.var<-anti_join(length.2017,metadata.2017) # Two pots that arent in the original
 
 # Clean up enviroment
-rm(missing.pot.var,duplicates,info.2017,dat.2017)
+rm(missing.pot.var,duplicates,info.2017,dat.2017, total.recaps, total.recaps.17)
 
 unique(metadata.2017$Site)
 unique(metadata.2017$Location)

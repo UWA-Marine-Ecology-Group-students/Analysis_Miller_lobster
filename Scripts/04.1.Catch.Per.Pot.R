@@ -53,7 +53,7 @@ dat.length<-read.csv("length.csv")%>%
 
 #Check
 length(unique(dat.length$Tag.number)) #9687
-length(dat.length$Carapace.length) #14254
+length(dat.length$Carapace.length) #14063
 
 unique(dat.length$Source)
 
@@ -220,6 +220,5 @@ mean.plot<- ggplot(plot.dat, aes(x=month, y=Count, group=Location, color=Locatio
 mean.plot
 
 setwd(plots.dir)
-
-ggsave(mean.plot,file="mean.plot.250619.png", width = 20, height = 12,units = "cm")
+ggsave(mean.plot,file="mean.plot.250619.png", width = 16, height = 10,units = "cm")
 

@@ -9,7 +9,7 @@ library(stringr)
 library(ggplot2)
 library(magrittr)
 library(readr)
-
+library(geosphere)
 # Study name ----
 study<-"Recapture.Distance"
 
@@ -52,3 +52,4 @@ dat.movement<-dat.rr%>%
 #Save for GAMM
 setwd(data.dir)
 write.csv(dat.movement, "Movement.Data.csv", row.names = F)  
+

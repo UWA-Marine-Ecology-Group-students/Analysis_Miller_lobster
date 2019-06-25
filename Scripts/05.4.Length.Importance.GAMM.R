@@ -1,8 +1,8 @@
 
 # Part 2 - custom plot of importance scores----
-
+rm(list =ls())
 # Bring in and format the raw data----
-#Librarys-----
+#Librarys----
 library(readr)
 library(gridExtra)
 library(ggplot2)
@@ -25,7 +25,7 @@ name<-"length"
 
 setwd(model.dir)
 
-dat.taxa <-read.csv("length_all.var.imp.csv")%>% #from local copy
+dat.taxa <-read.csv("length_all.var.imp.200619.csv")%>% #from local copy
   rename(resp.var=X)%>%
   gather(key=predictor,value=importance,2:ncol(.))%>%
   filter(!resp.var=="All")%>%
@@ -69,24 +69,26 @@ unique(dat.taxa$resp.var)
 dat.taxa.label<-dat.taxa%>%
   mutate(label=NA)%>%
   # mutate(label=ifelse(predictor=="sst"&resp.var=="White","X",ifelse(predictor=="T1.s.sw"&resp.var=="White","X",ifelse(predictor=="Location"&resp.var=="White","X",label))))%>%
-  mutate(label=ifelse(predictor=="Location"&resp.var=="White","X",label))%>%
-  
   mutate(label=ifelse(predictor=="sst"&resp.var=="Red","X",ifelse
-                      (predictor=="T1.s.sw"&resp.var=="Red","X",ifelse
-                        (predictor=="Hs.m.sw"&resp.var=="Red","X",label))))%>%
+                      (predictor=="Location"&resp.var=="Red","X",ifelse
+                        (predictor=="T1.s.sw"&resp.var=="Red","X",label))))%>%
+  mutate(label=ifelse(predictor=="Location"&resp.var=="White","X",ifelse
+                      (predictor=="sst"&resp.var=="White","X", ifelse
+                        (predictor=="T1.s.sw"&resp.var=="White","X",label))))%>%
+  
+  
 
   glimpse()
 
 # Plot gg.importance.scores ----
 gg.importance.scores <- ggplot(dat.taxa.label, aes(x=predictor,y=resp.var,fill=importance))+
   geom_tile(show.legend=T) +
-  scale_fill_gradientn(legend_title,colours=c("white", re), na.value = "grey98",limits = c(0.01, max(dat.taxa.label$importance)))+
+  scale_fill_gradientn(legend_title,colours=c("white", re), na.value = "grey98",limits = c(0.00, max(dat.taxa.label$importance)))+
   scale_x_discrete(limits=c("Location","Hs.m.sw","T1.s.sw","sst"),
                    labels=c("Location","Swell height","Swell period","SST"
                    ))+
-  scale_y_discrete(limits = c("White","Red"
-  ),
-  labels=c("White","Red"))+
+  scale_y_discrete(limits = c("Red", "White"),
+  labels=c("Red", "White"))+
   xlab(NULL)+
   ylab(NULL)+
   theme_classic()+
@@ -100,6 +102,6 @@ gg.importance.scores
 setwd("Z:/Analysis_Miller_lobster/Plots")
 # setwd("C:/GitHub/Analysis_Miller_lobster/Plots")
 
-ggsave(gg.importance.scores,file="length.location.importance.new.png", width = 20, height = 6,units = "cm")
+ggsave(gg.importance.scores,file="length.location.importance.190619.png", width = 20, height = 6,units = "cm")
 
 

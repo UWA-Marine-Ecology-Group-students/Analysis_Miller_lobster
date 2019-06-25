@@ -56,10 +56,13 @@ dat<- read_csv("length.sw.sst.csv")%>%
   mutate(Site=as.factor(Site))%>%
   mutate(Location=as.factor(Location))%>%
   mutate(Pot.number=as.factor(Pot.number))%>%
-  mutate(Location=str_replace_all(.$Location,c("Golden Ridge"="Medium", "Little Horseshoe"="Medium","White Point"= "Better","Irwin Reef"="Better")))%>%
+  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid")))%>%
+  mutate(Location=as.factor(Location))%>%
   glimpse()
 
+dat<-as.data.frame(dat)
 unique(dat$Location)
+unique(dat$Taxa)
 names(dat)
 
 ggplot(data=dat,aes(x=Taxa,y=response))+
@@ -123,8 +126,9 @@ var.imp=list()
 for(i in 1:length(resp.vars)){
   use.dat=dat[which(dat$Taxa==resp.vars[i]),]
   
-  Model1=gam(response~s(sst,k=3,bs='cr')+s(Pot.number,bs='re'),  data=use.dat)
-  # gam.check(Model1)
+  Model1=gam(response~s(sst,k=3,bs='cr')+s(Pot.number,bs='re')+s(Date,bs='re'),  data=use.dat)
+  #gam.check(Model1)
+  #summary(Model1)
   # plot.gam(Model1) + s(Site,bs='re')
   
   model.set=generate.model.set(use.dat=use.dat,
@@ -136,7 +140,7 @@ for(i in 1:length(resp.vars)){
                                factor.smooth.interactions = F,
                                cov.cutoff = 0.7,
                                k=3,
-                               null.terms="s(Pot.number,bs='re')") #s(Site,bs='re')+
+                               null.terms="s(Pot.number,bs='re')+s(Date,bs='re')") #s(Site,bs='re')+s(Date,bs='re')
   
   out.list=fit.model.set(model.set,
                          max.models=600,
@@ -172,6 +176,6 @@ names(out.all)=resp.vars
 names(var.imp)=resp.vars
 all.mod.fits=do.call("rbind",out.all)
 all.var.imp=do.call("rbind",var.imp)
-write.csv(all.mod.fits[,-2],file=paste(name,"all.mod.fits.new.csv",sep="_"))
-write.csv(all.var.imp,file=paste(name,"all.var.imp.new.csv",sep="_"))
+write.csv(all.mod.fits[,-2],file=paste(name,"all.mod.fits.200619.csv",sep="_"))
+write.csv(all.var.imp,file=paste(name,"all.var.imp.200619.csv",sep="_"))
 

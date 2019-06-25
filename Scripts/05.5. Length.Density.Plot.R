@@ -36,6 +36,7 @@ dat<- read_csv("length.sw.sst.csv")%>%
   mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid", "Cliff Head"="Low-catch", "Seven Mile"= "Control")))%>%
   drop_na(Colour)%>%
   drop_na(Carapace.length)%>%
+  drop_na(Location)%>%
   filter(Carapace.length>0)%>%
   filter(Colour%in%c("Red","White"))%>%
   # filter(!Location=="Golden Ridge")%>% #think about putting that back in
@@ -52,6 +53,7 @@ dat<- dat[!duplicated(dat[,c("Tag.number","Sample", "Carapace.length")]),]%>%
   glimpse
 
 dat<-as.data.frame(dat)
+
 
 # Plotting Themes ----
 Theme1 <-
