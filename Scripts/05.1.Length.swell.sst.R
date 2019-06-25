@@ -13,6 +13,7 @@ library(tidyverse)
 study<-"Lobster.Data"
 
 # Set work directory----
+work.dir=("C:/GitHub/Analysis_Miller_lobster") # Brooke
 work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 ## Sub directories ----
@@ -139,7 +140,7 @@ get.sst<-function(data){
 # Import length data----
 setwd("Z://Analysis_Miller_lobster/Data")
 
-dat.length<-read_csv("length.csv")%>%
+dat.length<-read.csv("length.csv")%>%
   filter(!is.na(Carapace.length))%>%
   filter(!Carapace.length<0)%>%
   select(Sample, Tag.number, Carapace.length, Sex, Colour)%>%
@@ -147,7 +148,7 @@ dat.length<-read_csv("length.csv")%>%
 
 #Check
 length(unique(dat.length$Tag.number)) #9698
-length(dat.length$Carapace.length) #14448
+length(dat.length$Carapace.length) #14257
 glimpse(dat.length)
 
 #Import Pot data----
