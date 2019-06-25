@@ -1,0 +1,512 @@
+theme(legend.position=c(0.54,0.64)) +
+scale_y_continuous(breaks=seq(-24,-21.5,0.5))
+setwd("/Volumes/GoogleDrive/My Drive/ArcGIS shapefiles")
+bathy<-readOGR("Bathym_Statewide.shp", layer = "Bathym_Statewide")
+bathy<-fortify(bathy, region = "OBJECTID")
+WAinsertmap <- ggplot(data=ausmap, aes(long,lat)) +
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+geom_path(alpha=0)+
+coord_cartesian(xlim = c(112, 129),ylim = c(-36,-12)) +
+annotate("rect", xmin = 112.65, xmax = 114.85, ymin = -25.55, ymax = -24.4, colour="red", alpha = 0, size = 1) +
+annotate("text", label="Western\n Australia", x=122.5, y=-26, size=4.5, colour="black") +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+panel.background = element_blank(),
+panel.border = element_rect(colour = "black", fill=NA, size=0.7),
+axis.text.x=element_blank(),
+axis.text.y=element_blank(),
+axis.title.x=element_blank(),
+axis.title.y=element_blank(),
+axis.ticks.length=unit(0,"cm"),
+plot.margin=unit(c(0,0,0,0), "cm"),
+plot.title=element_blank())
+library(RColorBrewer)
+library(colorRamps)
+myPalette <- colorRamps::matlab.like2 # Set the colour palette to use for the data points (fishing locations) on the map, based on the percentage depredation rate
+rawdepdatabathy <-map +
+geom_point(aes(Long,Lat,colour=DepredationRate),size=2.2, data=dat) +
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'transparent') +
+scale_colour_gradientn(name="Depredation rate (%)",colours= myPalette(20)) +
+xlab("\nLongitude")+
+ylab("Latitude\n")+
+coord_cartesian(xlim = c(112.65, 114.85), ylim = c(-25.55, -24.4)) +
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+Generictheme  +
+scaleBar(lon = 114.35, lat = -25.05, distanceLon = 20,distanceLat = 2, distanceLegend = -5, dist.unit = "km", rec.fill = "black", rec.colour = "black", rec2.fill = "white", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 12, arrow.distance = 5, arrow.North.size = 6) +
+annotate("text", label="20", x=113.29, y=-25.27, size=3, colour="black", angle=50) +
+annotate("text", label="50", x=113.52, y=-24.81, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.70, y=-25.45, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.35, y=-25.25, size=3, colour="black", angle=40) +
+annotate("text", label="20", x=113.43, y=-25.45, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.41, y=-24.79, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.09, y=-25.32, size=3, colour="black", angle=85) +
+annotate("text", label="150", x=113.232, y=-24.72, size=3, colour="black", angle=60) +
+annotate("text", label="150", x=113.35, y=-24.46, size=3, colour="black", angle=70) +
+annotate("text", label="350", x=112.83, y=-25.29, size=3, colour="black", angle=85) +
+annotate("text", label="350", x=112.64, y=-24.8, size=3, colour="black", angle=85) +
+theme(legend.position=c(0.34,0.74))+
+theme(axis.text=element_text(size = 0.1))+
+scale_y_continuous(breaks=seq(-25.5,-24.5,0.25)) +
+scale_x_continuous(breaks=seq(112.75,114.75,0.5)) +
+geom_polygon(data=bathy,aes(x=long, y=lat, group=group), show.legend=FALSE, colour="grey30", fill="white", size=0.1, alpha=0.1) +
+theme(plot.margin=unit(c(1,1,0.5,0.5), "cm"))
+rawdepdatabathy
+print(WAinsertmap, vp=viewport(width=0.22, height=0.29, x=0.82, y=0.30))
+# Libraries required
+detach("package:plyr", unload=TRUE)#will error - no worries
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(readxl)
+library(googlesheets)
+library(zoo) #for filling in missing values
+library(rgeos)
+library(rgdal)
+library(gtable)
+library(gridExtra)
+library(jpeg)
+library(grid)
+library(png)
+library(maptools)
+library(maps)
+library(GISTools)
+library(scales)
+# Set directories----
+rm(list=ls()) #clear memory
+study<-"Kerneldensityfishingpressuremap"
+# Set your specific work.dir here-
+work.dir=("/Volume/Google Drive/My Drive/Masters_Charlotte/Analysis/Data")
+em.export=paste(work.dir,"EM export",sep="/")
+em.check=paste(work.dir,"EM check",sep="/")
+tidy.data=paste(work.dir,"Tidy data",sep="/")
+plots=paste(work.dir,"Maps",sep="/")
+setwd("/Volumes/GoogleDrive/My Drive/Masters_Charlotte/Analysis/Map layers")
+auspoly<-readOGR("World.shp", layer = "World")
+ausmap<-fortify(auspoly, region = "parent_id")
+map <- ggplot(data=ausmap, aes(long,lat))+ ### the map needs to be plotted using ggplot in order to annotate
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'lightgrey') + # ADDING    sanctuaries
+geom_path(alpha=0)+
+annotate("text", x = 114.37, y = -21.3, face="bold", angle=40, size=1.5,label = "200m")+
+annotate("text", x = 115.1, y = -21.1, face="bold", angle=60, size=1.5,label = "30m")+
+theme_classic()+
+theme_bw()
+ggsave(filename="map.pdf", plot=map)
+## Theme for plots----
+Generictheme<-theme(panel.grid.major = element_blank(),
+legend.justification=c(1,0), legend.position=c(0.85,0.6),
+legend.background = element_rect(fill="transparent"),
+panel.grid.minor = element_blank(),
+strip.background = element_blank(),
+legend.key = element_blank(),
+legend.key.height=unit(2,"line"),
+legend.title = element_text(size=20),
+panel.border = element_rect(colour = "black"),
+legend.text = element_text(size=17),
+axis.text.x=element_text(size=18),
+axis.text.y=element_text(size=18),
+axis.title.x=element_text(size=23),
+axis.title.y=element_text(size=23),
+axis.ticks.length=unit(0.1,"cm"),
+plot.margin = unit(c(1,1,2,2),"lines"),
+plot.title=element_text(size=8,face="italic"))
+Generictheme2<-theme(panel.grid.major = element_blank(),
+legend.justification=c(1,0), legend.position=c(0.85,0.6),
+legend.background = element_rect(fill="transparent"),
+panel.grid.minor = element_blank(),
+strip.background = element_blank(),
+legend.key = element_blank(),
+legend.key.height=unit(2,"line"),
+legend.title = element_text(size=20),
+panel.border = element_rect(colour = "black"),
+legend.text = element_text(size=17),
+axis.text.x=element_text(size=18),
+axis.text.y=element_text(size=18),
+axis.title.x=element_text(size=23),
+axis.title.y=element_text(size=23),
+axis.ticks.length=unit(0.1,"cm"),
+plot.margin = unit(c(1,1,2,2),"lines"),
+plot.title=element_text(size=8))
+Generictheme3<-theme(panel.grid.major = element_blank(),
+legend.justification=c(1,0), legend.position=c(0.85,0.6),
+legend.background = element_rect(fill="transparent"),
+panel.grid.minor = element_blank(),
+strip.background = element_blank(),
+legend.key = element_blank(),
+legend.key.height=unit(2,"line"),
+legend.title = element_text(size=20),
+panel.border = element_rect(colour = "black"),
+legend.text = element_text(size=17),
+axis.text.x=element_text(size=18),
+axis.text.y=element_text(size=18),
+axis.title.x=element_text(size=23),
+axis.title.y=element_text(size=23),
+axis.ticks.length=unit(0.1,"cm"),
+plot.margin = unit(c(1,1,2,2),"lines"),
+plot.title=element_text(size=8,face="italic"))
+map
+createScaleBar <-
+function(lon,lat,distanceLon,distanceLat,distanceLegend, dist.units =
+"km"){
+# First rectangle
+bottomRight <- gcDestination(lon = lon, lat = lat, bearing = 90, dist = distanceLon, dist.units = dist.units, model = "WGS84")
+topLeft <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distanceLat, dist.units = dist.units, model = "WGS84")
+rectangle <- cbind(lon=c(lon, lon, bottomRight[1,"long"], bottomRight[1,"long"], lon),
+lat = c(lat, topLeft[1,"lat"], topLeft[1,"lat"],lat, lat))
+rectangle <- data.frame(rectangle, stringsAsFactors = FALSE)
+# Second rectangle t right of the first rectangle
+bottomRight2 <- gcDestination(lon = lon, lat = lat, bearing = 90, dist = distanceLon*2, dist.units = dist.units, model = "WGS84")
+rectangle2 <- cbind(lon = c(bottomRight[1,"long"], bottomRight[1,"long"], bottomRight2[1,"long"], bottomRight2[1,"long"],
+bottomRight[1,"long"]),
+lat=c(lat, topLeft[1,"lat"], topLeft[1,"lat"], lat, lat))
+rectangle2 <- data.frame(rectangle2, stringsAsFactors = FALSE)
+# Now let's deal with the text
+onTop <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distanceLegend, dist.units = dist.units, model = "WGS84")
+onTop2 <- onTop3 <- onTop
+onTop2[1,"long"] <- bottomRight[1,"long"]
+onTop3[1,"long"] <- bottomRight2[1,"long"]
+legend <- rbind(onTop, onTop2, onTop3)
+legend <- data.frame(cbind(legend, text = c(0, distanceLon, distanceLon*2)), stringsAsFactors = FALSE, row.names = NULL)
+return(list(rectangle = rectangle, rectangle2 = rectangle2, legend = legend)) }
+# Returns a list containing :
+#   - res : coordinates to draw an arrow ;
+#   - coordinates of the middle of the arrow (where the "N" will be plotted).
+#
+# Arguments : #
+#-------------#
+# scaleBar : result of createScaleBar() ;
+# length : desired length of the arrow ;
+# distance : distance between legend rectangles and the bottom of the arrow ;
+# dist.units : units of distance "km" (kilometers) (default), "nm" (nautical miles), "mi" (statute miles).
+createOrientationArrow <-
+function(scaleBar, length, distance = 1, dist.units = "km"){
+lon <- scaleBar$rectangle2[1,1]
+lat <- scaleBar$rectangle2[1,2]
+# Bottom point of the arrow
+begPoint <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = distance, dist.units = dist.units, model = "WGS84")
+lon <- begPoint[1,"long"]
+lat <- begPoint[1,"lat"]
+# Let us create the endpoint
+onTop <- gcDestination(lon = lon, lat = lat, bearing = 0, dist = length, dist.units = dist.units, model = "WGS84")
+leftArrow <- gcDestination(lon = onTop[1,"long"], lat = onTop[1,"lat"], bearing = 225, dist = length/5, dist.units =
+dist.units, model = "WGS84")
+rightArrow <- gcDestination(lon = onTop[1,"long"], lat = onTop[1,"lat"], bearing = 135, dist = length/5, dist.units =
+dist.units, model = "WGS84")
+res <- rbind(
+cbind(x = lon, y = lat, xend = onTop[1,"long"], yend = onTop[1,"lat"]),
+cbind(x = leftArrow[1,"long"], y = leftArrow[1,"lat"], xend = onTop[1,"long"], yend = onTop[1,"lat"]),
+cbind(x = rightArrow[1,"long"], y = rightArrow[1,"lat"], xend = onTop[1,"long"], yend = onTop[1,"lat"]))
+res <- as.data.frame(res, stringsAsFactors = FALSE)
+# Coordinates from which "N" will be plotted
+coordsN <- cbind(x = lon, y = (lat + onTop[1,"lat"])/2)
+return(list(res = res, coordsN = coordsN)) } #The last function enables the user to draw the elements:
+# distanceLegend : distance between rectangles and legend texts ;
+# dist.units : units of distance "km" (kilometers) (by default), "nm" (nautical miles), "mi" (statute miles) ;
+# rec.fill, rec2.fill : filling colour of the rectangles (default to white, and black, resp.);
+# rec.colour, rec2.colour : colour of the rectangles (default to black for both);
+# legend.colour : legend colour (default to black);
+# legend.size : legend size (default to 3);
+# orientation : (boolean) if TRUE (default), adds an orientation arrow to the plot ;
+# arrow.length : length of the arrow (default to 500 km) ;
+# arrow.distance : distance between the scale bar and the bottom of the arrow (default to 300 km) ;
+# arrow.North.size : size of the "N" letter (default to 6).
+scaleBar <- function(lon, lat, distanceLon, distanceLat, distanceLegend,
+dist.unit = "km", rec.fill = "white", rec.colour = "black", rec2.fill = "black", rec2.colour = "black", legend.colour = "black", legend.size = 2, orientation = TRUE, arrow.length = 500, arrow.distance = 300, arrow.North.size = 6){
+laScaleBar <- createScaleBar(lon = lon, lat = lat, distanceLon = distanceLon, distanceLat = distanceLat, distanceLegend = distanceLegend, dist.unit = dist.unit)
+# First rectangle
+rectangle1 <- geom_polygon(data = laScaleBar$rectangle, aes(x = lon, y = lat), fill = rec.fill, colour = rec.colour)
+# Second rectangle
+rectangle2 <- geom_polygon(data = laScaleBar$rectangle2, aes(x = lon, y = lat), fill = rec2.fill, colour = rec2.colour)
+# Legend
+scaleBarLegend <- annotate("text", label = paste(laScaleBar$legend[,"text"], dist.unit, sep=""), x =
+laScaleBar$legend[,"long"], y = laScaleBar$legend[,"lat"], size =
+legend.size, colour = legend.colour)
+res <- list(rectangle1, rectangle2, scaleBarLegend)
+if(orientation){# Add an arrow pointing North
+coordsArrow <- createOrientationArrow(scaleBar = laScaleBar, length = arrow.length, distance = arrow.distance, dist.unit =
+dist.unit)
+arrow <- list(geom_segment(data = coordsArrow$res, aes(x = x, y = y, xend = xend, yend = yend)), annotate("text", label = "N", x =
+coordsArrow$coordsN[1,"x"], y = coordsArrow$coordsN[1,"y"], size =
+arrow.North.size, colour = "black"))
+res <- c(res, arrow)
+}
+return(res) }
+setwd("/Volumes/GoogleDrive/My Drive/Masters_Charlotte/Analysis/Data")
+dat<-read.csv("/Volumes/GoogleDrive/My Drive/Masters_Charlotte/Analysis/Data/Carnarvon Data No Crabs TIDIED.csv")
+library(MASS)
+tripdensity <- kde2d(dat$Long, dat$Lat, n=403, lims=c(112.7, 113.8, -25.41, -23.70 ))
+tripdensitydataframe <- data.frame(expand.grid(Long = tripdensity$x, Lat=tripdensity$y),
+z=as.vector(tripdensity$z)) # z value is the kde value
+write.csv(tripdensitydataframe, file="tripdensitykde.csv")
+setwd("/Volumes/GoogleDrive/My Drive/Masters_Charlotte/Analysis/Map layers")
+bathy<-readOGR("Bathym_Statewide.shp", layer = "Bathym_Statewide")
+bathy <-fortify(bathym, region = "OBJECTID")
+bathy <-fortify(bathy, region = "OBJECTID")
+##Correct code for to get rid of weird lines
+WAinsertmap <- ggplot(data=ausmap, aes(long,lat)) +
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+geom_path(alpha=0)+
+coord_cartesian(xlim = c(112, 129),ylim = c(-36,-12)) +
+annotate("rect", xmin = 112.65, xmax = 114.85, ymin = -25.55, ymax = -24.4, colour="red", alpha = 0, size = 1) +
+annotate("text", label="Western\n Australia", x=122.5, y=-26, size=4.5, colour="black") +
+theme(panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(),
+panel.background = element_blank(),
+panel.border = element_rect(colour = "black", fill=NA, size=0.7),
+axis.text.x=element_blank(),
+axis.text.y=element_blank(),
+axis.title.x=element_blank(),
+axis.title.y=element_blank(),
+axis.ticks.length=unit(0,"cm"),
+plot.margin=unit(c(0,0,0,0), "cm"),
+plot.title=element_blank())
+kerneldensitymap <- map + #basemap # add the kernel density heatmap
+stat_contour(aes(Long, Lat, z=z, fill=..level..), data=tripdensitydataframe, geom="polygon", alpha=0.7, inherit.aes=F) + # add in the NMP sanctuary zones with white fill and a green line so that it blocks out the kernel density heatmap, because we don't want it to appear that there was fishing in the sanctuary zones
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'transparent') +
+scale_fill_gradientn(name="Fishing pressure\n(kernel density)", colours=rev(brewer.pal(7,"Spectral")))+
+xlab("\nLongitude ")+
+ylab("Latitude \n")+
+coord_cartesian(xlim = c(112.65, 114.85), ylim = c(-25.55, -24.4)) + # Have to add geom_polygon here after the stat_contour function so that it blocks out the kernel density plot over land
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+Generictheme  +
+scaleBar(lon = 114.35, lat = -25.05, distanceLon = 20,distanceLat = 2, distanceLegend = -5, dist.unit = "km", rec.fill = "black", rec.colour = "black", rec2.fill = "white", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 12, arrow.distance = 5, arrow.North.size = 6) +
+annotate("text", label="20", x=113.29, y=-25.27, size=3, colour="black", angle=50) +
+annotate("text", label="50", x=113.52, y=-24.81, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.70, y=-25.45, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.35, y=-25.25, size=3, colour="black", angle=40) +
+annotate("text", label="20", x=113.43, y=-25.45, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.41, y=-24.79, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.09, y=-25.32, size=3, colour="black", angle=85) +
+annotate("text", label="150", x=113.232, y=-24.72, size=3, colour="black", angle=60) +
+annotate("text", label="150", x=113.35, y=-24.46, size=3, colour="black", angle=70) +
+annotate("text", label="350", x=112.83, y=-25.29, size=3, colour="black", angle=85) +
+annotate("text", label="350", x=112.64, y=-24.8, size=3, colour="black", angle=85) +
+theme(legend.position=c(0.42,0.58))+
+theme(axis.text=element_text(size = 0.1))+
+scale_y_continuous(breaks=seq(-25.5,-24.5,0.25)) +
+scale_x_continuous(breaks=seq(112.75,114.75,0.5)) +
+geom_polygon(data=bathy,aes(x=long, y=lat, group=group), show.legend=FALSE, colour="grey30", fill="white", size=0.1, alpha=0.1) +
+theme(plot.margin=unit(c(1,1,0.5,0.5), "cm"))
+kerneldensitymap
+print(WAinsertmap, vp=viewport(width=0.22, height=0.29, x=0.82, y=0.29))
+## Theme for plots----
+Generictheme<-theme(panel.grid.major = element_blank(),
+legend.justification=c(1,0), legend.position=c(0.85,0.6),
+legend.background = element_rect(fill="transparent"),
+panel.grid.minor = element_blank(),
+strip.background = element_blank(),
+legend.key = element_blank(),
+legend.key.height=unit(2,"line"),
+legend.title = element_text(size=14),
+panel.border = element_rect(colour = "black"),
+legend.text = element_text(size=17),
+axis.text.x=element_text(size=18),
+axis.text.y=element_text(size=18),
+axis.title.x=element_text(size=23),
+axis.title.y=element_text(size=23),
+axis.ticks.length=unit(0.1,"cm"),
+plot.margin = unit(c(1,1,2,2),"lines"),
+plot.title=element_text(size=8,face="italic"))
+Generictheme2<-theme(panel.grid.major = element_blank(),
+legend.justification=c(1,0), legend.position=c(0.85,0.6),
+legend.background = element_rect(fill="transparent"),
+panel.grid.minor = element_blank(),
+strip.background = element_blank(),
+legend.key = element_blank(),
+legend.key.height=unit(2,"line"),
+legend.title = element_text(size=14),
+panel.border = element_rect(colour = "black"),
+legend.text = element_text(size=17),
+axis.text.x=element_text(size=18),
+axis.text.y=element_text(size=18),
+axis.title.x=element_text(size=23),
+axis.title.y=element_text(size=23),
+axis.ticks.length=unit(0.1,"cm"),
+plot.margin = unit(c(1,1,2,2),"lines"),
+plot.title=element_text(size=8))
+Generictheme3<-theme(panel.grid.major = element_blank(),
+legend.justification=c(1,0), legend.position=c(0.85,0.6),
+legend.background = element_rect(fill="transparent"),
+panel.grid.minor = element_blank(),
+strip.background = element_blank(),
+legend.key = element_blank(),
+legend.key.height=unit(2,"line"),
+legend.title = element_text(size=14),
+panel.border = element_rect(colour = "black"),
+legend.text = element_text(size=17),
+axis.text.x=element_text(size=18),
+axis.text.y=element_text(size=18),
+axis.title.x=element_text(size=23),
+axis.title.y=element_text(size=23),
+axis.ticks.length=unit(0.1,"cm"),
+plot.margin = unit(c(1,1,2,2),"lines"),
+plot.title=element_text(size=8,face="italic"))
+kerneldensitymap <- map + #basemap # add the kernel density heatmap
+stat_contour(aes(Long, Lat, z=z, fill=..level..), data=tripdensitydataframe, geom="polygon", alpha=0.7, inherit.aes=F) + # add in the NMP sanctuary zones with white fill and a green line so that it blocks out the kernel density heatmap, because we don't want it to appear that there was fishing in the sanctuary zones
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'transparent') +
+scale_fill_gradientn(name="Fishing pressure\n(kernel density)", colours=rev(brewer.pal(7,"Spectral")))+
+xlab("\nLongitude ")+
+ylab("Latitude \n")+
+coord_cartesian(xlim = c(112.65, 114.85), ylim = c(-25.55, -24.4)) + # Have to add geom_polygon here after the stat_contour function so that it blocks out the kernel density plot over land
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+Generictheme  +
+scaleBar(lon = 114.35, lat = -25.05, distanceLon = 20,distanceLat = 2, distanceLegend = -5, dist.unit = "km", rec.fill = "black", rec.colour = "black", rec2.fill = "white", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 12, arrow.distance = 5, arrow.North.size = 6) +
+annotate("text", label="20", x=113.29, y=-25.27, size=3, colour="black", angle=50) +
+annotate("text", label="50", x=113.52, y=-24.81, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.70, y=-25.45, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.35, y=-25.25, size=3, colour="black", angle=40) +
+annotate("text", label="20", x=113.43, y=-25.45, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.41, y=-24.79, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.09, y=-25.32, size=3, colour="black", angle=85) +
+annotate("text", label="150", x=113.232, y=-24.72, size=3, colour="black", angle=60) +
+annotate("text", label="150", x=113.35, y=-24.46, size=3, colour="black", angle=70) +
+annotate("text", label="350", x=112.83, y=-25.29, size=3, colour="black", angle=85) +
+annotate("text", label="350", x=112.64, y=-24.8, size=3, colour="black", angle=85) +
+theme(legend.position=c(0.42,0.58))+
+theme(axis.text=element_text(size = 0.1))+
+scale_y_continuous(breaks=seq(-25.5,-24.5,0.25)) +
+scale_x_continuous(breaks=seq(112.75,114.75,0.5)) +
+geom_polygon(data=bathy,aes(x=long, y=lat, group=group), show.legend=FALSE, colour="grey30", fill="white", size=0.1, alpha=0.1) +
+theme(plot.margin=unit(c(1,1,0.5,0.5), "cm"))
+kerneldensitymap
+print(WAinsertmap, vp=viewport(width=0.22, height=0.29, x=0.82, y=0.30))
+kerneldensitymap <- map + #basemap # add the kernel density heatmap
+stat_contour(aes(Long, Lat, z=z, fill=..level..), data=tripdensitydataframe, geom="polygon", alpha=0.7, inherit.aes=F) + # add in the NMP sanctuary zones with white fill and a green line so that it blocks out the kernel density heatmap, because we don't want it to appear that there was fishing in the sanctuary zones
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'transparent') +
+scale_fill_gradientn(name="Fishing pressure\n(kernel density)", colours=rev(brewer.pal(7,"Spectral")))+
+xlab("\nLongitude ")+
+ylab("Latitude \n")+
+coord_cartesian(xlim = c(112.65, 114.85), ylim = c(-25.55, -24.4)) + # Have to add geom_polygon here after the stat_contour function so that it blocks out the kernel density plot over land
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+Generictheme  +
+scaleBar(lon = 114.35, lat = -25.05, distanceLon = 20,distanceLat = 2, distanceLegend = -5, dist.unit = "km", rec.fill = "black", rec.colour = "black", rec2.fill = "white", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 12, arrow.distance = 5, arrow.North.size = 6) +
+annotate("text", label="20", x=113.29, y=-25.27, size=3, colour="black", angle=50) +
+annotate("text", label="50", x=113.52, y=-24.81, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.70, y=-25.45, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.35, y=-25.25, size=3, colour="black", angle=40) +
+annotate("text", label="20", x=113.43, y=-25.45, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.41, y=-24.79, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.09, y=-25.32, size=3, colour="black", angle=85) +
+annotate("text", label="150", x=113.232, y=-24.72, size=3, colour="black", angle=60) +
+annotate("text", label="150", x=113.35, y=-24.46, size=3, colour="black", angle=70) +
+annotate("text", label="350", x=112.83, y=-25.29, size=3, colour="black", angle=85) +
+annotate("text", label="350", x=112.64, y=-24.8, size=3, colour="black", angle=85) +
+theme(legend.position=c(0.38,0.58))+
+theme(axis.text=element_text(size = 0.1))+
+scale_y_continuous(breaks=seq(-25.5,-24.5,0.25)) +
+scale_x_continuous(breaks=seq(112.75,114.75,0.5)) +
+geom_polygon(data=bathy,aes(x=long, y=lat, group=group), show.legend=FALSE, colour="grey30", fill="white", size=0.1, alpha=0.1) +
+theme(plot.margin=unit(c(1,1,0.5,0.5), "cm"))
+kerneldensitymap
+kerneldensitymap <- map + #basemap # add the kernel density heatmap
+stat_contour(aes(Long, Lat, z=z, fill=..level..), data=tripdensitydataframe, geom="polygon", alpha=0.7, inherit.aes=F) + # add in the NMP sanctuary zones with white fill and a green line so that it blocks out the kernel density heatmap, because we don't want it to appear that there was fishing in the sanctuary zones
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'transparent') +
+scale_fill_gradientn(name="Fishing pressure\n(kernel density)", colours=rev(brewer.pal(7,"Spectral")))+
+xlab("\nLongitude ")+
+ylab("Latitude \n")+
+coord_cartesian(xlim = c(112.65, 114.85), ylim = c(-25.55, -24.4)) + # Have to add geom_polygon here after the stat_contour function so that it blocks out the kernel density plot over land
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+Generictheme  +
+scaleBar(lon = 114.35, lat = -25.05, distanceLon = 20,distanceLat = 2, distanceLegend = -5, dist.unit = "km", rec.fill = "black", rec.colour = "black", rec2.fill = "white", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 12, arrow.distance = 5, arrow.North.size = 6) +
+annotate("text", label="20", x=113.29, y=-25.27, size=3, colour="black", angle=50) +
+annotate("text", label="50", x=113.52, y=-24.81, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.70, y=-25.45, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.35, y=-25.25, size=3, colour="black", angle=40) +
+annotate("text", label="20", x=113.43, y=-25.45, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.41, y=-24.79, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.09, y=-25.32, size=3, colour="black", angle=85) +
+annotate("text", label="150", x=113.232, y=-24.72, size=3, colour="black", angle=60) +
+annotate("text", label="150", x=113.35, y=-24.46, size=3, colour="black", angle=70) +
+annotate("text", label="350", x=112.83, y=-25.29, size=3, colour="black", angle=85) +
+annotate("text", label="350", x=112.64, y=-24.8, size=3, colour="black", angle=85) +
+theme(legend.position=c(0.34,0.58))+
+theme(axis.text=element_text(size = 0.1))+
+scale_y_continuous(breaks=seq(-25.5,-24.5,0.25)) +
+scale_x_continuous(breaks=seq(112.75,114.75,0.5)) +
+geom_polygon(data=bathy,aes(x=long, y=lat, group=group), show.legend=FALSE, colour="grey30", fill="white", size=0.1, alpha=0.1) +
+theme(plot.margin=unit(c(1,1,0.5,0.5), "cm"))
+kerneldensitymap
+kerneldensitymap <- map + #basemap # add the kernel density heatmap
+stat_contour(aes(Long, Lat, z=z, fill=..level..), data=tripdensitydataframe, geom="polygon", alpha=0.7, inherit.aes=F) + # add in the NMP sanctuary zones with white fill and a green line so that it blocks out the kernel density heatmap, because we don't want it to appear that there was fishing in the sanctuary zones
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'transparent') +
+scale_fill_gradientn(name="Fishing pressure\n(kernel density)", colours=rev(brewer.pal(7,"Spectral")))+
+xlab("\nLongitude ")+
+ylab("Latitude \n")+
+coord_cartesian(xlim = c(112.65, 114.85), ylim = c(-25.55, -24.4)) + # Have to add geom_polygon here after the stat_contour function so that it blocks out the kernel density plot over land
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+Generictheme  +
+scaleBar(lon = 114.35, lat = -25.05, distanceLon = 20,distanceLat = 2, distanceLegend = -5, dist.unit = "km", rec.fill = "black", rec.colour = "black", rec2.fill = "white", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 12, arrow.distance = 5, arrow.North.size = 6) +
+annotate("text", label="20", x=113.29, y=-25.27, size=3, colour="black", angle=50) +
+annotate("text", label="50", x=113.52, y=-24.81, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.70, y=-25.45, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.35, y=-25.25, size=3, colour="black", angle=40) +
+annotate("text", label="20", x=113.43, y=-25.45, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.41, y=-24.79, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.09, y=-25.32, size=3, colour="black", angle=85) +
+annotate("text", label="150", x=113.232, y=-24.72, size=3, colour="black", angle=60) +
+annotate("text", label="150", x=113.35, y=-24.46, size=3, colour="black", angle=70) +
+annotate("text", label="350", x=112.83, y=-25.29, size=3, colour="black", angle=85) +
+annotate("text", label="350", x=112.64, y=-24.8, size=3, colour="black", angle=85) +
+theme(legend.position=c(0.30,0.58))+
+theme(axis.text=element_text(size = 0.1))+
+scale_y_continuous(breaks=seq(-25.5,-24.5,0.25)) +
+scale_x_continuous(breaks=seq(112.75,114.75,0.5)) +
+geom_polygon(data=bathy,aes(x=long, y=lat, group=group), show.legend=FALSE, colour="grey30", fill="white", size=0.1, alpha=0.1) +
+theme(plot.margin=unit(c(1,1,0.5,0.5), "cm"))
+kerneldensitymap
+kerneldensitymap <- map + #basemap # add the kernel density heatmap
+stat_contour(aes(Long, Lat, z=z, fill=..level..), data=tripdensitydataframe, geom="polygon", alpha=0.7, inherit.aes=F) + # add in the NMP sanctuary zones with white fill and a green line so that it blocks out the kernel density heatmap, because we don't want it to appear that there was fishing in the sanctuary zones
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'transparent') +
+scale_fill_gradientn(name="Fishing pressure\n(kernel density)", colours=rev(brewer.pal(7,"Spectral")))+
+xlab("\nLongitude ")+
+ylab("Latitude \n")+
+coord_cartesian(xlim = c(112.65, 114.85), ylim = c(-25.55, -24.4)) + # Have to add geom_polygon here after the stat_contour function so that it blocks out the kernel density plot over land
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+Generictheme  +
+scaleBar(lon = 114.35, lat = -25.05, distanceLon = 20,distanceLat = 2, distanceLegend = -5, dist.unit = "km", rec.fill = "black", rec.colour = "black", rec2.fill = "white", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 12, arrow.distance = 5, arrow.North.size = 6) +
+annotate("text", label="20", x=113.29, y=-25.27, size=3, colour="black", angle=50) +
+annotate("text", label="50", x=113.52, y=-24.81, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.70, y=-25.45, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.35, y=-25.25, size=3, colour="black", angle=40) +
+annotate("text", label="20", x=113.43, y=-25.45, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.41, y=-24.79, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.09, y=-25.32, size=3, colour="black", angle=85) +
+annotate("text", label="150", x=113.232, y=-24.72, size=3, colour="black", angle=60) +
+annotate("text", label="150", x=113.35, y=-24.46, size=3, colour="black", angle=70) +
+annotate("text", label="350", x=112.83, y=-25.29, size=3, colour="black", angle=85) +
+annotate("text", label="350", x=112.64, y=-24.8, size=3, colour="black", angle=85) +
+theme(legend.position=c(0.29,0.60))+
+theme(axis.text=element_text(size = 0.1))+
+scale_y_continuous(breaks=seq(-25.5,-24.5,0.25)) +
+scale_x_continuous(breaks=seq(112.75,114.75,0.5)) +
+geom_polygon(data=bathy,aes(x=long, y=lat, group=group), show.legend=FALSE, colour="grey30", fill="white", size=0.1, alpha=0.1) +
+theme(plot.margin=unit(c(1,1,0.5,0.5), "cm"))
+kerneldensitymap
+kerneldensitymap <- map + #basemap # add the kernel density heatmap
+stat_contour(aes(Long, Lat, z=z, fill=..level..), data=tripdensitydataframe, geom="polygon", alpha=0.7, inherit.aes=F) + # add in the NMP sanctuary zones with white fill and a green line so that it blocks out the kernel density heatmap, because we don't want it to appear that there was fishing in the sanctuary zones
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'transparent') +
+scale_fill_gradientn(name="Fishing pressure\n(kernel density)", colours=rev(brewer.pal(7,"Spectral")))+
+xlab("\nLongitude ")+
+ylab("Latitude \n")+
+coord_cartesian(xlim = c(112.65, 114.85), ylim = c(-25.55, -24.4)) + # Have to add geom_polygon here after the stat_contour function so that it blocks out the kernel density plot over land
+geom_polygon(aes(x = long, y = lat, group = group), colour = 'transparent',     fill = 'grey85') +
+Generictheme  +
+scaleBar(lon = 114.35, lat = -25.05, distanceLon = 20,distanceLat = 2, distanceLegend = -5, dist.unit = "km", rec.fill = "black", rec.colour = "black", rec2.fill = "white", rec2.colour = "black", legend.colour = "black", legend.size = 3, orientation = TRUE, arrow.length = 12, arrow.distance = 5, arrow.North.size = 6) +
+annotate("text", label="20", x=113.29, y=-25.27, size=3, colour="black", angle=50) +
+annotate("text", label="50", x=113.52, y=-24.81, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.70, y=-25.45, size=3, colour="black", angle=50) +
+annotate("text", label="20", x=113.35, y=-25.25, size=3, colour="black", angle=40) +
+annotate("text", label="20", x=113.43, y=-25.45, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.41, y=-24.79, size=3, colour="black", angle=40) +
+annotate("text", label="150", x=113.09, y=-25.32, size=3, colour="black", angle=85) +
+annotate("text", label="150", x=113.232, y=-24.72, size=3, colour="black", angle=60) +
+annotate("text", label="150", x=113.35, y=-24.46, size=3, colour="black", angle=70) +
+annotate("text", label="350", x=112.83, y=-25.29, size=3, colour="black", angle=85) +
+annotate("text", label="350", x=112.64, y=-24.8, size=3, colour="black", angle=85) +
+theme(legend.position=c(0.28,0.59))+
+theme(axis.text=element_text(size = 0.1))+
+scale_y_continuous(breaks=seq(-25.5,-24.5,0.25)) +
+scale_x_continuous(breaks=seq(112.75,114.75,0.5)) +
+geom_polygon(data=bathy,aes(x=long, y=lat, group=group), show.legend=FALSE, colour="grey30", fill="white", size=0.1, alpha=0.1) +
+theme(plot.margin=unit(c(1,1,0.5,0.5), "cm"))
+kerneldensitymap
+print(WAinsertmap, vp=viewport(width=0.22, height=0.29, x=0.82, y=0.30))
