@@ -5,10 +5,10 @@
     <mapcanvas>
         <units>degrees</units>
         <extent>
-            <xmin>113.83672621888501908</xmin>
-            <ymin>-30.13672425703590818</ymin>
-            <xmax>115.96079751420381854</xmax>
-            <ymax>-28.62106428472333164</ymax>
+            <xmin>114.51000492559413146</xmin>
+            <ymin>-29.59452240153330038</ymin>
+            <xmax>115.04102274942383133</xmax>
+            <ymax>-29.2156074084551598</ymax>
         </extent>
         <projections>0</projections>
         <destinationsrs>
@@ -25,7 +25,7 @@
         </destinationsrs>
         <layer_coordinate_transform_info/>
     </mapcanvas>
-    <legend updateDrawingOrder="true" activeLayer="Bathym_Statewide20190625123430794">
+    <legend updateDrawingOrder="true" activeLayer="buffer_0_3520190625135647861">
         <legendlayer drawingOrder="-1" open="true" checked="Qt::Unchecked" name="metadata" showFeatureCount="0">
             <filegroup open="true" hidden="false">
                 <legendlayerfile isInOverview="0" layerid="metadata20190625133814072" visible="0"/>
@@ -130,7 +130,7 @@
                     </Annotation>
                 </Grid>
                 <AtlasMap fixedScale="0" atlasDriven="0" margin="0.10000000000000001"/>
-                <ComposerItem width="97.1079" x="199.892" transparency="0" y="105" height="107.304" positionMode="0" frame="false" outlineWidth="0.3" zValue="2" itemRotation="0" lastValidViewScaleFactor="3.55732" uuid="{e2572ed3-7d39-4a7b-8c2b-fe9671a4bf42}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="97.1079" x="199.892" transparency="0" y="105" height="107.304" positionMode="0" frame="false" outlineWidth="0.3" zValue="3" itemRotation="0" lastValidViewScaleFactor="3.55732" uuid="{e2572ed3-7d39-4a7b-8c2b-fe9671a4bf42}" id="" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
@@ -185,7 +185,7 @@
         </Composition>
     </Composer>
     <Composer title="map 2" visible="1">
-        <Composition snapGridTolerance="2" gridVisible="0" printResolution="300" paperWidth="297" snapGridOffsetX="0" guidesVisible="0" snapGridResolution="10" snapGridOffsetY="0" alignmentSnap="1" snapping="0" numPages="1" paperHeight="210" alignmentSnapTolerance="2" smartGuides="1" printAsRaster="0" generateWorldFile="0">
+        <Composition snapGridTolerance="2" gridVisible="0" printResolution="300" paperWidth="297" snapGridOffsetX="0" guidesVisible="1" snapGridResolution="10" snapGridOffsetY="0" alignmentSnap="1" snapping="0" numPages="1" paperHeight="210" alignmentSnapTolerance="2" smartGuides="1" printAsRaster="0" generateWorldFile="0">
             <symbol alpha="1" type="fill" name="">
                 <layer pass="0" class="SimpleFill" locked="0">
                     <prop k="border_width_unit" v="MM"/>
@@ -198,70 +198,62 @@
                     <prop k="width_border" v="0.26"/>
                 </layer>
             </symbol>
-            <ComposerLabel valign="32" labelText="10 m" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,10,-1,5,50,0,0,0,0,0"/>
-                <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="10.0779" x="175.771" transparency="0" y="168.174" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="18" itemRotation="270" lastValidViewScaleFactor="7.63494" uuid="{f13c68da-9762-424e-ab7d-646fee419fb3}" id="" background="false" blendMode="0" positionLock="false">
-                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
-                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
-                </ComposerItem>
-            </ComposerLabel>
-            <ComposerLabel valign="32" labelText="10 m" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,10,-1,5,50,0,0,0,0,0"/>
-                <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="10.0779" x="171.449" transparency="0" y="133.989" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="17" itemRotation="270" lastValidViewScaleFactor="7.63494" uuid="{48dd194a-8d9e-4004-8cda-cfb930d3bbbe}" id="" background="false" blendMode="0" positionLock="false">
-                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
-                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
-                </ComposerItem>
-            </ComposerLabel>
-            <ComposerLabel valign="32" labelText="20 m" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,10,-1,5,50,0,0,0,0,0"/>
-                <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="10.3217" x="142.626" transparency="0" y="64.8556" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="16" itemRotation="270" lastValidViewScaleFactor="3.56176" uuid="{1c6961fb-75e1-45b8-af15-a6787f99f714}" id="" background="false" blendMode="0" positionLock="false">
-                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
-                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
-                </ComposerItem>
-            </ComposerLabel>
-            <ComposerLabel valign="32" labelText="20 m" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,10,-1,5,50,0,0,0,0,0"/>
-                <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="10.3217" x="149.645" transparency="0" y="162.279" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="15" itemRotation="270" lastValidViewScaleFactor="3.56176" uuid="{53556328-c680-413b-a782-1f90f2696138}" id="" background="false" blendMode="0" positionLock="false">
-                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
-                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
-                </ComposerItem>
-            </ComposerLabel>
-            <ComposerLabel valign="32" labelText="50 m" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,10,-1,5,50,0,0,0,0,0"/>
-                <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="13.1293" x="69.0671" transparency="0" y="108.654" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="14" itemRotation="270" lastValidViewScaleFactor="3.56176" uuid="{b66f5ea2-bed2-445c-9231-b07d950d66dc}" id="" background="false" blendMode="0" positionLock="false">
-                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
-                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
-                </ComposerItem>
-            </ComposerLabel>
             <ComposerPicture pictureRotation="0" pictureWidth="10.069" file="./Map Layers/north arrow.png" pictureHeight="14.5382" mapId="-1">
-                <ComposerItem width="14.0072" x="64.5716" transparency="0" y="146.677" height="14.5382" positionMode="0" frame="false" outlineWidth="0.3" zValue="13" itemRotation="0" lastValidViewScaleFactor="4.12686" uuid="{8fbc434f-a0ae-4410-aa10-3e4b7049d70b}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="14.0072" x="64.5716" transparency="0" y="146.677" height="14.5382" positionMode="0" frame="false" outlineWidth="0.3" zValue="18" itemRotation="0" lastValidViewScaleFactor="4.12686" uuid="{8fbc434f-a0ae-4410-aa10-3e4b7049d70b}" id="" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerPicture>
             <ComposerLabel valign="32" labelText="20 m" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,10,-1,5,50,0,0,0,0,0"/>
+                <LabelFont description="Times New Roman,8,-1,5,50,0,0,0,0,0"/>
                 <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="10.3217" x="131.577" transparency="0" y="110.496" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="12" itemRotation="270" lastValidViewScaleFactor="3.56176" uuid="{87d37cc9-75c8-4b09-9f08-5ea68c5f4f97}" id="" background="false" blendMode="0" positionLock="false">
+                <ComposerItem width="8.63716" x="142.966" transparency="0" y="61.7904" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="17" itemRotation="270" lastValidViewScaleFactor="4.12686" uuid="{5e629432-fa08-4bb9-91f8-0e578a9d8ab9}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="32" labelText="20 m" htmlState="0" halign="1" margin="1">
+                <LabelFont description="Times New Roman,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="8.63716" x="131.577" transparency="0" y="110.496" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="16" itemRotation="270" lastValidViewScaleFactor="4.12686" uuid="{87d37cc9-75c8-4b09-9f08-5ea68c5f4f97}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="32" labelText="20 m" htmlState="0" halign="1" margin="1">
+                <LabelFont description="Times New Roman,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="8.63716" x="150.235" transparency="0" y="163.32" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="15" itemRotation="270" lastValidViewScaleFactor="4.12686" uuid="{300d5d5f-57a8-451e-aacc-e024bdc7b89b}" id="" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLabel>
             <ComposerLabel valign="32" labelText="10 m" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,10,-1,5,50,0,0,0,0,0"/>
+                <LabelFont description="Times New Roman,8,-1,5,50,0,0,0,0,0"/>
                 <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="10.0779" x="165.39" transparency="0" y="87.5826" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="11" itemRotation="270" lastValidViewScaleFactor="7.63494" uuid="{b936651a-bf90-4b21-8cf6-b6226f3d8109}" id="" background="false" blendMode="0" positionLock="false">
+                <ComposerItem width="8.63716" x="165.259" transparency="0" y="86.7489" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="14" itemRotation="270" lastValidViewScaleFactor="4.12686" uuid="{b936651a-bf90-4b21-8cf6-b6226f3d8109}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="32" labelText="10 m" htmlState="0" halign="1" margin="1">
+                <LabelFont description="Times New Roman,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="8.63716" x="170.832" transparency="0" y="130.666" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="13" itemRotation="270" lastValidViewScaleFactor="4.12686" uuid="{a7259188-27fb-41c3-84cb-c3487be6adef}" id="" background="false" blendMode="0" positionLock="false">
+                    <FrameColor alpha="255" red="0" blue="0" green="0"/>
+                    <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
+                </ComposerItem>
+            </ComposerLabel>
+            <ComposerLabel valign="32" labelText="10 m" htmlState="0" halign="1" margin="1">
+                <LabelFont description="Times New Roman,8,-1,5,50,0,0,0,0,0"/>
+                <FontColor red="0" blue="0" green="0"/>
+                <ComposerItem width="8.63716" x="177.349" transparency="0" y="164.382" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="12" itemRotation="270" lastValidViewScaleFactor="4.12686" uuid="{db128487-213f-4d1c-9436-24417523c299}" id="" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLabel>
             <ComposerScaleBar penColor="#000000" style="Single Box" numMapUnitsPerScaleBarUnit="1" alignment="0" brushColor="#000000" numSegments="2" segmentMillimeters="26.2046" fontColor="#000000" font="Times New Roman,12,-1,5,50,0,0,0,0,0" numUnitsPerSegment="10" units="1" labelBarSpace="3" outlineWidth="0.5" numSegmentsLeft="0" height="2" mapId="1" boxContentSpace="1" unitLabel="km">
-                <ComposerItem width="65.0592" x="64.0218" transparency="0" y="163.408" height="10.8" positionMode="0" frame="false" outlineWidth="0.3" zValue="9" itemRotation="0" lastValidViewScaleFactor="4.12686" uuid="{aef9bf37-0816-460b-b997-c8296a9cc79e}" id="" background="false" blendMode="0" positionLock="false">
+                <ComposerItem width="65.0592" x="64.0218" transparency="0" y="163.408" height="10.8" positionMode="0" frame="false" outlineWidth="0.3" zValue="11" itemRotation="0" lastValidViewScaleFactor="4.12686" uuid="{aef9bf37-0816-460b-b997-c8296a9cc79e}" id="" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
@@ -279,34 +271,34 @@
                         <prop k="width_border" v="0.3"/>
                     </layer>
                 </symbol>
-                <ComposerItem width="3" x="205.466" transparency="0" y="66.4435" height="3" positionMode="0" frame="false" outlineWidth="0.3" zValue="8" itemRotation="0" lastValidViewScaleFactor="3.23796" uuid="{d5a7c816-8712-4724-8537-5df69d064fa4}" id="" background="true" blendMode="0" positionLock="true">
+                <ComposerItem width="3" x="205.466" transparency="0" y="66.4435" height="3" positionMode="0" frame="false" outlineWidth="0.3" zValue="8" itemRotation="0" lastValidViewScaleFactor="3.75169" uuid="{d5a7c816-8712-4724-8537-5df69d064fa4}" id="" background="true" blendMode="0" positionLock="true">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerShape>
             <ComposerLabel valign="32" labelText="Cliff Head" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,16,-1,5,50,0,0,0,0,0"/>
+                <LabelFont description="Times New Roman,12,-1,5,50,0,0,0,0,0"/>
                 <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="33.0888" x="199.595" transparency="0" y="142.677" height="11.2691" positionMode="0" frame="false" outlineWidth="0.3" zValue="7" itemRotation="0" lastValidViewScaleFactor="3.56176" uuid="{0181b74e-9d47-4d0d-b303-7e803bb393e4}" id="" background="false" blendMode="0" positionLock="false">
+                <ComposerItem width="25.2275" x="199.595" transparency="0" y="142.677" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="7" itemRotation="0" lastValidViewScaleFactor="3.91793" uuid="{0181b74e-9d47-4d0d-b303-7e803bb393e4}" id="" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLabel>
             <ComposerLabel valign="32" labelText="Dongara" htmlState="0" halign="1" margin="1">
-                <LabelFont description="Times New Roman,16,-1,5,50,0,0,0,0,0"/>
+                <LabelFont description="Times New Roman,12,-1,5,50,0,0,0,0,0"/>
                 <FontColor red="0" blue="0" green="0"/>
-                <ComposerItem width="25.2275" x="170.818" transparency="0" y="64.5749" height="9.34608" positionMode="0" frame="false" outlineWidth="0.3" zValue="6" itemRotation="0" lastValidViewScaleFactor="3.56176" uuid="{66f08e2e-4b5f-4f48-a464-dfe5ff843146}" id="" background="false" blendMode="0" positionLock="false">
+                <ComposerItem width="25.2275" x="170.818" transparency="0" y="64.5749" height="7.1" positionMode="0" frame="false" outlineWidth="0.3" zValue="6" itemRotation="0" lastValidViewScaleFactor="3.91793" uuid="{66f08e2e-4b5f-4f48-a464-dfe5ff843146}" id="" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLabel>
             <ComposerLegend symbolWidth="7" title="Location" boxSpace="2" splitLayer="0" equalColumnWidth="0" symbolHeight="4" wmsLegendHeight="25" wrapChar="" fontColor="#000000" columnSpace="2" wmsLegendWidth="50" columnCount="1">
                 <styles>
-                    <style marginBottom="2" name="title" font="Times New Roman,16,-1,5,50,0,0,0,0,0"/>
+                    <style marginBottom="2" name="title" font="Times New Roman,12,-1,5,50,0,0,0,0,0"/>
                     <style marginTop="2" name="group" font="Times New Roman,12,-1,5,50,0,0,0,0,0"/>
                     <style marginTop="2" name="subgroup" font="Times New Roman,12,-1,5,50,0,0,0,0,0"/>
                     <style marginTop="2" name="symbol" font="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0"/>
-                    <style marginTop="2" marginLeft="2" name="symbolLabel" font="Times New Roman,16,-1,5,50,0,0,0,0,0"/>
+                    <style marginTop="2" marginLeft="2" name="symbolLabel" font="Times New Roman,12,-1,5,50,0,0,0,0,0"/>
                 </styles>
                 <Model autoUpdate="0">
                     <LayerItem layerId="buffer_0_06520190625135034208" userText="" style="hidden" text="Low-catch" showFeatureCount="0">
@@ -382,13 +374,13 @@
                         </VectorClassificationItemNg>
                     </LayerItem>
                 </Model>
-                <ComposerItem width="37.9" x="62.9137" transparency="0" y="22.1688" height="35.8" positionMode="0" frame="false" outlineWidth="0.3" zValue="5" itemRotation="0" lastValidViewScaleFactor="3.56176" uuid="{cdcc685a-08e4-4d24-8b02-3574b6248689}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="31.8" x="62.9137" transparency="0" y="22.1688" height="34.2" positionMode="0" frame="false" outlineWidth="0.3" zValue="5" itemRotation="0" lastValidViewScaleFactor="3.75169" uuid="{cdcc685a-08e4-4d24-8b02-3574b6248689}" id="" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
             </ComposerLegend>
             <ComposerLabel valign="128" labelText="Western&#xa;Australia" htmlState="0" halign="4" margin="1">
-                <LabelFont description="Times New Roman,16,-1,5,50,0,0,0,0,0"/>
+                <LabelFont description="Times New Roman,12,-1,5,50,0,0,0,0,0"/>
                 <FontColor red="0" blue="0" green="0"/>
                 <ComposerItem width="24.8957" x="214.782" transparency="0" y="49.1331" height="13.2767" positionMode="0" frame="false" outlineWidth="0.3" zValue="4" itemRotation="0" lastValidViewScaleFactor="3.56176" uuid="{ebcc5c69-01d9-4c96-bf77-c0fa87e53e2e}" id="" background="false" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
@@ -418,7 +410,7 @@
                         </layer>
                     </symbol>
                 </overviewFrame>
-                <Extent ymin="-36.62507855715350047" xmin="110.09850380183368657" ymax="-12.08153171117455926" xmax="129.51035758741625159"/>
+                <Extent ymin="-36.62507855715350047" xmin="110.09850380183368657" ymax="-12.08150394991656995" xmax="129.51035758741625159"/>
                 <LayerSet>
                     <Layer>World20190625123430811</Layer>
                 </LayerSet>
@@ -447,7 +439,7 @@
                     </Annotation>
                 </Grid>
                 <AtlasMap fixedScale="0" atlasDriven="0" margin="0.10000000000000001"/>
-                <ComposerItem width="50.868" x="194.196" transparency="0" y="21.3188" height="64.3154" positionMode="0" frame="true" outlineWidth="0.3" zValue="2" itemRotation="0" lastValidViewScaleFactor="3.56176" uuid="{0883e2d2-6615-4aa4-acc8-dab9101189c0}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="50.868" x="194.196" transparency="0" y="21.3188" height="64.3154" positionMode="0" frame="true" outlineWidth="0.3" zValue="2" itemRotation="0" lastValidViewScaleFactor="3.23796" uuid="{0883e2d2-6615-4aa4-acc8-dab9101189c0}" id="" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
@@ -496,12 +488,12 @@
                             <prop k="width_unit" v="MM"/>
                         </layer>
                     </symbol>
-                    <Annotation rightDirection="0" bottomDirection="0" format="1" topPosition="1" precision="2" leftDirection="0" rightPosition="1" bottomPosition="1" frameDistance="2" show="1" font="Times New Roman,12,-1,5,50,0,0,0,0,0" leftPosition="1" topDirection="0">
+                    <Annotation rightDirection="0" bottomDirection="0" format="1" topPosition="1" precision="2" leftDirection="0" rightPosition="1" bottomPosition="1" frameDistance="2" show="1" font="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" leftPosition="1" topDirection="0">
                         <fontColor alpha="255" red="0" blue="0" green="0"/>
                     </Annotation>
                 </Grid>
                 <AtlasMap fixedScale="0" atlasDriven="0" margin="0.10000000000000001"/>
-                <ComposerItem width="183" x="62.0637" transparency="0" y="21.3188" height="156" positionMode="0" frame="true" outlineWidth="0.3" zValue="1" itemRotation="0" lastValidViewScaleFactor="3.56176" uuid="{f447d801-cc90-4219-a77f-92d7a990ead9}" id="" background="true" blendMode="0" positionLock="false">
+                <ComposerItem width="183" x="62.0637" transparency="0" y="21.3188" height="156" positionMode="0" frame="true" outlineWidth="0.3" zValue="1" itemRotation="0" lastValidViewScaleFactor="3.75169" uuid="{f447d801-cc90-4219-a77f-92d7a990ead9}" id="" background="true" blendMode="0" positionLock="false">
                     <FrameColor alpha="255" red="0" blue="0" green="0"/>
                     <BackgroundColor alpha="255" red="255" blue="255" green="255"/>
                 </ComposerItem>
@@ -748,10 +740,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="Shape_Area"/>
                 <edittype labelontop="0" editable="1" type="0" name="Shape_Leng"/>
             </edittypes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -839,6 +831,8 @@
                         </layer>
                     </symbol>
                 </source-symbol>
+                <colorramp type="randomcolors" name="[source]"/>
+                <invertedcolorramp value="0"/>
                 <rotation/>
                 <sizescale scalemethod="area"/>
             </renderer-v2>
@@ -994,10 +988,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="Shape_Area"/>
                 <edittype labelontop="0" editable="1" type="0" name="Shape_Leng"/>
             </edittypes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -1077,10 +1071,10 @@
                 <multilineenabled fieldname="" on=""/>
                 <selectedonly on=""/>
             </labelattributes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -1279,10 +1273,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="sibling_id"/>
                 <edittype labelontop="0" editable="1" type="0" name="source"/>
             </edittypes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -1476,10 +1470,10 @@
             <edittypes>
                 <edittype labelontop="0" editable="1" type="0" name="id"/>
             </edittypes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -1673,10 +1667,10 @@
             <edittypes>
                 <edittype labelontop="0" editable="1" type="0" name="id"/>
             </edittypes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -1870,10 +1864,10 @@
             <edittypes>
                 <edittype labelontop="0" editable="1" type="0" name="id"/>
             </edittypes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -2067,10 +2061,10 @@
             <edittypes>
                 <edittype labelontop="0" editable="1" type="0" name="id"/>
             </edittypes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
@@ -2258,6 +2252,8 @@
                         </layer>
                     </symbol>
                 </source-symbol>
+                <colorramp type="randomcolors" name="[source]"/>
+                <invertedcolorramp value="0"/>
                 <rotation/>
                 <sizescale scalemethod="area"/>
             </renderer-v2>
@@ -2431,10 +2427,10 @@
                 <edittype labelontop="0" editable="1" type="0" name="Trip"/>
                 <edittype labelontop="0" editable="1" type="0" name="Wkw"/>
             </edittypes>
-            <editform>.</editform>
+            <editform></editform>
             <editforminit></editforminit>
             <featformsuppress>0</featformsuppress>
-            <annotationform>.</annotationform>
+            <annotationform></annotationform>
             <editorlayout>generatedlayout</editorlayout>
             <excludeAttributesWMS/>
             <excludeAttributesWFS/>
