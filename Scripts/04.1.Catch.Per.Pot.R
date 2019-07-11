@@ -51,10 +51,10 @@ dat.length<-read.csv("length.csv")%>%
   filter(!is.na(Carapace.length))%>%
   glimpse()
 
+
 #Check
 length(unique(dat.length$Tag.number)) #9687
 length(dat.length$Carapace.length) #14063
-
 unique(dat.length$Source)
 
 #Import Pot data----

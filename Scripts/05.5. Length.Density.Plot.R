@@ -35,7 +35,7 @@ dir()
 
 dat<- read.csv("length.sw.sst.csv")%>% 
   #change locations to four
-  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid", "Cliff Head"="Low-Catch", "Seven Mile"= "Control")))%>%
+  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid", "Cliff Head"="Low-catch", "Seven Mile"= "High-catch")))%>%
   drop_na(Colour)%>%
   drop_na(Carapace.length)%>%
   filter(Carapace.length>0)%>%
@@ -89,17 +89,38 @@ glimpse(mean)
 glimpse(dat)
 
 unique(dat$Location)
+
+se <- function(x) sd(x) / sqrt(length(x))
+
+test<-dat%>%
+  filter(Location=="Boundary")%>%
+  filter(Colour=="Red")%>%
+  #mutate(Carapace.length= as.factor(Carapace.length))%>%
+  glimpse()
+
+length(test$Carapace.length)
+
+
 dat_mean <- dat %>% 
   group_by(Location, Colour)%>% 
-  dplyr::summarise(mean = mean(Carapace.length),min=(mean(Carapace.length) - se(Carapace.length)),max=se.max(Carapace.length),median = median(Carapace.length),number=n())%>%
+  dplyr::summarise(mean = mean(Carapace.length),
+                   #sd = sd(Carapace.length),
+                   #se= sd/sqrt(length(Carapace.length)),
+                   se=se(Carapace.length),
+                   min=(mean-se),
+                   max=(mean+se), 
+                   median = median(Carapace.length),
+                   number=n())%>%
   glimpse()
+
 
 labels<-dat_mean%>%
   mutate(label=paste("N (",Colour,"): ",number,sep=""))
 
 #Hitsograms----
+library(ggplot2)
 glimpse(dat)
-dat$Location<-factor(dat$Location, levels = c("Low-Catch","Boundary", "Mid", "Control"))
+dat$Location<-factor(dat$Location, levels = c("Low-catch","Boundary", "Mid", "High-catch"))
 glimpse(dat)
 unique(dat$Location)
 
@@ -107,8 +128,11 @@ hist.stage<-ggplot(data = dat, aes(x = Carapace.length, fill = Colour)) +
   geom_histogram(data = dplyr::filter(dat, Colour == "White"), aes(y = ..density..),col="grey30",binwidth=2) + 
   geom_histogram(data = dplyr::filter(dat, Colour == "Red"), aes(y = -..density..),col="grey30",binwidth=2) +
   #geom_point(data = dat_mean, aes(x = mean, y=0, shape=Colour), size=3)+
-  geom_point(data = dplyr::filter(dat_mean, Colour == "Red"), aes(x = median, y=0, shape=Colour), size=3)+
-  geom_point(data = dplyr::filter(dat_mean, Colour == "White"), aes(x = median, y=0, shape=Colour), size=3)+
+  geom_point(data = dplyr::filter(dat_mean, Colour == "Red"), aes(x = mean, y=-0.04, shape=Colour), size=3)+
+  geom_point(data = dplyr::filter(dat_mean, Colour == "White"), aes(x = mean, y=0.04, shape=Colour), size=3)+
+  
+  geom_segment(data = dplyr::filter(dat_mean, Colour == "White"),aes(x=min,xend=max,y=0.025,yend=0.025), size=1)+
+  geom_segment(data = dplyr::filter(dat_mean, Colour == "Red"), aes(x=min,xend=max,y=-0.025,yend=-0.025), size=1)+
   #geom_segment(data = dat_mean, aes(x=min,xend=max,y=0.02,yend=0.02))+
   #geom_errorbarh(data=dplyr::filter(dat, Colour == "White"),aes(xmin=se.min(Carapace.length), xmax=se.max(Carapace.length),y=0),height = .92)+
   #geom_errorbarh(data=dplyr::filter(dat, Colour == "Red"),aes(xmin=se.min(Carapace.length), xmax=se.max(Carapace.length),y=0),height = .92)+
@@ -126,9 +150,8 @@ hist.stage<-ggplot(data = dat, aes(x = Carapace.length, fill = Colour)) +
   #ylim(-0.08,0.15)+
   theme(legend.position="top")+
   #annotate("text", x = 60, y = 0, label = paste("n red:",number))+
-  geom_text(data = dplyr::filter(labels, Colour == "White"), aes(x = 97, y = 0.07, label = label))+
-  geom_text(data = dplyr::filter(labels, Colour == "Red"), aes(x = 97, y = 0.05, label = label))
-
+  geom_text(data = dplyr::filter(labels, Colour == "White"), aes(x = 96, y = 0.07, label = label), size=3)+
+  geom_text(data = dplyr::filter(labels, Colour == "Red"), aes(x = 96, y = 0.05, label = label), size=3)
 hist.stage
 
 se.min(dat$Carapace.length)
@@ -138,6 +161,6 @@ mean(dat$Carapace.length)
 setwd(plots.dir)
 
 
-ggsave(hist.stage,file="hist.location.stage.tall.median.png", width = 10, height = 16, units = "cm")
+ggsave(hist.stage,file="hist.location.stage.mean.se.png", width = 13, height = 15, units = "cm")
 
 

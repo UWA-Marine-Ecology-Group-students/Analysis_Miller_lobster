@@ -64,7 +64,7 @@ dat <-read_csv("catch.sw.sst.csv")%>%
   glimpse()
 
 dat%<>%
-  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid", "Cliff Head"="Low-catch", "Seven Mile"="Control")))%>%
+  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid", "Cliff Head"="Low-catch", "Seven Mile"="High-catch")))%>%
   mutate(Location=as.factor(Location))%>%
   glimpse()
 
@@ -181,7 +181,7 @@ testdata <- expand.grid(Hs.m.sw=mean(mod$model$Hs.m.sw),
                         sst=mean(mod$model$sst),
                         Date=(mod$model$Date),
                         Site=(mod$model$Site),
-                        Location = c("Low-catch","Boundary", "Mid","Control"))%>%
+                        Location = c("Low-catch","Boundary", "Mid","High-catch"))%>%
   distinct()%>%
   glimpse()
 
@@ -206,14 +206,14 @@ catch.sublegal.location<- ggplot(aes(x=Location,y=response), data=predicts.catch
   theme(legend.position = "none")+
   #scale_y_continuous(breaks=seq(0,12,2))+
   #ylim(0,46)+
-  ggtitle(label="Sublegal")
+  ggtitle(label="Sub-legal")
 catch.sublegal.location
 
 
 # Save plots----
 setwd(plots.dir)
 
-ggsave(catch.sublegal.location,file="catch.sublegal.gamm.190619.png", width = 20, height = 15,units = "cm")
+ggsave(catch.sublegal.location,file="catch.sublegal.gamm.260619.png", width = 20, height = 15,units = "cm")
 
 # To see what they will look like use grid.arrange() - make sure Plot window is large enough! - or will error!
 grid.arrange(catch.legal.location,catch.sublegal.location,nrow=1,ncol=2)
