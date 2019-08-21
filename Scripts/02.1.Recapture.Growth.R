@@ -13,13 +13,14 @@ library(ggplot2)
 library(magrittr)
 library(readr)
 library(geosphere)
+library(lubridate)
 
 # Study name ----
 study<-"Growth.Rate"
 
 # Set work directory ----
-#work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
-work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
+#work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Set sub-directories ----
 data.dir=paste(work.dir,"Data",sep="/")
@@ -69,55 +70,73 @@ dat<-left_join(length.clean,metadata.clean)%>%
 #Add in 2019 data----
 
 # #Bring 2019 pot data
-# potdata.19<-gs_title("Lobsters_data_2019_All")%>% 
-#   gs_read_csv(ws = "Pot.var")%>%
-#   mutate(Source = 'Dongara.Millers.Masters')%>%
-#   mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>% 
-#   dplyr::rename(Latitude=Latitude.y, Longitude=Longitude.x,Date=Date.Recovered)%>%
-#   dplyr::mutate(Date=as_date(dmy(Date)))%>%
-#   mutate(Latitude=as.numeric(Latitude))%>%
-#   mutate(Longitude=as.numeric(Longitude))%>%
-#   mutate(Site=str_replace_all(.$Site,c("GR"="Golden Ridge", "WL"="Whites Lump", "CHS"="Cliff Head South", "CHM"= "Cliff Head Mid", "CHN"="Cliff Head North", "CHout2."="Cliff Head North", "LHS"= "Little Horseshoe", "SR"="South Rig", "WP"="White Point" )))%>% 
-#   mutate(Location=str_replace_all(.$Site,c("Whites Lump"="White Point", "Cliff Head South"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head North"= "Cliff Head","South Rig"="White Point")))%>%
-#   select(Sample,Location,Site,Latitude, Longitude)%>%
-#   glimpse()
-# 
-# 
-# #Bring in lobster data 2019
-# lengthdata.19<-gs_title("Lobsters_data_2019_All")%>% 
-#   gs_read_csv(ws = "Lobster.var")%>%
-#   mutate(Source = 'Dongara.Millers.Masters')%>%
-#   mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>% 
-#   mutate(Total.damage=0)%>% #CHANGE LATER
-#   dplyr::mutate(Date=as_date(dmy(Date)))%>%
-#   filter(!is.na(Tag.number))%>% # Filter out individuals without Tag
-#   filter(!is.na(Carapace.length))%>% #Filter out individuals with no length measurement
-#   mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
-#   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
-#   mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
-#   select(Sample, Source, Trip, Date, Tag.number, Carapace.length, Sex, Colour, Total.damage)%>%
-#   glimpse()
-# 
-# 
-# length(unique(potdata.19$Sample))
-# length(unique(lengthdata.19$Sample))
-# 
-# dat.19<- left_join(lengthdata.19,potdata.19, by="Sample")%>%
-#   glimpse()
-# 
-# glimpse(dat)
-# glimpse(dat.19)
-# dat.1 <-rbind(dat, dat.19)
+potdata.2019<-gs_title("Lobsters_data_2019_All")%>%
+  gs_read_csv(ws = "Pot.var")%>%
+  mutate(Source = 'Dongara.Millers.Masters')%>%
+  mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>%
+  dplyr::rename(Latitude=Latitude.y, Longitude=Longitude.x,Date=Date.Recovered)%>%
+  mutate(Site=str_replace_all(.$Site.Name,c("IR"="Irwin Reef","JB"= "Jim Bailey", "GR"="Golden Ridge", "WL"="Whites Lump", "CHS"="Cliff Head South", "CHM"= "Cliff Head Mid", "CHN"="Cliff Head North", "CHout2_"="Cliff Head North", "LHS"= "Little Horseshoe", "SR"="South Rig", "WP"="White Point" )))%>%
+  mutate(Location=str_replace_all(.$Site,c("Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="White Point", "Long Reef"="Irwin Reef", "South Rig"= "White Point","Whites Lump"= "White Point","WP"= "White Point","Whitepoint"="White Point")))%>% 
+  select(Source,Sample,Day,Pot.Number,Location,Site,Latitude,Longitude,Pot.Type, PositionFormat)%>% # Trap.ID,
+  glimpse()
+
+# Change format of Longitude and Latitude
+dm <- potdata.2019%>%
+  filter(PositionFormat%in%c("Decimal Minutes"))%>%
+  dplyr::mutate(Latitude=measurements::conv_unit(.$Latitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
+  dplyr::mutate(Longitude=measurements::conv_unit(.$Longitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
+  dplyr::mutate(Latitude=as.numeric(Latitude))%>%
+  dplyr::mutate(Longitude=as.numeric(Longitude))%>%
+  glimpse()
+
+#filter decimla degrees
+dd <- potdata.2019%>%
+  filter(!PositionFormat%in%c("Decimal Minutes"))%>%
+  dplyr::mutate(Latitude=as.numeric(Latitude))%>%
+  dplyr::mutate(Longitude=as.numeric(Longitude))%>%
+  glimpse()
+
+#combine together
+potdata.2019 <- rbind(dd, dm)%>%
+  glimpse()
+
+
+#Bring in lobster data 2019
+lengthdata.2019<-gs_title("Lobsters_data_2019_All")%>%
+  gs_read_csv(ws = "Lobster.var")%>%
+  mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>%
+  mutate(Total.damage=0)%>% #CHANGE LATER
+  dplyr::mutate(Date=as_date(dmy(Date)))%>%
+  filter(!is.na(Tag.number))%>% # Filter out individuals without Tag
+  filter(!is.na(Carapace.length))%>% #Filter out individuals with no length measurement
+  mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
+  mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
+  mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
+  select(Sample, Trip, Date, Tag.number, Carapace.length, Sex, Colour, Total.damage)%>%
+  glimpse()
+ 
+#Combine pot and lobster data 2019
+dat.2019<- left_join(lengthdata.2019,potdata.2019, by="Sample")%>%
+  select(Source, Sample, Trip, Date, Location, Site, Latitude, Longitude, Tag.number, Carapace.length, Sex, Colour, Total.damage)%>%
+  glimpse()
+ 
+ glimpse(dat)
+ glimpse(dat.2019)
+ 
+ #Combine All data (2017, 2018, 2019)----
+ dat.all <-rbind(dat, dat.2019)%>%
+   glimpse()
+ 
 
 #Get a list of recaptured tags----
-recaps<- dat%>%
+recaps<- dat.all%>%
   select(Tag.number)%>%
   mutate(duplicates = duplicated(.) | duplicated(., fromLast = TRUE))%>%
   filter(duplicates=="TRUE")%>%
   glimpse()
 
 #Join with other data----
-all.recaps <- semi_join(dat, recaps)%>%
+all.recaps <- semi_join(dat.all, recaps)%>%
   glimpse()
 
 #Find initial tag----
@@ -135,29 +154,25 @@ just.initial<-dat.order%>%
 # Find Only Recaptures (not intial tags)----
 just.recaps <- dat.order[duplicated(dat.order$Tag.number), ]%>%
   select(Date, Location, Site,Tag.number, Carapace.length, Sex, Colour,Total.damage, Longitude, Latitude)%>% 
-  glimpse()
+  dplyr::rename(Date.recap=Date, 
+                Location.recap=Location, 
+                Site.recap=Site, 
+                Carapace.length.recap=Carapace.length,
+                Sex.recap=Sex, 
+                Colour.recap=Colour,
+                Total.damage.recap=Total.damage, 
+                Longitude.recap=Longitude,
+                Latitude.recap=Latitude)%>%
+    glimpse()
 
 #Bind to make a long dataframe of all recaptured----
 total.recaptures<-rbind(just.initial, just.recaps)%>%
   arrange(Tag.number)%>%
   glimpse()
 
-#rename variables in recapture dataframe----
-names(just.recaps)
-just.recaps.new<-just.recaps%>%
-  dplyr::rename(Date.recap=Date)%>%
-  dplyr::rename(Location.recap=Location)%>%
-  dplyr::rename(Site.recap=Site)%>%
-  dplyr::rename(Carapace.length.recap=Carapace.length)%>%
-  dplyr::rename(Sex.recap=Sex)%>%
-  dplyr::rename(Colour.recap=Colour)%>%
-  dplyr::rename(Total.damage.recap=Total.damage)%>%
-  dplyr::rename(Longitude.recap=Longitude)%>%
-  dplyr::rename(Latitude.recap=Latitude)%>%
-  glimpse()
 
 #Combine Initial and Recaptures----
-dat.rr<- dplyr::left_join(just.initial, just.recaps.new, by="Tag.number")%>%
+dat.rr<- dplyr::left_join(just.initial, just.recaps, by="Tag.number")%>%
   mutate(inc=Carapace.length.recap-Carapace.length)%>% #growth increment
   dplyr::mutate(Ldys=Date.recap-Date)%>% #Days between capture
   glimpse()
