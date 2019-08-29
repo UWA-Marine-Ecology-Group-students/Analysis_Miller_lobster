@@ -12,8 +12,8 @@ library(readr)
 study<-"Recapture.Movement"
 
 # Set work directory ----
-work.dir=("Z://Analysis_Miller_lobster") #for laptop
-#work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
+#work.dir=("Z://Analysis_Miller_lobster") #for laptop
+work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
 
 # Set sub-directories ----
 data.dir=paste(work.dir,"Data",sep="/")
@@ -79,13 +79,13 @@ polar.legal<-ggplot(data = dat.legal, aes(x = bearing)) +
         strip.background = element_blank())+
   theme(axis.text.y=element_blank(),
         axis.ticks.y=element_blank())+
-  coord_polar(theta = "x", start=0, direction = 1)+
-  facet_grid(~Location)
+  coord_polar(theta = "x", start=0, direction = 1)#+
+  #facet_grid(~Location)
 polar.legal
 
 #Legal-Distance
 dat.resid<-dat.mm%>%
-  filter(distance<0.5)%>%
+  filter(distance>0.5)%>%
   filter(sizeclass=='Legal')%>%
   glimpse()
 
@@ -170,13 +170,13 @@ facet_wrap(~Location)
 sub.distance
   
 sub.migrat<-dat.mm%>%
-  filter(distance>0.5)%>%
+  # filter(distance>0.5)%>%
   filter(sizeclass=='Sublegal')%>%
   glimpse()
 
 plot.distance<-ggplot(data = sub.migrat, aes(x = bearing, y=distance)) + 
   stat_summary(fun.y=mean, geom="bar",fill="maroon4",colour="black", width=2) +
-  stat_bin()+
+  #stat_bin()+
   xlab("")+
   ylab("")+
   geom_hline(aes(yintercept=0))+
@@ -186,8 +186,8 @@ plot.distance<-ggplot(data = sub.migrat, aes(x = bearing, y=distance)) +
         strip.background = element_blank())+
   theme(axis.text.y=element_blank(),
         axis.ticks.y=element_blank())+
-  coord_polar(theta = "x", start=0, direction = 1) #+
-  #facet_wrap(~Location)
+  coord_polar(theta = "x", start=0, direction = 1) +
+  facet_wrap(~Location)
 plot.distance
 
 
