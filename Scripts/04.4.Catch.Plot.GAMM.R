@@ -206,7 +206,7 @@ catch.sublegal.location<- ggplot(aes(x=Location,y=response), data=predicts.catch
   theme(legend.position = "none")+
   #scale_y_continuous(breaks=seq(0,12,2))+
   #ylim(0,46)+
-  ggtitle(label="Sub-legal")
+  ggtitle(label="MAtt")
 catch.sublegal.location
 
 

@@ -250,6 +250,14 @@ LR_test_func(aout.comb,aout.5par)  ## 0.004277475 Significantly different- So Lo
 pars <- exp(aout.5par$par)*c(100,1,1,1,1)
 View(pars)
 
+#Get full results
+chisq.test(aout.comb$par)
+
+summary(aout.comb,aout.5par) 
+
+
+
+
 #Simons fancy two-location split
 #no split vs loc1 split 
 #LR_test_func(aout.comb,aout.2loc1)  ## not significant different
@@ -417,10 +425,23 @@ sout.low_boundary$objective
 LR_test = 1-pchisq(abs(bout.low_boundary$objective-sout.low_boundary$objective), 2)
 LR_test  ## very much an improvement
 
+chisq.test(bout.low_boundary,p=0.01089531)
 
+summary(LR_test)
+model(LR_test)
+chisq.test(LR_test)
 #Low vs. Boundary= 0.5594925
 #Low vs. Mid = 0.01089531
 #Mid vs. Boundary = 0.1026145
+
+sout.low_boundary$par
+
+dat<- left_join(bout.low_boundary$par, sout.low_boundary$par)
+dat <- data.frame(split = c(108.5935235,0.5000000,0.2735333,0.1875661,2.7293147), 
+                  combined= c(110.4499703,0.1916149,2.7631792)) #,0.5000000, 1.0000000 
+dat
+chisq.test(dat)
+#row.names = c("1st", "2nd", "3rd", "crew"
 
 #Get full resulst, think I use chisq.test, just not sure what on?
 chisq.test(combined, split)

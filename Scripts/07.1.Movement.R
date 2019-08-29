@@ -22,7 +22,7 @@ work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
 data.dir=paste(work.dir,"Data",sep="/")
 plot.dir=paste(work.dir,"Plots",sep="/")
 
-#Import recapture data (created in '02.Recapture.Data.190515.R' script)
+#Import recapture data (created in '02.1.Recapture.Growth.R' script)
 #dat.rr<- read.csv("Recapture.Data.csv")%>%
 dat.rr<- read.csv("Growth.Data.csv")%>%
   glimpse()

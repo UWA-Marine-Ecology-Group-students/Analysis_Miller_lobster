@@ -34,12 +34,80 @@ remove<-function(c){
   ( gsub(" ", " ", c))
 }
 
+#Import 2019 data----
+# Two steps to keep additional info to join back into 
+dat.2019<-gs_title("Lobsters_data_2019_All")%>%
+  gs_read_csv(ws="Lobster.var", col_types="nccncccnnnncccccnnnncccccc")%>%
+  mutate(Sample=paste(Trip, Day, Trap.ID, sep="."))%>%
+  mutate(Source='Dongara.Millers.Masters')%>%
+  dplyr::mutate(Date=lubridate::as_date(dmy(Date)))%>%
+  glimpse()
+
+length.2019<-dat.2019%>%
+  filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>%
+  # now filters out where all are blank (empty pots)
+  mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
+  mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
+  mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
+  mutate(Setose.state=ifelse(Setose.state%in%c("I"),NA,Setose.state))%>%
+  mutate(Setose.state=ifelse(Setose.state%in%c("E"),"Immature",Setose.state))%>%
+  mutate(Setose.state=ifelse(Setose.state%in%c("M"),"Mature",Setose.state))%>%
+  mutate(Egg.stage=ifelse(Egg.stage%in%c("E","I"),"Early",Egg.stage))%>%
+  mutate(Egg.stage=ifelse(Egg.stage%in%c("M"),"Mid",Egg.stage))%>%
+  dplyr::select( Date,Source,Trip,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Setose.state,Egg.stage,Moult.stage,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Individual.Remarks)%>%
+  glimpse()
+
+#Get 2019 info
+names(dat.2019)
+info.2019<-dat.2019%>%
+  dplyr::select(Trip,Sample, Day,Trap.ID, Trap.Number, Day.Pull, Pot.Remarks,PWO,PWF, WKW)%>% # Location, Date,
+  distinct()%>%
+  glimpse()
+
+# Import 2019 metadata----
+metadata.2019<-gs_title("Lobsters_data_2019_All")%>%# To use GoogleSheets
+  gs_read_csv(ws = "Pot.var",col_types = "ncncnccncccc")%>% #
+  mutate(Source = 'Dongara.Millers.Masters')%>%
+  mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>% 
+  mutate(Site=str_replace_all(.$Site.Name,c( "SM"="Seven Mile", "DM"="Davids Marks",  "RM"="Rivermouth", "IR"="Irwin Reef", "LR"="Long Reef", "SD"="South Dummy", "LH"="Little Horseshoe", "CHin1_"="Cliff Head Mid","CHin2_"="Cliff Head South","CHout1_" = "Cliff Head OUT1","CHout2_" = "Cliff Head North", "JB"="Jim Bailey", "GR"="Golden Ridge", "SR"="South Rig", "WL"="Whites Lump")))%>% 
+  mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Long Reef"="Irwin Reef", "South Dummy"="White Point","South Rig"= "White Point","Whites Lump"= "White Point","WP"= "White Point","Whitepoint"="White Point")))%>% 
+  mutate(Site=str_replace_all(.$Site, c("Jim Bailey"="White Point" ,"WP"="White Point" , "Whitepoint"="White Point" , "CHS"="Cliff Head South","CHM"="Cliff Head Mid","CHN"="Cliff Head North", "Seven Mile Beach"= "Seven Mile South", "Cliff Head OUT1"="Cliff Head North", "Davids Marks"="Cliff Head North")))%>%
+  dplyr::rename(Latitude=Latitude.y, Longitude=Longitude.x,Date=Date.Recovered)%>%
+  #mutate(Latitude=as.numeric(Latitude))%>%
+  #mutate(Longitude=as.numeric(Longitude))%>%
+  filter(!Comment%in%c("Duplicate"))%>%
+  select(-c(Comment,Creation.Date))%>%
+  dplyr::rename(Site.Code=Site.Name)%>%
+  mutate(Site.Code=str_replace_all(.$Site.Code,c("_"="")))%>% # Remove trailing underscores from site code
+  left_join(.,info.2019)%>%
+  mutate(Day.Pull=as.numeric(Day.Pull))%>%
+  dplyr::mutate(Date=as_date(dmy(Date)))%>%
+  select(Source,Sample,Trip,Day,Site.Code,Pot.Number,Location,Site,Date,Day.Pull,Latitude,Longitude,Pot.Type,Pot.Remarks,PWO,PWF,WKW, PositionFormat)%>% # Trap.ID,
+  glimpse()
+
+#Convert Brian's data GPS points to decimal degrees
+dm <- metadata.2019%>%
+  filter(PositionFormat%in%c("Decimal Minutes"))%>%
+  dplyr::mutate(Latitude=measurements::conv_unit(.$Latitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
+  dplyr::mutate(Longitude=measurements::conv_unit(.$Longitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
+  glimpse()
+
+dd <- metadata.2019%>%
+  filter(is.na(PositionFormat))%>% #%in%c("Decimal Degrees"))%>%
+  glimpse()
+
+metadata.2019 <- bind_rows(dd, dm)%>%
+  dplyr::mutate(Latitude=as.numeric(Latitude))%>%
+  dplyr::mutate(Longitude=as.numeric(Longitude))%>%
+  glimpse()
+
 # Import 2018 data----
 # Two steps to keep additional info to join back into 
 dat.2018<-gs_title("Lobsters_data_2018_All")%>% 
   gs_read_csv(ws = "Lobster.var",col_types = "nccnccccccnccccccnnnncccccc")%>%
   mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>%  # trip.day.trap is now "Sample"
   mutate(Source = 'Dongara.Millers.Masters')%>%
+  dplyr::mutate(Date=as_date(dmy(Date)))%>%
   glimpse()
 
 length.2018<-dat.2018%>%
@@ -87,77 +155,77 @@ duplicates<-info.2018%>%
   summarise(n=n())%>%
   filter(n>1)
 #####################################################
-#Count recaptures per trip---
-glimpse(length.2018) #9318
-test<-length.2018%>%
-  dplyr::mutate(Date=as_date(dmy(Date)))%>%
-  select(Sample, Date, Trip, Tag.number, Carapace.length)%>%
-  glimpse()
-
-glimpse(test)
-meta<-metadata.2018%>%
-  select(Sample, Location)%>%
-  glimpse()
-
-catch<- left_join(test, meta, by="Sample")%>%
-  mutate(sizeclass= ifelse(Carapace.length>=76.0,"Legal", "Sublegal"))%>% 
-  filter(!is.na(Carapace.length))%>%
-  filter(!is.na(Tag.number))%>%
-  mutate(Count=1)%>%
-  glimpse()
-
-#order by date
-catch%<>%
-  arrange(Date)%>%
-  glimpse()
-
-#filter to initial tags
-int<-catch%>%
-  dplyr::distinct(Tag.number,.keep_all = TRUE)%>% 
-  #filters out the duplicates (recaptues)
-  filter(!Trip=="8")%>% #Added !Trip=="1" & 
-  glimpse()
-
-unique(int$Trip)
-tapply(int$Count, list(int$Location, int$sizeclass), length)
-
-#Thin data to recaps
-rec <- catch[duplicated(catch$Tag.number), ]%>%
-  filter(!Trip=="8")%>% #Added
-  glimpse()
-
-tapply(rec$Count, list(rec$Location, rec$sizeclass), length)
-
-#Join with other data----
-all.recaps <- semi_join(test, recaps)%>%
-  glimpse()
-
-#isolate recaps
-rec <- all.recaps[duplicated(all.recaps$Tag.number), ]%>%
-  glimpse()
-#join recaps
-int.rec <-full_join(int, rec, by="Tag.number")%>%
-  dplyr::rename(int.date=Date.x,
-                int.trip=Trip.x,
-                rec.date=Date.y,
-                rec.trip=Trip.y)%>%
-  glimpse()
-
-
-#count of recaptures per trip-----
-count<-int.rec%>%
-  group_by(int.trip)%>%
-  summarise(Sum=sum(n()))%>%
-  glimpse()
-
-trip<-int.rec%>%
-  filter(rec.trip=="8")%>%
-  glimpse()
-
-trip%<>%
-  group_by(int.trip)%>%
-  summarise(Sum=sum(n()))%>%
-  glimpse()
+# #Count recaptures per trip---
+# glimpse(length.2018) #9318
+# test<-length.2018%>%
+#   dplyr::mutate(Date=as_date(dmy(Date)))%>%
+#   select(Sample, Date, Trip, Tag.number, Carapace.length)%>%
+#   glimpse()
+# 
+# glimpse(test)
+# meta<-metadata.2018%>%
+#   select(Sample, Location)%>%
+#   glimpse()
+# 
+# catch<- left_join(test, meta, by="Sample")%>%
+#   mutate(sizeclass= ifelse(Carapace.length>=76.0,"Legal", "Sublegal"))%>% 
+#   filter(!is.na(Carapace.length))%>%
+#   filter(!is.na(Tag.number))%>%
+#   mutate(Count=1)%>%
+#   glimpse()
+# 
+# #order by date
+# catch%<>%
+#   arrange(Date)%>%
+#   glimpse()
+# 
+# #filter to initial tags
+# int<-catch%>%
+#   dplyr::distinct(Tag.number,.keep_all = TRUE)%>% 
+#   #filters out the duplicates (recaptues)
+#   filter(!Trip=="8")%>% #Added !Trip=="1" & 
+#   glimpse()
+# 
+# unique(int$Trip)
+# tapply(int$Count, list(int$Location, int$sizeclass), length)
+# 
+# #Thin data to recaps
+# rec <- catch[duplicated(catch$Tag.number), ]%>%
+#   filter(!Trip=="8")%>% #Added
+#   glimpse()
+# 
+# tapply(rec$Count, list(rec$Location, rec$sizeclass), length)
+# 
+# #Join with other data----
+# all.recaps <- semi_join(test, recaps)%>%
+#   glimpse()
+# 
+# #isolate recaps
+# rec <- all.recaps[duplicated(all.recaps$Tag.number), ]%>%
+#   glimpse()
+# #join recaps
+# int.rec <-full_join(int, rec, by="Tag.number")%>%
+#   dplyr::rename(int.date=Date.x,
+#                 int.trip=Trip.x,
+#                 rec.date=Date.y,
+#                 rec.trip=Trip.y)%>%
+#   glimpse()
+# 
+# 
+# #count of recaptures per trip-----
+# count<-int.rec%>%
+#   group_by(int.trip)%>%
+#   summarise(Sum=sum(n()))%>%
+#   glimpse()
+# 
+# trip<-int.rec%>%
+#   filter(rec.trip=="8")%>%
+#   glimpse()
+# 
+# trip%<>%
+#   group_by(int.trip)%>%
+#   summarise(Sum=sum(n()))%>%
+#   glimpse()
 
 #######################################################
 
@@ -218,6 +286,7 @@ dat.2017<-gs_title("1_Lobsters_data_171210.xlsx")%>% # To use GoogleSheets
   mutate(Pot.type=ifelse(Trap.ID%in%c("CH6C6"),"C",Pot.type))%>%
   mutate(Sample=paste(Day,Trap.ID,sep="."))%>%  #New column for Day and trap.number
   mutate(Source='Dongara.Canons.Masters')%>%
+  dplyr::mutate(Date=as_date(mdy(Date)))%>%
   glimpse()
 
 length.2017<-dat.2017%>%
@@ -233,6 +302,7 @@ length.2017<-dat.2017%>%
   dplyr::select(Source,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Individual.Remarks,everything())%>%
   mutate(Recapture=as.character(Recapture))%>%
   mutate(Trip=0)%>%
+  dplyr::mutate(Date=as_date(dmy(Date)))%>%
   glimpse()
 
 length(unique(length.2017$Sample)) #323
@@ -286,7 +356,7 @@ metadata.2017<-gs_title("Lobsters_data_20180214")%>% # To use GoogleSheets
 missing.pot.var<-anti_join(length.2017,metadata.2017) # Two pots that arent in the original
 
 # Clean up enviroment
-rm(missing.pot.var,duplicates,info.2017,dat.2017, total.recaps, total.recaps.17)
+rm(missing.pot.var,duplicates,info.2017,dat.2017)
 
 unique(metadata.2017$Site)
 unique(metadata.2017$Location)
@@ -296,16 +366,21 @@ unique(metadata.2018$Site)
 # Tidy names of data frames ----
 names(length.2017)<-ga.capitalise(names(length.2017))
 names(length.2018)<-ga.capitalise(names(length.2018))
+names(length.2019)<-ga.capitalise(names(length.2019))
+
 
 names(metadata.2017)<-ga.capitalise(names(metadata.2017))
 names(metadata.2018)<-ga.capitalise(names(metadata.2018))
+names(metadata.2019)<-ga.capitalise(names(metadata.2019))
 
 # Combine data ----
-metadata<-bind_rows(metadata.2017,metadata.2018)%>%
+
+metadata<-bind_rows(metadata.2017,metadata.2018, metadata.2019)%>%
   replace_na(list(Exclude.pots="No"))%>%
   glimpse()
 
-length<-bind_rows(length.2017,length.2018)%>%
+
+length<-bind_rows(length.2017,length.2018, length.2019)%>%
   replace_na(list(Damage.old.a = 0, Damage.old.l = 0,Damage.new.a = 0, Damage.new.l = 0))%>%
   mutate(Total.damage=(Damage.old.a+Damage.old.l+Damage.new.a+Damage.new.l))%>%
   replace_na(list(Sex="Unknown",Colour="Unknown",Cable.tie="FALSE",Dead="Alive"))%>%
@@ -367,6 +442,7 @@ dir()
   write.csv(metadata, "metadata.csv",row.names = FALSE)
   write.csv(length, "length.csv",row.names = FALSE)
 
+#Brooke for global----
 metadata.raw<-metadata%>%
   dplyr::rename(Comment=Pot.remarks)%>%
   mutate(Successful.count=ifelse(Exclude.pots%in%c("Yes"),"No","Yes"))%>%
