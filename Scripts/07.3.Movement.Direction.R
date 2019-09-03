@@ -12,8 +12,8 @@ library(readr)
 study<-"Recapture.Movement"
 
 # Set work directory ----
-#work.dir=("Z://Analysis_Miller_lobster") #for laptop
-work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
+work.dir=("Z://Analysis_Miller_lobster/Data") #for laptop
+#work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
 
 # Set sub-directories ----
 data.dir=paste(work.dir,"Data",sep="/")
@@ -25,8 +25,9 @@ dat.rr<- read.csv("Movement.Data.csv")%>%
 
 #Rename Locations
 dat.rr%<>%
-  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Boundary", "Golden Ridge"="Boundary", "Irwin Reef"="Mid", "White Point"="Mid")))%>%
+  mutate(Location=str_replace_all(.$Location, c("Little Horseshoe"="Golden Ridge", "White Point"="Irwin Reef")))%>% #Changed for fisher presentation
   mutate(Location=as.factor(Location))%>%
+  filter(!Location=="Seven Mile")%>% #Remove for fisher presentation
   glimpse()
 
 unique(dat.rr$Location)
@@ -41,11 +42,13 @@ dat.mm<- dat.rr%>%
 #Plotting----
 Theme1 <-
   theme( # use theme_get() to see available options
-    panel.grid.major = element_blank(), 
-    panel.grid.minor = element_blank(), 
+    #panel.grid.major = element_blank(), 
+    #panel.grid.minor = element_blank(), 
     legend.background = element_blank(),
-    legend.key = element_blank(), # switch off the rectangle around symbols in the legend
+    legend.key = element_blank(),
+    # switch off the rectangle around symbols in the legend
     legend.text = element_text(size=12),
+    legend.position = "none",
     text=element_text(size=12),
     axis.title.x=element_text(vjust=0.3, size=10),
     axis.title.y=element_text(vjust=0.6, angle=90, size=10),
@@ -54,9 +57,11 @@ Theme1 <-
     axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
     axis.ticks.x=element_line(colour="black", size=0.5,linetype='solid'),
     axis.line.y=element_line(colour="black", size=0.5,linetype='solid'),
-    strip.background = element_blank(),
-    plot.background = element_blank()) # Brooke added
+    strip.background = element_blank())
+    #plot.background = element_blank()) # Brooke added
 
+#Order Location
+dat.mm$Location<-factor(dat.mm$Location,levels=c("Irwin Reef","Cliff Head", "Golden Ridge")) #"Seven Mile", "Mid", "Boundary"
 
 #Seperate into sublegals and Legals
 #Legals----
@@ -65,88 +70,89 @@ dat.legal<-dat.mm%>%
   glimpse()
 #442 legals
 
-#Legal-Density
-polar.legal<-ggplot(data = dat.legal, aes(x = bearing)) + 
-  geom_histogram( aes(y = ..density..),binwidth=5,fill="maroon4",colour="black") + 
+
+#Legal-Density----
+legal.density<-ggplot(data = dat.legal, aes(x = bearing)) + 
+  geom_histogram( aes(y = ..density.., fill=Location),binwidth=15,colour="black") + #fill="maroon4"
   xlab("")+
   ylab("")+
   geom_hline(aes(yintercept=0))+
   theme_bw()+
   ggtitle("Legal-Density") +
-  #Theme1+
-  theme(axis.line.x=element_line(colour="white", size=0.5,linetype='solid'),
-        axis.ticks.x=element_line(colour="white", size=0.5,linetype='solid'),
-        strip.background = element_blank())+
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank())+
-  coord_polar(theta = "x", start=0, direction = 1)#+
-  #facet_grid(~Location)
-polar.legal
+  Theme1+
+  theme(axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
+        axis.ticks.x=element_line(colour="black", size=0.5,linetype='solid'),
+        strip.text = element_text(size=12))+
+  coord_polar(theta = "x", start=0, direction = 1)+
+  ylim(0,0.008)+
+  facet_wrap(~Location)
+legal.density
 
-#Legal-Distance
+
+#Legal-Distance----
 dat.resid<-dat.mm%>%
-  filter(distance>0.5)%>%
+  filter(distance<0.5)%>%
   filter(sizeclass=='Legal')%>%
   glimpse()
 
-resid.legal<-ggplot(data = dat.resid, aes(x = bearing, y=distance)) + 
-  stat_summary(fun.y=mean, geom="bar",fill="maroon4",colour="black", width=2) +
+legal.residential<-ggplot(data = dat.resid, aes(x = bearing, y=distance, fill=Location)) + 
+  stat_summary(fun.y=mean, geom="bar",colour="black", width=15) + #,fill="maroon4"
   xlab("")+
   ylab("")+
   geom_hline(aes(yintercept=0))+
   ggtitle("Legal-Distance residential (<0.5km)") +
   theme_bw()+
-  theme(axis.line.x=element_line(colour="white", size=0.5,linetype='solid'),
-  axis.ticks.x=element_line(colour="white", size=0.5,linetype='solid'),
-  strip.background = element_blank())+
-  theme(axis.text.y=element_blank(),
-         axis.ticks.y=element_blank())+
+  Theme1+
+  theme(axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
+        axis.ticks.x=element_line(colour="black", size=0.5,linetype='solid'),
+  strip.text = element_text(size=12))+
   coord_polar(theta = "x", start=0, direction = 1) +
-  facet_grid(~Location)
-resid.legal
+  facet_wrap(~Location)
+legal.residential
 
-dat.migrat<-dat.mm%>%
+#Legal migratory-----
+dat.migratory<-dat.mm%>%
   filter(distance>0.5)%>%
   filter(sizeclass=='Legal')%>%
   glimpse()
 
-migrat.legal<-ggplot(data = dat.migrat, aes(x = bearing, y=distance)) + 
-  stat_summary(fun.y=mean, geom="bar",fill="maroon4",colour="black", width=2) +
+legal.migratory<-ggplot(data = dat.migratory, aes(x = bearing, y=distance, fill=Location)) + 
+  stat_summary(fun.y=mean, geom="bar",colour="black", width=15) +
   xlab("")+
   ylab("")+
   geom_hline(aes(yintercept=0))+
-  ggtitle("Legal-Distance residential (>0.5km)") +
+  ggtitle("Legal-Distance migratory (>0.5km)") +
   theme_bw()+
-  theme(axis.line.x=element_line(colour="white", size=0.5,linetype='solid'),
-        axis.ticks.x=element_line(colour="white", size=0.5,linetype='solid'),
-        strip.background = element_blank())+
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank())+
+  Theme1+
+  theme(axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
+        axis.ticks.x=element_line(colour="black", size=0.5,linetype='solid'),
+        strip.text = element_text(size=12))+
   coord_polar(theta = "x", start=0, direction = 1) +
-  facet_grid(~Location)
-migrat.legal
+  facet_wrap(~Location)
+legal.migratory
 
 #Sublegals----
 dat.sublegal<-dat.mm%>%
   filter(sizeclass=='Sublegal')%>%
   glimpse()
 
+#Density-sublegals
 #1,022 sublegals
-polar.sublegal<-ggplot(data = dat.sublegal, aes(x = bearing)) + 
-  geom_histogram( aes(y = ..density..),binwidth=30,fill="maroon4",colour="black") + 
+sublegal.density<-ggplot(data = dat.sublegal, aes(x = bearing)) + 
+  geom_histogram( aes(y = ..density.., fill=Location),binwidth=15,colour="black") + 
   xlab("")+
   ylab("")+
   geom_hline(aes(yintercept=0))+
   theme_bw()+
-  ggtitle("(a)") +
-  theme(axis.line.x=element_line(colour="white", size=0.5,linetype='solid'),
-        axis.ticks.x=element_line(colour="white", size=0.5,linetype='solid'),
-        strip.background = element_blank())+
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank())+
+  ggtitle("Sublegal-Density")+
+  Theme1+
+  theme(axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
+        axis.ticks.x=element_line(colour="black", size=0.5,linetype='solid'),
+        strip.text = element_text(size=12))+
   coord_polar(theta = "x", start=0, direction = 1)+
-  facet_grid(~Location)
-polar.sublegal
+  ylim(0,0.008)+
+  facet_wrap(~Location)
+sublegal.density
 
 #Residential Distance-
 sub.resid<-dat.mm%>%
@@ -154,41 +160,40 @@ sub.resid<-dat.mm%>%
   filter(sizeclass=='Sublegal')%>%
   glimpse()
 
-sub.distance<-ggplot(data = sub.resid, aes(x = bearing, y=distance)) + 
-  stat_summary(fun.y=mean, geom="bar",fill="maroon4",colour="black", width=2) +
+sublegal.residential<-ggplot(data = sub.resid, aes(x = bearing, y=distance, fill=Location)) + 
+  stat_summary(fun.y=mean, geom="bar",colour="black", width=15) +
   xlab("")+
   ylab("")+
   geom_hline(aes(yintercept=0))+
+  ggtitle("Sublegal-Distance residential (<0.5km)") +
   theme_bw()+
-  theme(axis.line.x=element_line(colour="white", size=0.5,linetype='solid'),
-        axis.ticks.x=element_line(colour="white", size=0.5,linetype='solid'),
-        strip.background = element_blank())+
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank())+
+  Theme1+
+  theme(axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
+        axis.ticks.x=element_line(colour="black", size=0.5,linetype='solid'),
+        strip.text = element_text(size=12))+
   coord_polar(theta = "x", start=0, direction = 1) +
 facet_wrap(~Location)
-sub.distance
+sublegal.residential
   
 sub.migrat<-dat.mm%>%
-  # filter(distance>0.5)%>%
+  filter(distance>0.5)%>%
   filter(sizeclass=='Sublegal')%>%
   glimpse()
 
-plot.distance<-ggplot(data = sub.migrat, aes(x = bearing, y=distance)) + 
-  stat_summary(fun.y=mean, geom="bar",fill="maroon4",colour="black", width=2) +
-  #stat_bin()+
+sublegal.migratory<-ggplot(data = sub.migrat, aes(x = bearing, y=distance, fill=Location)) + 
+  stat_summary(fun.y=mean, geom="bar",colour="black", width=15) +
   xlab("")+
   ylab("")+
+  ggtitle("Sublegal-Distance migratory (>0.5km)")+
   geom_hline(aes(yintercept=0))+
   theme_bw()+
-  theme(axis.line.x=element_line(colour="white", size=0.5,linetype='solid'),
-        axis.ticks.x=element_line(colour="white", size=0.5,linetype='solid'),
-        strip.background = element_blank())+
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank())+
+  Theme1+
+  theme(axis.line.x=element_line(colour="black", size=0.5,linetype='solid'),
+        axis.ticks.x=element_line(colour="black", size=0.5,linetype='solid'),
+        strip.text = element_text(size=12))+
   coord_polar(theta = "x", start=0, direction = 1) +
   facet_wrap(~Location)
-plot.distance
+sublegal.migratory
 
 
   
