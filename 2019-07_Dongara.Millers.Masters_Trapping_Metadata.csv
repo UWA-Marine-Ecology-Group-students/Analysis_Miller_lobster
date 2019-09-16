@@ -1,0 +1,110 @@
+Sample,Latitude,Longitude,Date,Time,Location,Status,Site,Depth,Observer,Successful.count,Successful.length,Comment,Source,Trip,Day,Site.code,Pot.number,Day.pull,Pot.type,Pwo,Positionformat
+2.1.IR9,-29.3449166666667,114.873583333333,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,9,1,13,1,Decimal Minutes
+2.1.IR9,-29.3449166666667,114.873583333333,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,9,1,13,,Decimal Minutes
+2.1.IR38,-29.3445333333333,114.87405,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,38,1,13,,Decimal Minutes
+2.1.IR31,-29.3441333333333,114.8742,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,31,1,13,,Decimal Minutes
+2.1.IR48,-29.3436333333333,114.874216666667,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,48,1,13,,Decimal Minutes
+2.1.IR35,-29.3432166666667,114.8742,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,35,1,13,,Decimal Minutes
+2.1.IR29,-29.3427666666667,114.873933333333,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,29,1,13,,Decimal Minutes
+2.1.IR49,-29.3422166666667,114.87385,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,49,1,13,,Decimal Minutes
+2.1.IR12,-29.34175,114.873366666667,20190708,12:00:00,Irwin Reef,Fished,Irwin Reef,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,IR,12,1,13,,Decimal Minutes
+2.1.WL15,-29.3844666666667,114.885816666667,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,15,,13,,Decimal Minutes
+2.1.WL33,-29.3841666666667,114.88635,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,33,1,13,,Decimal Minutes
+2.1.WL21,-29.38415,114.886816666667,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,21,1,13,,Decimal Minutes
+2.1.WL13,-29.3837833333333,114.886766666667,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,13,1,13,,Decimal Minutes
+2.1.WL39,-29.3831833333333,114.8871,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,39,1,13,,Decimal Minutes
+2.1.WL34,-29.3826833333333,114.8873,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,34,1,13,,Decimal Minutes
+2.1.WL20,-29.3828666666667,114.887683333333,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,20,1,13,,Decimal Minutes
+2.1.WL45,-29.3832833333333,114.888016666667,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,45,1,13,,Decimal Minutes
+2.1.WL36,-29.3830666666667,114.888316666667,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,36,1,13,,Decimal Minutes
+2.1.WL36,-29.3830666666667,114.888316666667,20190708,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,WL,36,1,13,x,Decimal Minutes
+2.1.JB27,-29.4213,114.894716666667,20190708,12:00:00,Irwin Reef,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,JB,27,1,13,,Decimal Minutes
+2.1.JB5,-29.4216166666667,114.895216666667,20190708,12:00:00,Irwin Reef,Fished,White Point,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,JB,5,1,13,,Decimal Minutes
+2.1.JB18,-29.4221666666667,114.89535,20190708,12:00:00,Irwin Reef,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,JB,18,1,13,,Decimal Minutes
+2.1.JB4,-29.4225333333333,114.89505,20190708,12:00:00,Irwin Reef,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,JB,4,1,13,,Decimal Minutes
+2.1.JB46,-29.42285,114.89485,20190708,12:00:00,Irwin Reef,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,JB,46,1,13,,Decimal Minutes
+2.1.JB19,-29.4232,114.8953,20190708,12:00:00,Irwin Reef,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,JB,19,1,13,,Decimal Minutes
+2.1.JB50,-29.4235833333333,114.895316666667,20190708,12:00:00,Irwin Reef,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,JB,50,1,13,,Decimal Minutes
+2.1.JB22,-29.4238666666667,114.895466666667,20190708,12:00:00,Irwin Reef,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,JB,22,1,13,,Decimal Minutes
+2.1.SR16,-29.45185,114.871166666667,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,16,1,13,,Decimal Minutes
+2.1.SR2,-29.4527333333333,114.870583333333,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,2,1,13,,Decimal Minutes
+2.1.SR11,-29.4541166666667,114.87,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,SR,11,1,13,,Decimal Minutes
+2.1.SR40,-29.4551333333333,114.86995,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,40,1,13,,Decimal Minutes
+2.1.SR32,-29.4563,114.86965,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,SR,32,1,13,,Decimal Minutes
+2.1.SR23,-29.4569666666667,114.869033333333,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,23,1,13,,Decimal Minutes
+2.1.SR26,-29.4575333333333,114.868966666667,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,26,1,13,,Decimal Minutes
+2.1.SR28,-29.4580666666667,114.868716666667,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,SR,28,1,13,,Decimal Minutes
+2.1.SR41,-29.4689166666667,114.867116666667,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,41,1,13,,Decimal Minutes
+2.1.SR44,-29.4698,114.8663,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,44,1,13,,Decimal Minutes
+2.1.SR8,-29.4704333333333,114.866433333333,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,8,1,13,,Decimal Minutes
+2.1.SR37,-29.47085,114.865866666667,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,SR,37,1,13,,Decimal Minutes
+2.1.SR10,-29.4715666666667,114.865983333333,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,10,1,13,,Decimal Minutes
+2.1.SR30,-29.4721666666667,114.8661,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,30,1,13,,Decimal Minutes
+2.1.SR43,-29.4725333333333,114.8662,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,43,1,13,,Decimal Minutes
+2.1.SR7,-29.47305,114.866033333333,20190708,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,SR,7,1,13,,Decimal Minutes
+2.1.LHS24,-29.4621333333333,114.9169,20190708,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,LHS,24,1,13,,Decimal Minutes
+2.1.LHS47,-29.4617333333333,114.91695,20190708,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,LHS,47,1,13,,Decimal Minutes
+2.1.LHS17,-29.4615333333333,114.91755,20190708,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,LHS,17,1,13,,Decimal Minutes
+2.1.LHS1,-29.4612,114.918116666667,20190708,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,LHS,1,1,13,,Decimal Minutes
+2.1.LHS1,-29.4612,114.918116666667,20190708,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,LHS,1,1,13,1,Decimal Minutes
+2.1.LHS3,-29.4608333333333,114.918666666667,20190708,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,LHS,3,1,13,,Decimal Minutes
+2.1.LHS25,-29.46065,114.9192,20190708,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,1,LHS,25,1,13,,Decimal Minutes
+2.1.LHS6,-29.4602833333333,114.919383333333,20190708,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,Empty,Dongara.Millers.Masters,12,1,LHS,6,1,13,,Decimal Minutes
+2.2.LHS6,-29.4592166666667,114.92665,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,6,1,13,,Decimal Minutes
+2.2.LHS25,-29.4595333333333,114.926533333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,25,1,13,,Decimal Minutes
+2.2.LHS3,-29.45995,114.9267,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,3,1,13,,Decimal Minutes
+2.2.LHS47,-29.4603166666667,114.92645,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,47,1,13,,Decimal Minutes
+2.2.LHS24,-29.4608666666667,114.9262,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,24,1,13,,Decimal Minutes
+2.2.LHS17,-29.4649666666667,114.924283333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,17,1,13,,Decimal Minutes
+2.2.LHS1,-29.4656833333333,114.925233333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,1,1,13,,Decimal Minutes
+2.2.LHS7,-29.4667333333333,114.9252,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,7,1,13,,Decimal Minutes
+2.2.LHS43,-29.4671333333333,114.923866666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,43,1,13,,Decimal Minutes
+2.2.LHS27,-29.4672666666667,114.923433333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,27,,13,,Decimal Minutes
+2.2.LHS29,-29.5008666666667,114.921566666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,29,1,13,,Decimal Minutes
+2.2.LHS39,-29.50075,114.920633333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,39,1,13,,Decimal Minutes
+2.2.LHS33,-29.5011833333333,114.919066666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,33,1,13,,Decimal Minutes
+2.2.LHS15,-29.5012833333333,114.917883333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,15,1,13,,Decimal Minutes
+2.2.LHS12,-29.50215,114.917333333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,12,1,13,,Decimal Minutes
+2.2.LHS35,-29.5032333333333,114.917316666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,35,1,13,,Decimal Minutes
+2.2.LHS48,-29.5036166666667,114.917466666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,48,1,13,,Decimal Minutes
+2.2.LHS31,-29.5031666666667,114.915766666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,31,1,13,,Decimal Minutes
+2.2.LHS38,-29.5052,114.91395,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,38,1,13,,Decimal Minutes
+2.2.LHS9,-29.50575,114.914183333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,9,1,13,,Decimal Minutes
+2.2.LHS8,-29.5354333333333,114.92945,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,8,,13,,Decimal Minutes
+2.2.LHS5,-29.5367166666667,114.929483333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,5,,13,,Decimal Minutes
+2.2.LHS27,-29.5370666666667,114.929366666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,27,,13,,Decimal Minutes
+2.2.LHS36,-29.5371,114.9286,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,36,,13,,Decimal Minutes
+2.2.LHS45,-29.5381333333333,114.928533333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,45,,13,,Decimal Minutes
+2.2.LHS13,-29.5385833333333,114.928516666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,13,,13,,Decimal Minutes
+2.2.LHS21,-29.5392,114.928283333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,21,,13,,Decimal Minutes
+2.2.LHS20,-29.5394333333333,114.928716666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,20,,13,,Decimal Minutes
+2.2.LHS34,-29.54005,114.928533333333,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,34,,13,,Decimal Minutes
+2.2.LHS9,-29.5404833333333,114.927816666667,20190709,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,LHS,9,1,13,,Decimal Minutes
+2.2.GR8,-29.5354333333333,114.92945,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,8,1,13,,Decimal Minutes
+2.2.GR5,-29.5367166666667,114.92945,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,5,1,13,,Decimal Minutes
+2.2.GR27,-29.5370666666667,114.929366666667,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,27,1,13,,Decimal Minutes
+2.2.GR36,-29.5371,114.9286,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,36,1,13,,Decimal Minutes
+2.2.GR45,-29.5381333333333,114.928533333333,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,45,1,13,,Decimal Minutes
+2.2.GR13,-29.5385833333333,114.928516666667,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,13,1,13,,Decimal Minutes
+2.2.GR21,-29.5392,114.928283333333,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,21,1,13,,Decimal Minutes
+2.2.GR20,-29.5394333333333,114.928716666667,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,20,1,13,,Decimal Minutes
+2.2.GR34,-29.54005,114.928533333333,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,34,1,13,,Decimal Minutes
+2.2.GR49,-29.5404833333333,114.927816666667,20190709,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,GR,49,1,13,,Decimal Minutes
+2.2.CHN8,-29.4791,114.957216666667,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,8,1,13,,Decimal Minutes
+2.2.CHN41,-29.4799666666667,114.957133333333,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,41,1,13,,Decimal Minutes
+2.2.CHN28,-29.4799666666667,114.9571,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,28,1,13,,Decimal Minutes
+2.2.CHN30,-29.4804333333333,114.95695,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,30,,13,,Decimal Minutes
+2.2.CHN44,-29.4808166666667,114.95725,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,44,1,13,,Decimal Minutes
+2.2.CHN10,-29.48115,114.957383333333,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,10,1,13,,Decimal Minutes
+2.2.CHN26,-29.4815333333333,114.956966666667,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,26,1,13,,Decimal Minutes
+2.2.CHN23,-29.4818,114.956983333333,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,23,1,13,,Decimal Minutes
+2.2.CHN32,-29.4824166666667,114.95715,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,32,1,13,,Decimal Minutes
+2.2.CHN40,-29.4828166666667,114.95635,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,40,1,13,,Decimal Minutes
+2.2.CHN11,-29.4835666666667,114.956233333333,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,11,1,13,,Decimal Minutes
+2.2.CHN2,-29.4841,114.9559,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,2,1,13,,Decimal Minutes
+2.2.CHN22,-29.4844833333333,114.9557,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,22,1,13,,Decimal Minutes
+2.2.CHN50,-29.4840166666667,114.958433333333,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,50,1,13,,Decimal Minutes
+2.2.CHN46,-29.4832,114.958983333333,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,46,1,13,,Decimal Minutes
+2.2.CHN4,-29.4827,114.95915,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,4,1,13,,Decimal Minutes
+2.2.CHN16,-29.4822666666667,114.959366666667,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,16,1,13,,Decimal Minutes
+2.2.CHN19,-29.4818166666667,114.959433333333,20190709,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,12,2,CHN,19,1,13,,Decimal Minutes

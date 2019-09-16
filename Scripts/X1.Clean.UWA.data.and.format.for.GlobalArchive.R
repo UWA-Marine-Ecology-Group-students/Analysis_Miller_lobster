@@ -14,8 +14,8 @@ library(tidyverse)
 # Set work directory----
 # work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 # work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
-# work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
- work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+work.dir=("C:/GitHub/Analysis_Miller_lobster") # For Brooke
+# work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 # Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -45,6 +45,7 @@ dat.2019<-gs_title("Lobsters_data_2019_All")%>%
 
 length.2019<-dat.2019%>%
   filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>%
+  mutate(Trip=ifelse(Trip%in%c(1),11,12))%>%
   # now filters out where all are blank (empty pots)
   mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
@@ -55,6 +56,7 @@ length.2019<-dat.2019%>%
   mutate(Egg.stage=ifelse(Egg.stage%in%c("E","I"),"Early",Egg.stage))%>%
   mutate(Egg.stage=ifelse(Egg.stage%in%c("M"),"Mid",Egg.stage))%>%
   dplyr::select( Date,Source,Trip,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Setose.state,Egg.stage,Moult.stage,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Individual.Remarks)%>%
+  
   glimpse()
 
 #Get 2019 info
@@ -68,6 +70,7 @@ info.2019<-dat.2019%>%
 metadata.2019<-gs_title("Lobsters_data_2019_All")%>%# To use GoogleSheets
   gs_read_csv(ws = "Pot.var",col_types = "ncncnccncccc")%>% #
   mutate(Source = 'Dongara.Millers.Masters')%>%
+  mutate(Trip=ifelse(Trip%in%c(1),11,12))%>%
   mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>% 
   mutate(Site=str_replace_all(.$Site.Name,c( "SM"="Seven Mile", "DM"="Davids Marks",  "RM"="Rivermouth", "IR"="Irwin Reef", "LR"="Long Reef", "SD"="South Dummy", "LH"="Little Horseshoe", "CHin1_"="Cliff Head Mid","CHin2_"="Cliff Head South","CHout1_" = "Cliff Head OUT1","CHout2_" = "Cliff Head North", "JB"="Jim Bailey", "GR"="Golden Ridge", "SR"="South Rig", "WL"="Whites Lump")))%>% 
   mutate(Location=str_replace_all(.$Site,c("Seven Mile Beach"= "Seven Mile", "Cliff Head North"="Cliff Head","Cliff Head Mid"= "Cliff Head","Cliff Head South"="Cliff Head","Cliff Head OUT1"= "Cliff Head","CHM"="Cliff Head", "Davids Marks"="Cliff Head","CHM"= "Cliff Head", "CHS"="Cliff Head", "CHN"="Cliff Head", "Jim Bailey"="Irwin Reef", "Long Reef"="Irwin Reef", "South Dummy"="White Point","South Rig"= "White Point","Whites Lump"= "White Point","WP"= "White Point","Whitepoint"="White Point")))%>% 
@@ -83,9 +86,10 @@ metadata.2019<-gs_title("Lobsters_data_2019_All")%>%# To use GoogleSheets
   mutate(Day.Pull=as.numeric(Day.Pull))%>%
   dplyr::mutate(Date=as_date(dmy(Date)))%>%
   select(Source,Sample,Trip,Day,Site.Code,Pot.Number,Location,Site,Date,Day.Pull,Latitude,Longitude,Pot.Type,Pot.Remarks,PWO,PWF,WKW, PositionFormat)%>% # Trap.ID,
+  
   glimpse()
 
-#Convert Brian's data GPS points to decimal degrees
+# Convert Brian's data GPS points to decimal degrees
 dm <- metadata.2019%>%
   filter(PositionFormat%in%c("Decimal Minutes"))%>%
   dplyr::mutate(Latitude=measurements::conv_unit(.$Latitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
@@ -302,7 +306,7 @@ length.2017<-dat.2017%>%
   dplyr::select(Source,Sample,Tag.number,Recapture,Carapace.length,Sex,Colour,Damage.old.a,Damage.old.L,Damage.new.a,Damage.new.L,Dead,Individual.Remarks,everything())%>%
   mutate(Recapture=as.character(Recapture))%>%
   mutate(Trip=0)%>%
-  dplyr::mutate(Date=as_date(dmy(Date)))%>%
+  #dplyr::mutate(Date=as_date(dmy(Date)))%>%
   glimpse()
 
 length(unique(length.2017$Sample)) #323
@@ -510,3 +514,7 @@ for (i in 1:length(campaigns)){
   write.csv(temp.length, file=paste(unique(id),"_Length.csv",sep=""), quote=FALSE,row.names = FALSE,na = "") # write file
 }
 
+
+test<-metadata%>%
+  group_by(Sample,Trip)%>%
+  summarise(n=n())

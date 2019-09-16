@@ -273,7 +273,7 @@ unique(length.final$Reproductive.stage) # OK
 unique(metadata.final$Site)
 unique(metadata.final$Location)
 metadata.final%<>%
-  mutate(Location=str_replace_all(.$Site,c("Little Horseshoe"="Little Horseshoe", "White Point"="White Point", "Whites Lump"="White Point", "South Dummy"="White Point","Cliff Head North"= "Cliff Head", "Kevin Healy"="Cliff Head", "Long Reef"="Irwin Reef","South Rig" ="Irwin Reef",  "Cliff Head Mid"="Cliff Head", "Cliff Head South"= "Cliff Head", "Seven Mile Mid"="Seven Mile","Seven Mile North" ="Seven Mile")))%>%
+  mutate(Location=str_replace_all(.$Site,c("Little Horseshoe"="Little Horseshoe", "White Point"="White Point", "Whites Lump"="White Point", "South Dummy"="White Point","Cliff Head North"= "Cliff Head", "Kevin Healy"="Cliff Head", "Long Reef"="Irwin Reef","South Rig" ="Irwin Reef",  "Cliff Head Mid"="Cliff Head", "Cliff Head South"= "Cliff Head", "Seven Mile Mid"="Seven Mile","Seven Mile North" ="Seven Mile","Little HorseshoeS"="Little Horseshoe")))%>%
   glimpse()
 
 ## Save metadata, count and length files ----
