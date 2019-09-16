@@ -46,6 +46,7 @@ dat.2019<-gs_title("Lobsters_data_2019_All")%>%
 length.2019<-dat.2019%>%
   filter(!(is.na(Carapace.length)&is.na(Tag.number)&is.na(Colour)))%>%
   mutate(Trip=ifelse(Trip%in%c(1),11,12))%>%
+  mutate(Sample=paste(Trip,Day,Trap.ID,sep="."))%>% 
   # now filters out where all are blank (empty pots)
   mutate(Colour=str_replace_all(.$Colour,c("W"="White", "R"="Red")))%>%
   mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
@@ -439,14 +440,14 @@ changes<-length%>%
 length<-length%>%
   filter(!Tag.number%in%c(list.tags))
 
-#Write data
+# Write data
 setwd(data.dir)
 dir()
 
-  write.csv(metadata, "metadata.csv",row.names = FALSE)
-  write.csv(length, "length.csv",row.names = FALSE)
+write.csv(metadata, "metadata.csv",row.names = FALSE)
+write.csv(length, "length.csv",row.names = FALSE)
 
-#Brooke for global----
+# Brooke for global----
 metadata.raw<-metadata%>%
   dplyr::rename(Comment=Pot.remarks)%>%
   mutate(Successful.count=ifelse(Exclude.pots%in%c("Yes"),"No","Yes"))%>%
@@ -464,7 +465,8 @@ length.raw<-length%>%
   dplyr::rename(Length=Carapace.length)%>%
   mutate(Family="Palinuridae",Genus="Panulirus",Species="cygnus")%>%
   replace_na(list(Length=(-9999)))%>%
-  semi_join(metadata.raw)%>%
+  #select(-c(Date))%>%
+  semi_join(metadata.raw, by = c("Source", "Sample", "Trip"))%>%
   glimpse()
 
 # Make a more GlobalArchive-y CampaignID
@@ -478,26 +480,26 @@ campaigns<-metadata.raw%>%
   select(-c(Date))
 
 # Add campaigns to metadata and length ----
-metadata<-left_join(metadata.raw,campaigns)%>%
+metadata.cam<-left_join(metadata.raw,campaigns)%>%
   mutate(Date=str_replace_all(.$Date,c("-"=""))) # fix format of date here - cant do above as need it to make campaignid
 
-length<-left_join(length.raw,campaigns)
+length.cam<-left_join(length.raw,campaigns)
 
 # Remove csv unfriendly tings (e.g. commas) from metadata ----
-metadata[] <- sapply(metadata, remove.commas)
-metadata[] <- sapply(metadata, remove.colon)
-metadata[] <- sapply(metadata, remove)
+metadata.cam[] <- sapply(metadata.cam, remove.commas)
+metadata.cam[] <- sapply(metadata.cam, remove.colon)
+metadata.cam[] <- sapply(metadata.cam, remove)
 
 # Split data into campaigns based on trip ----
 # Loop through to save individuals campaigns ----
 setwd(uploads)
 dir()
 
-campaigns <- unique(unlist(metadata$CampaignID))
+campaigns <- unique(unlist(metadata.cam$CampaignID))
 
 for (i in 1:length(campaigns)){
   # Metadata
-  temp.met <- subset(metadata, CampaignID == campaigns[i])
+  temp.met <- subset(metadata.cam, CampaignID == campaigns[i])
   id<-temp.met$CampaignID
   # Remove CampaignID from dataframe and then remove all columns where all are NA
   temp.met2<-temp.met%>%select(-c(CampaignID))
@@ -510,7 +512,7 @@ for (i in 1:length(campaigns)){
   write.csv(temp.met4, file=paste(unique(id),"_Metadata.csv",sep=""), quote=FALSE,row.names = FALSE,na = "")
   
   # Length
-  temp.length <- subset(length, CampaignID == campaigns[i])%>%select(-c(CampaignID)) # Remove CampaignID from dataframe
+  temp.length <- subset(length.cam, CampaignID == campaigns[i])%>%select(-c(CampaignID)) # Remove CampaignID from dataframe
   write.csv(temp.length, file=paste(unique(id),"_Length.csv",sep=""), quote=FALSE,row.names = FALSE,na = "") # write file
 }
 
