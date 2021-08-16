@@ -6,13 +6,14 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(lubridate)
-library(googlesheets)
 
 # Study name----
 study<-"Lobster.Data"
 
 # Set work directory----
 work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+
+work.dir=("C:/GitHub/Analysis_Miller_lobster_current") # Brooke's desktop
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -27,6 +28,7 @@ sd.min <- function(x) (mean(x)) - sd(x)
 sd.max <- function(x) (mean(x)) + sd(x)
 scaleFUN <- function(x) sprintf("%.0f", x)
 get.sst<-function(data){
+  data <-catch.sst[1:100, ]
   #function to retrieve sst given a dataframe with Latitude, Longitude, data and time
   #provide a data frame with a column called Lat and a column called Long
   #should be a column called Date which should be a column called Date which is in data format: "2018-07-14" (use as.Date)
@@ -49,7 +51,7 @@ get.sst<-function(data){
   if(is.Date(data$Date)==F) {print("Convert your dates using as.Date")}
   
   
-  rerddap::info(datasetid = "ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon", url = "https://www.ncei.noaa.gov/erddap/")
+  #rerddap::info(datasetid = "ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon", url = "https://www.ncei.noaa.gov/erddap/")
   
   OISST_sub <- function(times){ #function to download sst data from noaa
     oisst_res <- griddap(x = "ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon", 
@@ -86,18 +88,28 @@ get.sst<-function(data){
   
   data$years<-format(data$Date,"%Y")
   years<-unique(data$years)
+  # 
+  # for (i in 1:length(years)){ #loop to get start and end dates
+  # 
+  #   start<-paste0(years[i], "-01-01T00:00:00Z")
+  #   end<-paste0(years[i], "-12-31T00:00:00Z")
+  #   temp <- OISST_sub(c(start, end)) #download data
+  #   temp_prepped <- OISST_prep(temp) #prep data
+  #   
+  #   if(i==1){OISST_all<-temp_prepped}else{ 
+  #     OISST_all <- rbind(OISST_all, temp_prepped)}#bind data
+  #   
+  # } #this downloads the data for interesting years and geographic range and binds it all together
   
-  for (i in 1:length(years)){ #loop to get start and end dates
-    
-    start<-paste0(years[i], "-01-01T00:00:00Z")
-    end<-paste0(years[i], "-12-31T00:00:00Z")
+  
+    start<-paste0("2018", "-01-01T00:00:00Z")
+    end<-paste0("2018", "-12-31T00:00:00Z")
     temp <- OISST_sub(c(start, end)) #download data
     temp_prepped <- OISST_prep(temp) #prep data
     
     if(i==1){OISST_all<-temp_prepped}else{ 
       OISST_all <- rbind(OISST_all, temp_prepped)}#bind data
     
-  } #this downloads the data for interesting years and geographic range and binds it all together
   
   #retrieve unique spatial points for each data set
   sst_points <- unique(OISST_all[,c("lon", "lat")])
@@ -136,39 +148,41 @@ get.sst<-function(data){
   return(data$sst)
 } #Matts Function for sst data
 # Import Catch data----
+setwd(data.dir)
+dir()
+
 dat.catch <- read.csv("dat.catch.csv")%>%
   dplyr::mutate(Date=as_date(ymd(Date)))%>%
   glimpse()
 
 #Bring in swell data for 2018----
-dat.swell.18 <-gs_title("JDW2018")%>%
-  gs_read_csv(ws="Sheet1", header=TRUE)%>%
+dir()
+dat.swell.18 <-read.csv("JDW2018.csv")%>%
   mutate(Date=as.Date(Date,format= "%d/%m/%Y"))%>%
   fill(2:12, .direction = c("down"))%>% #Some data is missing from certain days. k. cool. whatever.
   group_by(Date) %>%
   summarise_all(funs(mean))%>% #Find average per day
   distinct()%>%
-  dplyr::rename("Hs.m.sw"="Hs(m).sw",
-                "Hs.m.sea"="Hs(m).sea",
-                "T1.s.sw"="T1(s).sw",
-                "T1.s.sea"="T1(s).sea")%>%
+  dplyr::rename("Hs.m.sw"="Hs.m..sw",
+                "Hs.m.sea"="Hs.m..sea",
+                "T1.s.sw"="T1.s..sw",
+                "T1.s.sea"="T1.s..sea")%>%
   select(Date, Hs.m.sw, Hs.m.sea, T1.s.sw, T1.s.sea)%>%
   ungroup()%>%
   glimpse()
 
 #2017 data----
 # Added as sheet 2 to 2018 data. 
-dat.swell.17 <-gs_title("JDW2018")%>%
-  gs_read_csv(ws="Sheet2", header=TRUE)%>%
+dat.swell.17 <- read.csv("JDW2017.csv")%>%
   mutate(Date=as.Date(Date,format= "%d/%m/%Y"))%>%
   fill(2:12, .direction = c("down"))%>%
   group_by(Date) %>%
   summarise_all(funs(mean))%>%
   distinct()%>%
-  dplyr::rename("Hs.m.sw"="Hs(m).sw",
-                "Hs.m.sea"="Hs(m).sea",
-                "T1.s.sw"="T1(s).sw",
-                "T1.s.sea"="T1(s).sea")%>%
+  dplyr::rename("Hs.m.sw"="Hs.m..sw",
+                "Hs.m.sea"="Hs.m..sea",
+                "T1.s.sw"="T1.s..sw",
+                "T1.s.sea"="T1.s..sea")%>%
   select(Date, Hs.m.sw, Hs.m.sea, T1.s.sw, T1.s.sea)%>%
   ungroup()%>%
   glimpse()

@@ -29,6 +29,8 @@ study<-"Lobster.Data"
 # work.dir=("C:/GitHub/Analysis_Miller_lobster")
 work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
+work.dir=("C:/GitHub/Analysis_Miller_lobster_current") # Brooke's desktop
+
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
 map.dir<-paste(work.dir,"Map Layers",sep="/")
