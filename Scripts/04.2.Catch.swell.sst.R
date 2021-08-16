@@ -6,6 +6,7 @@ library(tidyr)
 library(dplyr)
 library(stringr)
 library(lubridate)
+library(sf)
 
 # Study name----
 study<-"Lobster.Data"
@@ -50,12 +51,22 @@ get.sst<-function(data){
   if(!("Date" %in% colnames(data))){print("Need a column called Date in date fromat using as.Date")}
   if(is.Date(data$Date)==F) {print("Convert your dates using as.Date")}
   
+  # First download the list of data products on the server
+  server_data <- rerddap::ed_datasets(which = "griddap", "https://www.ncei.noaa.gov/erddap/")$Dataset.ID
   
+  # Check if the "final" data are currently hosted
+  if(!"ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon" %in% server_data)
+    stop("Final data are not currently up on the ERDDAP server")
+  
+  # Check if the "prelim" data are currently hosted
+  if(!"ncdc_oisst_v2_avhrr_prelim_by_time_zlev_lat_lon" %in% server_data)
+    stop("Prelim data are not currently up on the ERDDAP server")
   #rerddap::info(datasetid = "ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon", url = "https://www.ncei.noaa.gov/erddap/")
   
   OISST_sub <- function(times){ #function to download sst data from noaa
     oisst_res <- griddap(x = "ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon", 
-                         url = "https://www.ncei.noaa.gov/erddap/", 
+                         url = "https://coastwatch.pfeg.noaa.gov/erddap/",
+                         #url = "https://www.ncei.noaa.gov/erddap/", 
                          time = times, 
                          depth = c(0, 0),
                          latitude = c(min(data$Lat)-0.25, max(data$Lat)+0.25),
@@ -107,8 +118,7 @@ get.sst<-function(data){
     temp <- OISST_sub(c(start, end)) #download data
     temp_prepped <- OISST_prep(temp) #prep data
     
-    if(i==1){OISST_all<-temp_prepped}else{ 
-      OISST_all <- rbind(OISST_all, temp_prepped)}#bind data
+    OISST_all<-temp_prepped
     
   
   #retrieve unique spatial points for each data set
@@ -199,13 +209,16 @@ catch.swell <- left_join(dat.catch, dat.swell, by="Date")%>%
 
 #Now bring in SST data----
 catch.sst<-catch.swell%>%
-  select(Date, Longitude, Latitude)%>%
+  dplyr::select(Date, Longitude, Latitude)%>%
   dplyr::rename("Lat"="Latitude", "Long"="Longitude")%>%
   mutate(Lat=as.numeric(Lat))%>%
   mutate(Long=as.numeric(Long))%>%
   unite(SiteNo, c(Lat,Long), sep = "", remove = F)%>% 
   glimpse()
 
+catch.sst<-catch.sst[1:1000,]
+
+catch.sst$sst<-get_sst(catch.sst$Date, catch.sst$Long, catch.sst$Lat)
 
 #Bring in SST data- using Mathew's function----
 catch.sst$sst<-get.sst(catch.sst) #Keeps getting an error: Server is down? Fixed!
