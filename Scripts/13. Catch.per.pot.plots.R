@@ -8,6 +8,7 @@ library(googlesheets)
 library(stringr)
 library(measurements)
 library(lubridate)
+library(ggplot2)
 
 # Study name----
 study<-"Lobster.Data"
@@ -67,7 +68,6 @@ dat.length.1<-dat.length%>%
   dplyr::mutate(Total.damage=sum(Damage.old.a+Damage.old.L+Damage.new.a+Damage.new.L,na.rm = TRUE))%>%
   glimpse()
 
-
 unique(dat.length$Remarks)
 length(unique(dat.length.1$Tag.number))
 #7537
@@ -103,7 +103,7 @@ dat.length.1<-left_join(dat.length.1,sites, by="Trap.ID")
 #Join Lobster and pot 2018 data----
 
 data.oct <- dat.length.1%>%
-  dplyr::filter(Remarks%in%c("PWO (1)", "1 X CARDinAL PWO (1)","Dead (octopus)","PWO(X)" ,"PWO(X), WKW (4)", "PWO(1), Crab (1)",  "PWO(1), Daed crab (1)","Dead recapture (by occy) PWO (X)","Dead-Occy","Occy","PWO(!)","Dead-by Occy, Had cliiped pleopod but no tag, Occy (x)","(x) occy, (1) wkw", "Still alive, Occy (1)","Occy (X)", "Dead by occy, PWO(X)" ,"PWO(x), Dead by occy" ,"PWO(x)", "PWO(1), Dead-by occy", "PWO(x), 2 tails" , "PWO (1), Dead-by Occy"  ,"Dead-by occy, PWO(X), (2) WKW","Dead-occy" ,"PWO(X), Dead-by occy" ,"DEAD-by occy, PWO(2)" , "DEAD -by occy ,PWO(1), WKW (1)", "PWO(X), DEAD-by occy", "PWO(1), wkw(1)" , "Dead-by occy, infected tag", "PWO (X), Dead-by occy", "DEAD-BY OCCY, PWO(X), WKW(3)", "DEAD- OCCY",  "Dead-occy, wkw (2)", "Dead-occy, wkw (2)" ,  "(2) PWO", "Dead- by Occy" ,   "PWO(1), Dead- by occy", "PWO(X), Dead- by occy", "DEAD- BY OCCY, PWO (X)", "Dead by occy, PWO (X)" , "Dead- by occy","By Occy" , "Dead-by occy, (1) PWO, (1) WKW" ,"Dead-by occy, (1) PWO", "Dead- Occy", "Half dead (octopus)", "PWO(1)",  "Dead, PWO(X)", "Dead (octopus), PWO (1)" ,  "PWO (X)","MAYBE OCCY?","WOBBY 0.8 M","1.5 m wobby"))%>%
+  dplyr::filter(Individual.Remarks%in%c("PWO (1)", "1 X CARDinAL PWO (1)","Dead (octopus)","PWO(X)" ,"PWO(X), WKW (4)", "PWO(1), Crab (1)",  "PWO(1), Daed crab (1)","Dead recapture (by occy) PWO (X)","Dead-Occy","Occy","PWO(!)","Dead-by Occy, Had cliiped pleopod but no tag, Occy (x)","(x) occy, (1) wkw", "Still alive, Occy (1)","Occy (X)", "Dead by occy, PWO(X)" ,"PWO(x), Dead by occy" ,"PWO(x)", "PWO(1), Dead-by occy", "PWO(x), 2 tails" , "PWO (1), Dead-by Occy"  ,"Dead-by occy, PWO(X), (2) WKW","Dead-occy" ,"PWO(X), Dead-by occy" ,"DEAD-by occy, PWO(2)" , "DEAD -by occy ,PWO(1), WKW (1)", "PWO(X), DEAD-by occy", "PWO(1), wkw(1)" , "Dead-by occy, infected tag", "PWO (X), Dead-by occy", "DEAD-BY OCCY, PWO(X), WKW(3)", "DEAD- OCCY",  "Dead-occy, wkw (2)", "Dead-occy, wkw (2)" ,  "(2) PWO", "Dead- by Occy" ,   "PWO(1), Dead- by occy", "PWO(X), Dead- by occy", "DEAD- BY OCCY, PWO (X)", "Dead by occy, PWO (X)" , "Dead- by occy","By Occy" , "Dead-by occy, (1) PWO, (1) WKW" ,"Dead-by occy, (1) PWO", "Dead- Occy", "Half dead (octopus)", "PWO(1)",  "Dead, PWO(X)", "Dead (octopus), PWO (1)" ,  "PWO (X)","MAYBE OCCY?","WOBBY 0.8 M","1.5 m wobby"))%>%
   ungroup()%>%
   select(trip.day.trap)%>%
   glimpse()
@@ -133,6 +133,8 @@ Theme1 <-
     plot.background = element_blank()) # Brooke added
 
 #Plot----
+dat<-dat.length.1
+
 glimpse(dat)
 
 #For Males
