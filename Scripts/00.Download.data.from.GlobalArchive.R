@@ -26,8 +26,7 @@ library(lubridate)
 library(googlesheets)
 
 ## Set your working directory ----
-working.dir=("C:/GitHub/Analysis_Miller_lobster")
-#working.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
+working.dir=("C:/GitHub/Analysis_Miller_lobster_current") # Brooke's desktop
 
 ## Save these directory names to use later----
 data.dir<-paste(working.dir,"Data",sep="/") 
@@ -82,8 +81,10 @@ length <-ga.list.files("Length.csv")%>%
 
 
 # Import Tag Return data sent to Fisheries----
-fisheries.returns <- gs_title("Fisheries.Tag.Returns")%>%
-  gs_read_csv(ws="Sheet1")%>%
+setwd(data.dir)
+dir()
+
+fisheries.returns <- read.csv("Fisheries.Tag.Returns.csv")%>%
   dplyr::mutate(Recapture=TRUE)%>%
   dplyr::mutate(Colour="Unknown")%>%
   dplyr::mutate(Source= "fisheries-returns")%>%
@@ -95,7 +96,7 @@ fisheries.returns <- gs_title("Fisheries.Tag.Returns")%>%
   replace_na(list(Sex="Unknown"))%>%
   dplyr::mutate(Dead=ifelse(Comments%in%c("Eaten by octopus"),"Dead",NA))%>%
   dplyr::rename(Individual.Remarks=Comments,Fisher.Email=ReportersUserEmail,Depth.fms=depth.fms)%>%
-  dplyr::select(-c(ReportId,SpeciesName,SpeciesCategory,ReportersPhoneNumber,ReportersBoatRegistrationNumber,address,X19,X20,X21,X22,RetentionStatus))%>%
+  dplyr::select(-c(ReportId,SpeciesName,SpeciesCategory,ReportersPhoneNumber,ReportersBoatRegistrationNumber,address,X,X.1,X.2,X.3,RetentionStatus))%>%
   dplyr::mutate(Date=lubridate::as_date(mdy(Date)))%>%
   glimpse()
 
@@ -104,10 +105,14 @@ dm <- fisheries.returns%>%
   filter(PositionFormat%in%c("Decimal Minutes"))%>%
   dplyr::mutate(Latitude=measurements::conv_unit(.$Latitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
   dplyr::mutate(Longitude=measurements::conv_unit(.$Longitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
+  dplyr::mutate(Latitude=as.numeric(Latitude))%>%
+  dplyr::mutate(Longitude=as.numeric(Longitude))%>%
   glimpse()
 
 dd <- fisheries.returns%>%
   filter(PositionFormat%in%c("Decimal Degrees"))%>%
+  dplyr::mutate(Latitude=as.numeric(Latitude))%>%
+  dplyr::mutate(Longitude=as.numeric(Longitude))%>%
   glimpse()
 
 fisheries.returns <- bind_rows(dd, dm)%>%
@@ -128,13 +133,14 @@ length.fisheries<-fisheries.returns%>%
   dplyr::select(Source,Sample,Tag.number,Sex,Colour,Carapace.length,Recapture,Setose.state,Tarspot,Individual.Remarks,Retention.Status,Dead)
 
 # Import Tag Return data sent to UWA----
-fisher.returns <- gs_title("UWA.Tag.Returns")%>%
-  gs_read_csv(ws="Sheet1")%>%
+dir()
+
+fisher.returns <- read.csv("UWA.Tag.Returns.csv")%>%
   dplyr::mutate(Recapture=TRUE)%>%
   dplyr::mutate(Source = "fisher-returns")%>%
   dplyr::mutate(Sex=str_replace_all(.$Sex, c("M"="Male", "F"="Female","U"="Unknown")))%>%
   dplyr::mutate(Colour=str_replace_all(.$Colour, c("W"="White", "R"="Red")))%>%
-  dplyr::rename(Fisher= Reporter, Latitude=`Latitude(deg_dec_min)`, Longitude=`Longitude(deg_dec_min)`,Setose.state=Setose,Fisher.Email=Email,Pot.Remarks=Comments,Retention.Status=RetentionStatus)%>%
+  dplyr::rename(Fisher= Reporter, Latitude=`Latitude.deg_dec_min.`, Longitude=`Longitude.deg_dec_min.`,Setose.state=Setose,Fisher.Email=Email,Pot.Remarks=Comments,Retention.Status=RetentionStatus)%>%
   dplyr::mutate(Date=as_date(dmy(Date)))%>%
   dplyr::mutate(Latitude=measurements::conv_unit(.$Latitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
   dplyr::mutate(Longitude=measurements::conv_unit(.$Longitude, from = 'deg_dec_min', to = 'dec_deg'))%>%
@@ -158,8 +164,10 @@ length.fisher<-fisher.returns%>%
 rm(dd,dm,fisher.returns,fisheries.returns)
 
 # Seven Mile Data ----
-sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
-  gs_read_csv("SMB2",col_types = "cccnnnnnccnnnnnnncccnnnnnnnn")%>%
+dir()
+
+sevenmile<-read.csv("Lobster_Data_Fisheries_SMB_All.csv")%>%
+  #gs_read_csv("SMB2",col_types = "cccnnnnnccnnnnnnncccnnnnnnnn")%>%
   dplyr::mutate(Source="ben-seven-mile")%>%
   dplyr::mutate(Location="Seven Mile")%>%
   dplyr::mutate(Site="Seven Mile North")%>%
@@ -188,6 +196,7 @@ sevenmile<-gs_title("Lobster_Data_Fisheries_SMB_All")%>%
   dplyr::mutate(Sex=if_else((!is.na(Colour)&!Sex%in%c("Female","Male")),"Unknown",Sex))%>%
   dplyr::mutate(Recapture=str_replace_all(.$Recapture, c("1"= "TRUE")))%>%
   filter(!is.na(Sample))%>%
+  dplyr::mutate(PWF=as.character(PWF))%>%
   glimpse()
 
 #####"))%>%
