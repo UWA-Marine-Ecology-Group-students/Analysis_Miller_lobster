@@ -75,9 +75,7 @@ length(dat.length.1$Carapace.length)
 #9614
 
 # # Import 2018 pot data----
-
-dat.pot.1<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
-  gs_read_csv(ws = "Pot.var")%>%
+dat.pot.1<-googlesheets4::read_sheet(url, range = "Pot.var")%>%
   mutate(trip.day.trap=paste(Trip,Day,Trap.ID,sep="."))%>% 
   mutate(Site.Name=str_replace_all(.$Site.Name,c( "SM"="Seven Mile", "DM"="Davids Marks",  "RM"="Rivermouth", "IR"="Irwin Reef", "LR"="Long Reef", "SD"="South Dummy", "LH"="Little Horseshoe", "CHin1_"="Cliff Head Mid","CHin2_"="Cliff Head South","CHout1_" = "Cliff Head OUT1","CHout2_" = "Cliff Head North", "JB"="Jim Bailey", "GR"="Golden Ridge", "SR"="South Rig", "WL"="Whites Lump")))%>% 
   filter(Johns=="No")%>% # turn off when I add in john's data (if ever)
