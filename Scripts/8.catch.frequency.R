@@ -9,11 +9,15 @@ library(stringr)
 library(ggplot2)
 library(readr)
 
+
 # Study name----
 study<-"frequency.plot"
 
 # Set work directory----
 work.dir=("Z:/Analysis_Miller_lobster")
+work.dir=("C:/GitHub/Analysis_Miller_lobster_current") # Brooke's desktop
+
+setwd(work.dir)
 
 # Set sub-directories----
 data.dir=paste(work.dir,"Data",sep="/")
