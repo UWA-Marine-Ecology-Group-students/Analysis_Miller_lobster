@@ -27,6 +27,7 @@ study<-"Lobster.Data"
 work.dir=("~/GitHub/Analysis_Miller_WRL") #for Tim's github
 
 work.dir=("~/workspace/Analysis_Miller_WRL") #for ecocloud server
+work.dir=("C:/GitHub/Analysis_Miller_lobster_current") # Brooke's desktop
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -49,9 +50,9 @@ options(httr_oob_default=TRUE)
 # gs_auth(new_user = TRUE) #only run once
 
 # Import 2018 length data----
+url <- "https://docs.google.com/spreadsheets/d/17TM2JiYEv6QSIwqgsgGDu9vaiSWlBS3TSZSE8w2ZCMI/edit#gid=592826847"
 
-dat.length<-gs_title("Lobsters_data_2018_All")%>% # To use GoogleSheets
-  gs_read_csv(ws = "Lobster.var" )%>%
+dat.length<-googlesheets4::read_sheet(url, range = "Lobster.var")%>%
   glimpse()
 
 dat.length.1<-dat.length%>%
