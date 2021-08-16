@@ -28,6 +28,7 @@ dat.length<-read_csv("length.csv")%>%
   filter(!is.na(Carapace.length))%>%
   filter(!Sex=="Unknown")%>%
   mutate(Count=1)%>%
+  dplyr::select(-c(Date))%>%
   #select(Sample, Tag.number, Carapace.length, Sex, Colour, Count)%>%
   glimpse()
 
