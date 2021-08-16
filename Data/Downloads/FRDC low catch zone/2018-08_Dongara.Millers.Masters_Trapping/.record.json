@@ -1,0 +1,89 @@
+{
+  "created_at": ["2019-05-21T06:40:36.606246"],
+  "current_user_has_access": [true],
+  "current_user_is_owner": [true],
+  "deployment_count": [189],
+  "description": [""],
+  "files": [
+    {
+      "id": 10006,
+      "iscompressed": true,
+      "name": "2018-08_Dongara.Millers.Masters_Trapping_Length.csv",
+      "user_id": 2
+    },
+    {
+      "id": 10007,
+      "iscompressed": true,
+      "name": "2018-08_Dongara.Millers.Masters_Trapping_Metadata.csv",
+      "user_id": 2
+    }
+  ],
+  "id": [920],
+  "info": [
+    {
+      "campaigninfoprop_id": 44,
+      "id": 218,
+      "property": {
+        "id": 44,
+        "is_filter": true,
+        "name": "Annotation: Upload type"
+      },
+      "value": "Generic"
+    },
+    {
+      "campaigninfoprop_id": 46,
+      "id": 231,
+      "property": {
+        "id": 46,
+        "is_filter": false,
+        "name": "Annotation: Taxa that have been ID'd"
+      },
+      "value": "Spiny lobster"
+    },
+    {
+      "campaigninfoprop_id": 50,
+      "id": 258,
+      "property": {
+        "id": 50,
+        "is_filter": true,
+        "name": "Annotation: Lengths measured for"
+      },
+      "value": "All spiny lobster"
+    },
+    {
+      "campaigninfoprop_id": 51,
+      "id": 261,
+      "property": {
+        "id": 51,
+        "is_filter": false,
+        "name": "Annotation: Type of Length measure"
+      },
+      "value": "Carapace length"
+    }
+  ],
+  "name": ["2018-08_Dongara.Millers.Masters_Trapping"],
+  "platform": {
+    "created_at": ["2019-05-21T06:35:13.196292"],
+    "fileurl": ["/api/platform_file/14"],
+    "id": [14],
+    "name": ["Trapping"]
+  },
+  "project": {
+    "current_user_is_member": [false],
+    "current_user_is_owner": [true],
+    "grouptype": ["project"],
+    "id": [223],
+    "is_public": [false],
+    "name": ["FRDC low catch zone"]
+  },
+  "project_id": [223],
+  "user": {
+    "email": ["tim.langlois@uwa.edu.au"],
+    "first_name": ["Tim"],
+    "id": [2],
+    "is_admin": [false],
+    "last_name": ["Langlois"],
+    "role_id": {}
+  },
+  "workgroups": []
+}

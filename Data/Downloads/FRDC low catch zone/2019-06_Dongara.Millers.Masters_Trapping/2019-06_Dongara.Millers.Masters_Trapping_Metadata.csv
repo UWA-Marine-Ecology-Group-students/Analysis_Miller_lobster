@@ -1,0 +1,137 @@
+Sample,Latitude,Longitude,Date,Time,Location,Status,Site,Depth,Observer,Successful.count,Successful.length,Comment,Source,Trip,Day,Site.code,Pot.number,Pot.type
+11.1.GR7,-29.53570833,114.9294867,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,7,13
+11.1.GR17,-29.536865,114.9295217,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,17,13
+11.1.GR37,-29.537225,114.9294333,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,37,13
+11.1.GR10,-29.53721333,114.928645,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,10,13
+11.1.GR1,-29.53827,114.92865,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,1,13
+11.1.GR3,-29.538755,114.9285267,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,3,13
+11.1.GR21,-29.539315,114.92838,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,21,13
+11.1.GR6,-29.53968167,114.92886,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,6,13
+11.1.GR32,-29.54030333,114.928535,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,32,13
+11.1.GR44,-29.54052833,114.9279133,20190603,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,GR,44,13
+11.2.GR44,-29.54031333,114.9278733,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,44,13
+11.2.GR32,-29.54007667,114.9285,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,32,13
+11.2.GR6,-29.539545,114.928695,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,6,13
+11.2.GR24,-29.53914667,114.92812,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,24,13
+11.2.GR3,-29.53866667,114.9285017,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,3,13
+11.2.GR1,-29.53808667,114.92851,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,1,13
+11.2.GR10,-29.53705,114.9286367,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,10,13
+11.2.GR37,-29.53691333,114.9293783,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,37,13
+11.2.GR17,-29.53666,114.9294317,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,17,13
+11.2.GR7,-29.53558667,114.929385,20190604,12:00:00,Golden Ridge,Fished,Golden Ridge,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,GR,7,13
+11.1.CHS43,-29.540995,114.9504567,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,43,13
+11.1.CHS47,-29.54044,114.950355,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,47,13
+11.1.CHS8,-29.539925,114.950565,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,8,13
+11.1.CHS25,-29.53960667,114.951205,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,25,13
+11.1.CHS30,-29.53936833,114.9525133,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,30,13
+11.1.CHS22,-29.53875833,114.9525167,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,22,13
+11.1.CHS23,-29.538625,114.95301,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,23,13
+11.1.CHS26,-29.53810333,114.9524683,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,26,13
+11.1.CHS50,-29.53766167,114.9527783,20190603,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHS,50,13
+11.2.CHS50,-29.53755333,114.9526567,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,50,13
+11.2.CHS26,-29.53801,114.9525433,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,26,13
+11.2.CHS23,-29.53844667,114.9526,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,23,13
+11.2.CHS22,-29.53861333,114.9527083,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,22,13
+11.2.CHS30,-29.53897,114.95241,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,30,13
+11.2.CHS25,-29.539195,114.9523933,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,25,13
+11.2.CHS8,-29.539435,114.9513317,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,8,13
+11.2.CHS47,-29.53978833,114.95069,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,47,13
+11.2.CHS43,-29.54047333,114.950275,20190604,12:00:00,Cliff Head,Fished,Cliff Head South,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHS,43,13
+11.1.CHM28,-29.536525,114.958585,20190603,12:00:00,Cliff Head,Fished,Cliff Head Mid,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHM,28,13
+11.1.CHM11,-29.53658,114.9586467,20190603,12:00:00,Cliff Head,Fished,Cliff Head Mid,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHM,11,13
+11.1.CHM2,-29.53583167,114.95889,20190603,12:00:00,Cliff Head,Fished,Cliff Head Mid,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHM,2,13
+11.2.CHM2,-29.53555833,114.9591,20190604,12:00:00,Cliff Head,Fished,Cliff Head Mid,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHM,2,13
+11.2.CHM11,-29.536025,114.9589033,20190604,12:00:00,Cliff Head,Fished,Cliff Head Mid,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHM,11,13
+11.2.CHM28,-29.53639167,114.958645,20190604,12:00:00,Cliff Head,Fished,Cliff Head Mid,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHM,28,13
+11.1.CHN41,-29.52734667,114.9598633,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHN,41,13
+11.2.CHN41,-29.52562833,114.9601533,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHN,41,13
+11.1.CHN40,-29.52560833,114.9600033,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHN,40,13
+11.2.CHN40,-29.52516,114.9602283,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHN,40,13
+11.1.CHN5,-29.52522,114.9601467,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHN,5,13
+11.2.CHN5,-29.52435,114.960235,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHN,5,13
+11.1.CHN16,-29.52407,114.9603667,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHN,16,13
+11.2.CHN16,-29.52415833,114.96025,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHN,16,13
+11.1.CHN19,-29.522755,114.9610317,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHN,19,13
+11.2.CHN19,-29.52265667,114.9607783,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHN,19,13
+11.1.CHN45,-29.52272,114.960715,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHN,45,13
+11.2.CHN45,-29.52085667,114.960605,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHN,45,13
+11.1.CHout2_33,-29.48526833,114.9583933,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,33,13
+11.1.CHout2_34,-29.48351,114.9589017,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,34,13
+11.1.CHout2_4,-29.482795,114.9592967,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,4,13
+11.1.CHout2_46,-29.48258,114.9592683,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,46,13
+11.1.CHout2_49,-29.48190667,114.9595317,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,49,13
+11.2.CHout2_49,-29.48198667,114.9594183,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,49,13
+11.2.CHout2_46,-29.48227667,114.9593317,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,46,13
+11.2.CHout2_4,-29.48262833,114.9591583,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,4,13
+11.2.CHout2_34,-29.48315,114.9588467,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,34,13
+11.2.CHout2_33,-29.48399833,114.9585067,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,33,13
+11.1.CHout2_35,-29.48432,114.958285,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,35,13
+11.1.CHout2_18,-29.48477,114.9557483,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,18,13
+11.1.CHout2_29,-29.48464167,114.95585,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,29,13
+11.1.CHout2_13,-29.484225,114.9558083,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,13,13
+11.1.CHout2_9,-29.48392667,114.955965,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,9,13
+11.1.CHout2_12,-29.50777471,114.968809,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,12,13
+11.1.CHout2_38,-29.48344833,114.9562267,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,38,13
+11.1.CHout2_21,-29.48308167,114.9561183,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,21,13
+11.1.CHout2_15,-29.48271667,114.956225,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,15,13
+11.1.CHout2_48,-29.48226,114.9573267,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,48,13
+11.1.CHout2_20,-29.48172833,114.9571033,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,20,13
+11.1.CHout2_36,-29.48176,114.9571233,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,36,13
+11.1.CHout2_27,-29.48138667,114.95749,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,27,13
+11.1.CHout2_31,-29.48090167,114.957345,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,31,13
+11.1.CHout2_39,-29.48032833,114.95694,20190603,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,1,CHout2,39,13
+11.2.CHout2_39,-29.478915,114.9572033,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,39,13
+11.2.CHout2_31,-29.479405,114.957175,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,31,13
+11.2.CHout2_27,-29.480085,114.95707,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,27,13
+11.2.CHout2_36,-29.48051833,114.9569383,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,36,13
+11.2.CHout2_20,-29.480865,114.9571883,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,20,13
+11.2.CHout2_48,-29.48110167,114.9573317,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,48,13
+11.2.CHout2_15,-29.48147,114.9569933,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,15,13
+11.2.CHout2_21,-29.48171,114.9569433,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,21,13
+11.2.CHout2_38,-29.48229167,114.9572217,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,38,13
+11.2.CHout2_12,-29.48291333,114.9562183,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,12,13
+11.2.CHout2_9,-29.48349333,114.95627,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,9,13
+11.2.CHout2_13,-29.48412667,114.955885,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,13,13
+11.2.CHout2_29,-29.48425833,114.9557383,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,29,13
+11.2.CHout2_18,-29.48462333,114.9557867,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,18,13
+11.2.CHout2_35,-29.48478167,114.955725,20190604,12:00:00,Cliff Head,Fished,Cliff Head North,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,2,CHout2,35,13
+11.3.LHS39,-29.46713,114.9236417,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,39,13
+11.3.LHS31,-29.46706,114.9239267,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,31,13
+11.3.LHS27,-29.46662667,114.9252017,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,27,13
+11.3.LHS36,-29.46555,114.9252683,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,36,13
+11.3.LHS20,-29.46077,114.9262067,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,20,13
+11.3.LHS48,-29.460405,114.92636,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,48,13
+11.3.LHS15,-29.45964333,114.9266033,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,15,13
+11.3.LHS21,-29.45927667,114.92661,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,21,13
+11.3.LHS38,-29.459515,114.92028,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,38,13
+11.3.LHS12,-29.46052667,114.9197267,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,12,13
+11.3.LHS9,-29.460625,114.9198217,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,9,13
+11.3.LHS13,-29.46096833,114.9191,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,13,13
+11.3.LHS29,-29.46129667,114.9186233,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,29,13
+11.3.LHS18,-29.46195,114.9182383,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,18,13
+11.3.LHS35,-29.46258667,114.9169167,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,35,13
+11.3.LHS49,-29.46314333,114.9176483,20190605,12:00:00,Little HorseshoeS,Fished,Little HorseshoeS,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,LHS,49,13
+11.3.SR46,-29.459005,114.8685,20190605,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,SR,46,13
+11.3.SR4,-29.458565,114.8684483,20190605,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,SR,4,13
+11.3.SR34,-29.45800667,114.868665,20190605,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,SR,34,13
+11.3.SR33,-29.45736667,114.86878,20190605,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,SR,33,13
+11.3.SR45,-29.45548667,114.8699033,20190605,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,SR,45,13
+11.3.SR19,-29.45452167,114.869905,20190605,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,SR,19,13
+11.3.SR16,-29.452845,114.8707383,20190605,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,SR,16,13
+11.3.SR5,-29.45171667,114.8709617,20190605,12:00:00,White Point,Fished,South Rig,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,SR,5,13
+11.3.WP40,-29.42463,114.89545,20190605,12:00:00,White Point,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WP,40,13
+11.3.WP41,-29.42419,114.8954467,20190605,12:00:00,White Point,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WP,41,13
+11.3.WP2,-29.42394167,114.8953383,20190605,12:00:00,White Point,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WP,2,13
+11.3.WP11,-29.42377167,114.89539,20190605,12:00:00,White Point,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WP,11,13
+11.3.WP26,-29.42336333,114.8951617,20190605,12:00:00,White Point,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WP,26,13
+11.3.WP28,-29.42287,114.8950083,20190605,12:00:00,White Point,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WP,28,13
+11.3.WP50,-29.42248833,114.8951917,20190605,12:00:00,White Point,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WP,50,13
+11.3.WP23,-29.422215,114.89568,20190605,12:00:00,White Point,Fished,White Point,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WP,23,13
+11.3.WL32,-29.38513167,114.8863533,20190605,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WL,32,13
+11.3.WL44,-29.38471333,114.8861617,20190605,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WL,44,13
+11.3.WL43,-29.38460167,114.8858683,20190605,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WL,43,13
+11.3.WL47,-29.38394167,114.88692,20190605,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WL,47,13
+11.3.WL8,-29.38351833,114.8874033,20190605,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WL,8,13
+11.3.WL25,-29.38309833,114.8873167,20190605,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WL,25,13
+11.3.WL30,-29.38346833,114.8878667,20190605,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WL,30,13
+11.3.WL22,-29.38340333,114.888335,20190605,12:00:00,White Point,Fished,Whites Lump,0,Ash Miller,Yes,Yes,,Dongara.Millers.Masters,11,3,WL,22,13
