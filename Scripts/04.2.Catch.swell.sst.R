@@ -30,6 +30,7 @@ study<-"Lobster.Data"
 work.dir=("Z:/Analysis_Miller_lobster") # FOr Ash's laptop using Git
 
 work.dir=("C:/GitHub/Analysis_Miller_lobster_current") # Brooke's desktop
+work.dir=("Y:/Analysis_Miller_lobster_current") # Brooke's laptop
 
 ## Sub directories ----
 data.dir<-paste(work.dir,"Data",sep="/")
@@ -358,19 +359,6 @@ sub.sites.sst.150<-sub.sites.150
 sub.sites.sst.150$sst<-get_sst(sub.sites.150$Date, sub.sites.150$Long, sub.sites.150$Lat)
 
 glimpse(sub.sites.sst)
-
-#df2<-split(sites, rep(1:1, each = 50)) 
-str(df2)
-glimpse(df2)
-summary(df2)
-
-score<-sapply(df2,get_sst())[1,] 
-
-score<-lapply(df2,get_sst(df2$Date,df2$Long,df2$Lat))[1,]
-
-score<-sapply(df2,get_sst())[1,]
-
-str(df2)
 
 split.sites <- split(sites, rep(1:43, each = 50)) # split data up into chunks that will run
 datalist = list() # create a blank data frame
